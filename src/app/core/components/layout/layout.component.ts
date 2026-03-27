@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,6 +10,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { AuthService } from '../../services/auth.service';
 import { LoadingService } from '../../services/loading.service';
+import { KeycloakProfile } from 'keycloak-js';
 
 @Component({
   selector: 'app-layout',
@@ -68,7 +69,7 @@ import { LoadingService } from '../../services/loading.service';
           
           <div class="user-actions">
             @if (authService.isLoggedIn) {
-              <span class="username">{{ (authService.getUserProfile() | async)?.firstName }}</span>
+              <span class="username">{{ (userProfile$ | async)?.firstName }}</span>
               <button mat-icon-button (click)="authService.logout()" title="Déconnexion">
                 <mat-icon>logout</mat-icon>
               </button>
@@ -164,8 +165,15 @@ import { LoadingService } from '../../services/loading.service';
     }
   `
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnInit {
   authService = inject(AuthService);
   loadingService = inject(LoadingService);
-  isHandset$: Observable<boolean> = new Observable<boolean>(sub => sub.next(false)); 
+  isHandset$: Observable<boolean> = of(false); 
+  userProfile$: Observable<KeycloakProfile | null> = of(null);
+
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn) {
+      this.userProfile$ = this.authService.getUserProfile();
+    }
+  }
 }

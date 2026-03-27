@@ -2,8 +2,7 @@ import { ApplicationConfig, provideZoneChangeDetection, APP_INITIALIZER } from '
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { KeycloakAngularModule, KeycloakService, KeycloakBearerInterceptor } from 'keycloak-angular';
+import { KeycloakService, KeycloakBearerInterceptor } from 'keycloak-angular';
 import { environment } from '../environments/environment';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
@@ -19,9 +18,13 @@ function initializeKeycloak(keycloak: KeycloakService) {
         clientId: environment.keycloak.clientId
       },
       initOptions: {
+        onLoad: 'check-sso',
         checkLoginIframe: false
-      },
-      bearerExcludedUrls: []
+      }
+    }).catch(err => {
+      console.error('Échec de l\'initialisation de Keycloak:', err);
+      // On laisse l'app démarrer même en cas d'erreur
+      return Promise.resolve();
     });
 }
 

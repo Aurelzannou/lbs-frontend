@@ -21,8 +21,14 @@ export class AuthService {
     this.keycloak.logout(window.location.origin);
   }
 
-  public getUserProfile(): Observable<KeycloakProfile> {
-    return from(this.keycloak.loadUserProfile());
+  public getUserProfile(): Observable<KeycloakProfile | null> {
+    if (!this.isLoggedIn) {
+      return from(Promise.resolve(null));
+    }
+    return from(this.keycloak.loadUserProfile().catch(err => {
+      console.error('Erreur lors de la récupération du profil:', err);
+      return null;
+    }));
   }
 
   public getToken(): Promise<string> {
