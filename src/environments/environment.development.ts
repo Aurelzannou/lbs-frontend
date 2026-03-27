@@ -4,6 +4,6 @@ export const environment = {
   keycloak: {
     url: 'http://localhost:8080',
     realm: 'lbs-realm',
-    clientId: 'lbs-frontend'
+    clientId: 'lbs-client'
   }
 };
