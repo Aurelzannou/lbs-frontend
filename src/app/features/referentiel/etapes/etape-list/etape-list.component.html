@@ -1,0 +1,163 @@
+<nb-card class="main-card glass-card" [nbSpinner]="loading" nbSpinnerStatus="primary" nbSpinnerSize="large" nbSpinnerMessage="Chargement...">
+  <nb-card-header class="header-container">
+    <div class="header-info">
+      <div class="icon-wrapper etape-icon">
+        <nb-icon icon="list-outline"></nb-icon>
+      </div>
+      <div class="title-wrapper">
+        <h2>Étapes du Workflow</h2>
+        <p class="subtitle">Définition des étapes administratives ({{ totalElements }} au total)</p>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <nb-form-field class="search-container">
+        <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
+        <input nbInput 
+               fullWidth 
+               shape="semi-round" 
+               fieldSize="medium"
+               placeholder="Filtrer les étapes..." 
+               (keyup)="applyFilter($event)"
+               #searchInput>
+      </nb-form-field>
+
+      <div class="button-group">
+        <button nbButton 
+                ghost 
+                status="primary" 
+                (click)="refresh()" 
+                nbTooltip="Rafraîchir les données"
+                class="refresh-btn">
+          <nb-icon icon="refresh-outline"></nb-icon>
+        </button>
+
+        <button nbButton 
+                status="primary" 
+                shape="semi-round" 
+                (click)="openForm()"
+                class="add-btn">
+          <nb-icon icon="plus-outline"></nb-icon>
+          Nouvelle Étape
+        </button>
+      </div>
+    </div>
+  </nb-card-header>
+
+  <nb-card-body>
+    <div class="table-container custom-scrollbar">
+      <table mat-table [dataSource]="dataSource" matSort class="premium-table">
+        
+        <!-- Code Column -->
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Code </th>
+          <td mat-cell *matCellDef="let element"> 
+            <div class="code-container">
+              <span class="code-label">#{{element.code}}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Libelle Column -->
+        <ng-container matColumnDef="libelle">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Libellé </th>
+          <td mat-cell *matCellDef="let element"> 
+            <span class="libelle-text">{{element.libelle}}</span>
+          </td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
+          <td mat-cell *matCellDef="let element"> 
+            <span class="description-text">{{element.description || '---'}}</span>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="actions-header"> Operations </th>
+          <td mat-cell *matCellDef="let element" class="actions-cell">
+            <div class="action-stack">
+              <button nbButton 
+                      ghost 
+                      status="info" 
+                      size="tiny" 
+                      (click)="openForm(element)" 
+                      nbTooltip="Modifier l'étape"
+                      class="action-btn edit">
+                <nb-icon icon="edit-2-outline"></nb-icon>
+              </button>
+              <button nbButton 
+                      ghost 
+                      status="danger" 
+                      size="tiny" 
+                      (click)="deleteEtape(element)" 
+                      nbTooltip="Supprimer cette étape"
+                      class="action-btn delete">
+                <nb-icon icon="trash-2-outline"></nb-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table-header"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+            class="table-row" 
+            [@rowsAnimation]></tr>
+        
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell no-results" [attr.colspan]="displayedColumns.length">
+            <div class="empty-state-wrapper" *ngIf="!loading">
+              <div class="empty-illustration">
+                <nb-icon icon="search-outline"></nb-icon>
+              </div>
+              <h3>Aucun résultat</h3>
+              <p>Aucune étape ne correspond à votre recherche "{{ searchInput.value }}"</p>
+              <button nbButton appearance="outline" status="primary" size="small" (click)="searchInput.value=''; applyFilter($event)">Réinitialiser</button>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <!-- Hidden mat-paginator to handle table logic -->
+    <mat-paginator [pageSize]="25" class="hidden-paginator"></mat-paginator>
+
+    <div class="custom-pagination-container" *ngIf="totalPages > 1">
+      <div class="pagination-buttons">
+        <button nbButton 
+                ghost 
+                status="primary" 
+                size="small" 
+                (click)="prevPage()" 
+                [disabled]="isFirstPage()"
+                class="nav-btn">
+          « Previous
+        </button>
+
+        <div class="page-numbers">
+          <button *ngFor="let p of pages" 
+                  nbButton 
+                  [status]="currentPage + 1 === p ? 'primary' : 'basic'" 
+                  [appearance]="currentPage + 1 === p ? 'filled' : 'ghost'"
+                  size="small"
+                  (click)="goToPage(p)"
+                  class="page-btn">
+            {{ p }}
+          </button>
+        </div>
+
+        <button nbButton 
+                ghost 
+                status="primary" 
+                size="small" 
+                (click)="nextPage()" 
+                [disabled]="isLastPage()"
+                class="nav-btn">
+          Next »
+        </button>
+      </div>
+    </div>
+  </nb-card-body>
+</nb-card>

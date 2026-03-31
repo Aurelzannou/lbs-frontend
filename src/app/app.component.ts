@@ -16,14 +16,20 @@ export const MENU_ITEMS: NbMenuItem[] = [
     group: true,
   },
   {
-    title: 'Niveaux',
-    icon: 'layers-outline',
-    link: '/niveaux',
-  },
-  {
-    title: 'Étapes',
-    icon: 'list-outline',
-    link: '/etapes',
+    title: 'Référentiel',
+    icon: 'settings-2-outline',
+    children: [
+      {
+        title: 'Niveaux',
+        icon: 'layers-outline',
+        link: '/referentiel/niveaux',
+      },
+      {
+        title: 'Étapes',
+        icon: 'list-outline',
+        link: '/referentiel/etapes',
+      },
+    ],
   },
 ];
 

@@ -1,6 +1,19 @@
 @use '@angular/material' as mat;
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
+// @nebular styles
+@import 'app/@theme/styles/themes';
+@import 'app/@theme/styles/overrides';
+@import 'app/@theme/styles/layout';
+@import '@nebular/theme/styles/globals';
+
+// install the framework
+@include nb-install() {
+  @include nb-theme-global();
+  @include nb-overrides();
+  @include ngx-layout();
+}
+
 :root {
   --primary-color: #1352e2;
   --accent-color: #ff4081;

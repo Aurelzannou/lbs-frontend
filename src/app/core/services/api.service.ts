@@ -19,13 +19,20 @@ export class ApiService {
 
   get<T>(path: string, params: HttpParams = new HttpParams()): Observable<T> {
     return this.http.get<ApiResponse<T>>(`${this.baseUrl}${path}`, { params }).pipe(
-      map(response => response.data)
+      map(response => {
+        console.log(`[ApiService] GET ${path} - raw response:`, response);
+        console.log(`[ApiService] GET ${path} - response.data:`, (response as any).data);
+        return response.data;
+      })
     );
   }
 
   post<T>(path: string, body: any): Observable<T> {
     return this.http.post<ApiResponse<T>>(`${this.baseUrl}${path}`, body).pipe(
-      map(response => response.data)
+      map(response => {
+        console.log(`[ApiService] POST ${path} - raw response:`, response);
+        return response.data;
+      })
     );
   }
 

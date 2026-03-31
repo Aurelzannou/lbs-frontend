@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 import { Niveau, NiveauRequest } from '../models/niveau.model';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,11 @@ export class NiveauService {
   private api = inject(ApiService);
   private readonly endpoint = '/api/niveaux';
 
-  getAll(): Observable<Niveau[]> {
-    return this.api.get<Niveau[]>(this.endpoint);
+  getAll(page: number = 0, size: number = 25): Observable<any> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.api.get<any>(this.endpoint, params);
   }
 
   getOne(uuid: string): Observable<Niveau> {

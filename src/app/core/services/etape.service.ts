@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 import { Etape, EtapeRequest } from '../models/etape.model';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,11 @@ export class EtapeService {
   private api = inject(ApiService);
   private readonly endpoint = '/api/etapes';
 
-  getAll(): Observable<Etape[]> {
-    return this.api.get<Etape[]>(this.endpoint);
+  getAll(page: number = 0, size: number = 25): Observable<any> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.api.get<any>(this.endpoint, params);
   }
 
   getOne(uuid: string): Observable<Etape> {

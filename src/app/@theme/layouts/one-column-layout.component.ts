@@ -13,7 +13,7 @@ import { FooterComponent } from '../components/footer/footer.component';
     FooterComponent,
   ],
   template: `
-    <nb-layout windowMode>
+    <nb-layout>
       <nb-layout-header fixed>
         <app-header></app-header>
       </nb-layout-header>
