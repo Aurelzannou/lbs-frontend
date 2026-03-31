@@ -1,0 +1,6 @@
+@import './themes';
+
+@mixin ngx-layout() {
+  // Add common layout mixins or overrides here
+  // If bootstrap grid is missing, we'll need to use NB row/col or CSS grid
+}

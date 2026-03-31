@@ -1,0 +1,55 @@
+@import '../../styles/themes';
+
+@include nb-install-component() {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+    width: auto;
+  }
+
+  nb-action {
+    height: auto;
+    display: flex;
+    align-content: center;
+  }
+
+  nb-user {
+    cursor: pointer;
+  }
+
+  .header-container {
+    display: flex;
+    align-items: center;
+    width: auto;
+
+    .sidebar-toggle {
+      padding: 0 1.25rem;
+      text-decoration: none;
+      color: nb-theme(text-hint-color);
+      nb-icon {
+        font-size: 1.75rem;
+      }
+    }
+
+    .logo {
+      padding: 0 1.25rem;
+      font-size: 1.75rem;
+      border-left: 1px solid nb-theme(divider-color);
+      white-space: nowrap;
+      text-decoration: none;
+      color: nb-theme(text-basic-color);
+      
+      span {
+        font-weight: bold;
+      }
+    }
+  }
+
+  nb-select {
+    margin-left: 1rem;
+  }
+}
