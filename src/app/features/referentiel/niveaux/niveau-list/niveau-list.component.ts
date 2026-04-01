@@ -147,6 +147,10 @@ export class NiveauListComponent implements OnInit, AfterViewInit, OnDestroy {
   isLastPage(): boolean {
     return this.pageIndex >= this.totalPages - 1;
   }
+
+  getEndIndex(): number {
+    return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements);
+  }
   // --------------------------------
 
   refresh(): void {
