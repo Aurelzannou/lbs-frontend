@@ -17,8 +17,8 @@
                fullWidth 
                shape="semi-round" 
                fieldSize="medium"
-               placeholder="Filtrer les niveaux..." 
-               (keyup)="applyFilter($event)"
+               placeholder="Rechercher un niveau..." 
+               (input)="onSearchChange($event)"
                #searchInput>
       </nb-form-field>
 
@@ -106,7 +106,7 @@
               </div>
               <h3>Aucun résultat</h3>
               <p>Aucun niveau ne correspond à votre recherche "{{ searchInput.value }}"</p>
-              <button nbButton appearance="outline" status="primary" size="small" (click)="searchInput.value=''; applyFilter($event)">Réinitialiser</button>
+              <button nbButton appearance="outline" status="primary" size="small" (click)="clearSearch(searchInput)">Réinitialiser</button>
             </div>
           </td>
         </tr>

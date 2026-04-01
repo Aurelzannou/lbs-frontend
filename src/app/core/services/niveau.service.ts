@@ -11,10 +11,13 @@ export class NiveauService {
   private api = inject(ApiService);
   private readonly endpoint = '/api/niveaux';
 
-  getAll(page: number = 0, size: number = 25): Observable<any> {
-    const params = new HttpParams()
+  getAll(page: number = 0, size: number = 25, filter: string = ''): Observable<any> {
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+    if (filter && filter.trim().length > 0) {
+      params = params.set('filter', filter.trim());
+    }
     return this.api.get<any>(this.endpoint, params);
   }
 

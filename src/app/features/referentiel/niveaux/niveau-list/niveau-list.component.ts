@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, inject, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, inject, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
@@ -17,7 +17,9 @@ import { NiveauFormDialogComponent } from '../niveau-form-dialog/niveau-form-dia
 import { NiveauService } from '../../../../core/services/niveau.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Niveau } from '../../../../core/models/niveau.model';
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-niveau-list',
@@ -47,7 +49,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   templateUrl: './niveau-list.component.html',
   styleUrl: './niveau-list.component.scss'
 })
-export class NiveauListComponent implements OnInit, AfterViewInit {
+export class NiveauListComponent implements OnInit, AfterViewInit, OnDestroy {
   private niveauService = inject(NiveauService);
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
@@ -59,11 +61,24 @@ export class NiveauListComponent implements OnInit, AfterViewInit {
   totalElements = 0;
   pageIndex = 0; // 0-based pour l'affichage interne
   pageSize = 25;
+  searchTerm = '';
+
+  private searchSubject = new Subject<string>();
+  private searchSub!: Subscription;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
+    // Debounce : attend 300ms après la dernière frappe avant d'appeler le backend
+    this.searchSub = this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
+      this.refresh();
+    });
     this.refresh();
   }
 
@@ -73,13 +88,18 @@ export class NiveauListComponent implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  ngOnDestroy(): void {
+    this.searchSub?.unsubscribe();
+  }
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+  onSearchChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(value);
+  }
+
+  clearSearch(inputEl: HTMLInputElement): void {
+    inputEl.value = '';
+    this.searchSubject.next('');
   }
 
   // --- Custom Pagination Methods (Server-Side) ---
@@ -131,9 +151,9 @@ export class NiveauListComponent implements OnInit, AfterViewInit {
 
   refresh(): void {
     this.loading = true;
-    console.log('[NiveauList] refresh() appelé - page:', this.pageIndex, 'taille:', this.pageSize);
+    console.log('[NiveauList] refresh() appelé - page:', this.pageIndex, 'taille:', this.pageSize, 'filtre:', this.searchTerm);
     // L'API utilise une pagination 1-based (page 1 = première page)
-    this.niveauService.getAll(this.pageIndex + 1, this.pageSize).subscribe({
+    this.niveauService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
       next: (response: any) => {
         console.log('[NiveauList] données reçues:', response);
 
