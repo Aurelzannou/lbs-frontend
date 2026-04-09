@@ -1,0 +1,90 @@
+<div class="login-wrapper">
+  <!-- Section Illustration (Gauche) -->
+  <div class="illustration-section">
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="logo-container">
+        <h1>LBS</h1>
+        <p>Legal Business Solutions</p>
+      </div>
+      <div class="welcome-text">
+        <h2>Bienvenue sur votre plateforme</h2>
+        <p>Gérez vos actes et vos processus métiers en toute simplicité.</p>
+      </div>
+      <div class="features-list">
+        <div class="feature-item">
+          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+          <span>Gestion de référentiels</span>
+        </div>
+        <div class="feature-item">
+          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+          <span>Sécurité renforcée</span>
+        </div>
+        <div class="feature-item">
+          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+          <span>Interface intuitive</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Formulaire (Droite) -->
+  <div class="form-section">
+    <div class="login-container">
+      <nb-card [nbSpinner]="loading" nbSpinnerStatus="primary">
+        <nb-card-header>
+          <h3>Connexion</h3>
+          <p class="subtitle">Entrez vos identifiants pour continuer</p>
+        </nb-card-header>
+        <nb-card-body>
+          <nb-alert *ngIf="error" status="danger" closable (close)="error = null">
+            {{ error }}
+          </nb-alert>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="form-control-group">
+              <label class="label" for="username">Nom d'utilisateur</label>
+              <input 
+                nbInput 
+                fullWidth 
+                id="username" 
+                formControlName="username" 
+                placeholder="Ex: john.doe"
+                [status]="loginForm.get('username')?.touched && loginForm.get('username')?.invalid ? 'danger' : 'basic'">
+              <p class="error-text" *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.hasError('required')">
+                Le nom d'utilisateur est requis.
+              </p>
+            </div>
+
+            <div class="form-control-group">
+              <label class="label" for="password">Mot de passe</label>
+              <div class="password-input-wrapper">
+                <input 
+                  nbInput 
+                  fullWidth 
+                  id="password" 
+                  [type]="showPassword ? 'text' : 'password'" 
+                  formControlName="password" 
+                  placeholder="********"
+                  [status]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid ? 'danger' : 'basic'">
+                <button type="button" nbButton ghost (click)="togglePassword()" class="toggle-password">
+                  <nb-icon [icon]="showPassword ? 'eye-outline' : 'eye-off-outline'"></nb-icon>
+                </button>
+              </div>
+              <p class="error-text" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')">
+                Le mot de passe est requis.
+              </p>
+            </div>
+
+            <button nbButton fullWidth status="primary" size="large" [disabled]="loading || loginForm.invalid">
+              Se connecter
+            </button>
+          </form>
+        </nb-card-body>
+        <nb-card-footer>
+          <p>© 2026 LBS. Tous droits réservés.</p>
+        </nb-card-footer>
+      </nb-card>
+    </div>
+  </div>
+</div>

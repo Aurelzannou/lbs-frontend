@@ -3,8 +3,9 @@ import { NbMediaBreakpointsService, NbMenuService, NbSidebarService, NbThemeServ
 import { KeycloakService } from 'keycloak-angular';
 import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { NbIconModule, NbSelectModule, NbActionsModule, NbUserModule, NbContextMenuModule } from '@nebular/theme';
+import { NbIconModule, NbSelectModule, NbActionsModule, NbUserModule, NbContextMenuModule, NbButtonModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-header',
@@ -16,6 +17,7 @@ import { NbIconModule, NbSelectModule, NbActionsModule, NbUserModule, NbContextM
     NbActionsModule,
     NbUserModule,
     NbContextMenuModule,
+    NbButtonModule,
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
@@ -25,6 +27,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
   userPictureOnly: boolean = false;
   user: any = { name: '', picture: '' };
+  authenticated: boolean = false;
 
   themes = [
     { value: 'default', name: 'Light' },
@@ -42,7 +45,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private menuService: NbMenuService,
     private themeService: NbThemeService,
     private breakpointService: NbMediaBreakpointsService,
-    private keycloakService: KeycloakService
+    private keycloakService: KeycloakService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -69,16 +73,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
         if (event.item.data === 'logout') {
-          this.keycloakService.logout();
+          this.logout();
         }
       });
   }
 
   async loadUserInfo() {
-    if (await this.keycloakService.isLoggedIn()) {
+    this.authenticated = await this.keycloakService.isLoggedIn();
+    if (this.authenticated) {
       const profile = await this.keycloakService.loadUserProfile();
       this.user.name = `${profile.firstName} ${profile.lastName}`;
     }
+  }
+
+  login() {
+    this.router.navigate(['/login']);
+  }
+
+  logout() {
+    this.keycloakService.logout(window.location.origin);
   }
 
   ngOnDestroy() {

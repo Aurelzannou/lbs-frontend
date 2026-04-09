@@ -23,11 +23,9 @@ export class AuthGuard extends KeycloakAuthGuard {
     state: RouterStateSnapshot
   ): Promise<boolean | UrlTree> {
     
-    // Si l'utilisateur n'est pas authentifié, forcer la connexion
+    // Si l'utilisateur n'est pas authentifié, rediriger vers la page de login locale
     if (!this.authenticated) {
-      await this.keycloak.login({
-        redirectUri: window.location.origin + state.url
-      });
+      return this.router.parseUrl('/login');
     }
 
     // Vérification des rôles (optionnel pour le moment)

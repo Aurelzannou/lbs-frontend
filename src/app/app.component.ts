@@ -3,6 +3,9 @@ import { RouterOutlet } from '@angular/router';
 import { NbMenuModule, NbMenuItem } from '@nebular/theme';
 import { OneColumnLayoutComponent } from './@theme/layouts/one-column-layout.component';
 import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
+import { AuthService } from './core/services/auth.service';
+import { filter } from 'rxjs/operators';
 
 export const MENU_ITEMS: NbMenuItem[] = [
   {
@@ -43,4 +46,14 @@ export const MENU_ITEMS: NbMenuItem[] = [
 export class AppComponent {
   title = 'lbs-frontend';
   menu = MENU_ITEMS;
+  showLayout = true;
+
+  constructor(private router: Router, private authService: AuthService) {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      // Masquer le layout pour la page de login
+      this.showLayout = !event.urlAfterRedirects.includes('/login');
+    });
+  }
 }
