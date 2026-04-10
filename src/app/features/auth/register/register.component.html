@@ -1,0 +1,104 @@
+<nb-layout>
+  <nb-layout-column class="register-container">
+    
+    <nb-card class="register-card">
+      <nb-card-header>
+        <div class="header-content">
+          <div class="icon-wrapper animate__animated animate__zoomIn">
+            <nb-icon icon="person-add-outline"></nb-icon>
+          </div>
+          <h1>Rejoignez LBS</h1>
+          <p class="subtitle">Créez votre compte professionnel en quelques secondes</p>
+        </div>
+      </nb-card-header>
+      
+      <nb-card-body [nbSpinner]="loading" nbSpinnerStatus="primary">
+        <!-- Message d'erreur -->
+        <nb-alert *ngIf="error" status="danger" closable (close)="error = null" class="animate__animated animate__shakeX">
+          <nb-icon icon="alert-circle-outline" style="margin-right: 8px;"></nb-icon>
+          {{ error }}
+        </nb-alert>
+
+        <!-- Vue de succès -->
+        <div *ngIf="success" class="success-container animate__animated animate__fadeIn">
+          <div class="success-content">
+            <div class="success-icon-wrapper animate__animated animate__bounceIn">
+              <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+            </div>
+            <h3>Bienvenue à bord !</h3>
+            <p>Votre compte a été créé avec succès. Sécurisation de l'accès en cours...</p>
+            
+            <div class="redirect-loader">
+                <div class="loader-bar"></div>
+            </div>
+            <p style="font-size: 0.85rem; margin-top: 1rem; color: #8f9bb3;">Redirection vers la connexion dans quelques secondes...</p>
+          </div>
+        </div>
+
+        <!-- Formulaire d'inscription -->
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" *ngIf="!success" class="animate__animated animate__fadeIn">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="firstName">Prénom</label>
+                <input nbInput fullWidth id="firstName" formControlName="firstName" 
+                       placeholder="Votre prénom" [status]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched ? 'danger' : 'basic'">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="lastName">Nom</label>
+                <input nbInput fullWidth id="lastName" formControlName="lastName" 
+                       placeholder="Votre nom" [status]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched ? 'danger' : 'basic'">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="username">Nom d'utilisateur</label>
+            <input nbInput fullWidth id="username" formControlName="username" 
+                   placeholder="Choisissez un identifiant" [status]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched ? 'danger' : 'basic'">
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email professionnel</label>
+            <input nbInput fullWidth id="email" type="email" formControlName="email" 
+                   placeholder="votre@email.com" [status]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched ? 'danger' : 'basic'">
+          </div>
+
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <div class="password-wrapper">
+              <input nbInput fullWidth id="password" [type]="showPassword ? 'text' : 'password'" 
+                     formControlName="password" placeholder="Min. 6 caractères"
+                     [status]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched ? 'danger' : 'basic'">
+              <nb-icon [icon]="showPassword ? 'eye-off-outline' : 'eye-outline'" 
+                       (click)="togglePassword()"></nb-icon>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirmer le mot de passe</label>
+            <input nbInput fullWidth id="confirmPassword" [type]="showPassword ? 'text' : 'password'" 
+                   formControlName="confirmPassword" placeholder="Répétez le mot de passe"
+                   [status]="(registerForm.get('confirmPassword')?.invalid || registerForm.hasError('mismatch')) && registerForm.get('confirmPassword')?.touched ? 'danger' : 'basic'">
+             <span class="error-text" *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched">
+               <nb-icon icon="close-outline" style="font-size: 0.8rem; vertical-align: middle;"></nb-icon>
+               Les mots de passe ne correspondent pas
+             </span>
+          </div>
+
+          <button nbButton fullWidth status="primary" type="submit" [disabled]="registerForm.invalid || loading" class="submit-btn">
+            CRÉER MON COMPTE
+          </button>
+        </form>
+
+        <!-- Footer -->
+        <div class="footer-links" *ngIf="!success">
+          <span>Vous avez déjà un compte ?</span>
+          <a routerLink="/login">Connectez-vous</a>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </nb-layout-column>
+</nb-layout>

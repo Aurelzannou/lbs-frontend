@@ -6,11 +6,13 @@ import { ReferentielComponent } from './features/referentiel/referentiel.compone
 import { NiveauListComponent } from './features/referentiel/niveaux/niveau-list/niveau-list.component';
 import { EtapeListComponent } from './features/referentiel/etapes/etape-list/etape-list.component';
 import { LoginComponent } from './features/auth/login/login.component';
+import { RegisterComponent } from './features/auth/register/register.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -26,5 +28,29 @@ export const routes: Routes = [
       { path: 'etapes', component: EtapeListComponent }
     ]
   },
-  // Ajoutez d'autres routes ici
+  {
+    path: 'profile',
+    loadComponent: () => import('./features/profile/profile.component').then(m => m.UserProfileComponent),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'administration',
+    canActivate: [AuthGuard],
+    children: [
+      { 
+        path: 'profils', 
+        loadComponent: () => import('./features/administration/profils/profil-list.component').then(m => m.ProfilListComponent) 
+      },
+      { 
+        path: 'menus', 
+        loadComponent: () => import('./features/administration/menus/menu-list.component').then(m => m.MenuListComponent) 
+      },
+      { 
+        path: 'utilisateurs', 
+        loadComponent: () => import('./features/administration/utilisateurs/user-list.component').then(m => m.UserListComponent) 
+      }
+    ]
+  },
+  // Redirection par défaut pour les routes non trouvées
+  { path: '**', redirectTo: 'home' }
 ];

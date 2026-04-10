@@ -63,16 +63,47 @@ export class AuthService {
     });
 
     return this.http.post(url, body.toString(), { headers }).pipe(
-      tap((response: any) => {
-        // Optionnel : On peut stocker les tokens manuellement ou les injecter dans KeycloakService
-        // Cependant, KeycloakService d'angular-keycloak est très lié au flux de redirection.
-        // Pour une approche simple, on recharge l'init de Keycloak avec les tokens reçus
-        console.log('Login réussi via API');
+      switchMap((response: any) => {
+        console.log('Login réussi via API, synchronisation Keycloak...');
+        
+        // On ré-initialise Keycloak avec les tokens reçus
+        // Cela met à jour l'instance interne pour que isLoggedIn() renvoie true
+        // et que l'intercepteur ajoute le token Bearer aux requêtes futures.
+        return from(this.keycloak.init({
+          config: {
+            url: environment.keycloak.url,
+            realm: environment.keycloak.realm,
+            clientId: environment.keycloak.clientId
+          },
+          initOptions: {
+            token: response.access_token,
+            refreshToken: response.refresh_token,
+            idToken: response.id_token,
+            onLoad: 'check-sso',
+            checkLoginIframe: false
+          }
+        }));
       }),
       switchMap(() => {
-        // Une fois authentifié via API, on peut essayer de rafraîchir le profil utilisateur
+        // Maintenant que le service est synchronisé, loadUserProfile ne devrait plus échouer
         return from(this.keycloak.loadUserProfile());
       })
     );
+  }
+
+  /**
+   * Récupération des informations de l'utilisateur connecté depuis le backend
+   */
+  public getCurrentUser(): Observable<any> {
+    const url = `${environment.apiUrl}/api/auth/me`;
+    return this.http.get<any>(url);
+  }
+
+  /**
+   * Inscription d'un nouvel utilisateur via le backend
+   */
+  public register(userData: any): Observable<any> {
+    const url = `${environment.apiUrl}/api/auth/register`;
+    return this.http.post(url, userData, { responseType: 'text' as 'json' });
   }
 }

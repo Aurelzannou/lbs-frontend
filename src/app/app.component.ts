@@ -5,36 +5,11 @@ import { OneColumnLayoutComponent } from './@theme/layouts/one-column-layout.com
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
+import { MenuService } from './core/services/menu.service';
 import { filter } from 'rxjs/operators';
+import { OnInit } from '@angular/core';
 
-export const MENU_ITEMS: NbMenuItem[] = [
-  {
-    title: 'Tableau de bord',
-    icon: 'home-outline',
-    link: '/dashboard',
-    home: true,
-  },
-  {
-    title: 'ADMINISTRATION',
-    group: true,
-  },
-  {
-    title: 'Référentiel',
-    icon: 'settings-2-outline',
-    children: [
-      {
-        title: 'Niveaux',
-        icon: 'layers-outline',
-        link: '/referentiel/niveaux',
-      },
-      {
-        title: 'Étapes',
-        icon: 'list-outline',
-        link: '/referentiel/etapes',
-      },
-    ],
-  },
-];
+// Les menus sont maintenant chargés dynamiquement depuis le backend via MenuService
 
 @Component({
   selector: 'app-root',
@@ -43,17 +18,43 @@ export const MENU_ITEMS: NbMenuItem[] = [
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'lbs-frontend';
-  menu = MENU_ITEMS;
+  menu: NbMenuItem[] = [];
   showLayout = true;
 
-  constructor(private router: Router, private authService: AuthService) {
+  constructor(
+    private router: Router, 
+    private authService: AuthService,
+    private menuService: MenuService
+  ) {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
-      // Masquer le layout pour la page de login
-      this.showLayout = !event.urlAfterRedirects.includes('/login');
+      this.showLayout = !event.urlAfterRedirects.includes('/login') && 
+                        !event.urlAfterRedirects.includes('/register');
+
+      // Si l'utilisateur est connecté et que le menu n'est pas encore chargé
+      if (this.showLayout && this.authService.isLoggedIn && this.menu.length === 0) {
+        this.loadMenu();
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn) {
+      this.loadMenu();
+    }
+  }
+
+  private loadMenu(): void {
+    this.menuService.getMenuItems().subscribe({
+      next: (items) => {
+        this.menu = items;
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement du menu:', err);
+      }
     });
   }
 }
