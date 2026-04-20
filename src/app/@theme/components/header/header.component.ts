@@ -5,6 +5,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../core/services/auth.service';
 import { NbIconModule, NbSelectModule, NbActionsModule, NbUserModule, NbContextMenuModule, NbButtonModule } from '@nebular/theme';
 
 @Component({
@@ -46,6 +47,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private themeService: NbThemeService,
     private breakpointService: NbMediaBreakpointsService,
     private keycloakService: KeycloakService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
@@ -91,7 +93,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.keycloakService.logout(window.location.origin);
+    this.authService.logout();
   }
 
   ngOnDestroy() {

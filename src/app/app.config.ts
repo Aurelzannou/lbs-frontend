@@ -13,8 +13,12 @@ import { NbThemeModule, NbLayoutModule, NbSidebarModule, NbMenuModule, NbDialogM
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 
 function initializeKeycloak(keycloak: KeycloakService) {
-  return () =>
-    keycloak.init({
+  return () => {
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+    const idToken = localStorage.getItem('id_token');
+
+    const options: any = {
       config: {
         url: environment.keycloak.url,
         realm: environment.keycloak.realm,
@@ -22,13 +26,36 @@ function initializeKeycloak(keycloak: KeycloakService) {
       },
       initOptions: {
         onLoad: 'check-sso',
+        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
         checkLoginIframe: false
       }
-    }).catch(err => {
-      console.error('Échec de l\'initialisation de Keycloak:', err);
-      // On laisse l'app démarrer même en cas d'erreur
-      return Promise.resolve();
-    });
+    };
+
+    // Restoration of tokens for F5 persistence
+    if (accessToken && refreshToken) {
+      options.initOptions.token = accessToken;
+      options.initOptions.refreshToken = refreshToken;
+      if (idToken) options.initOptions.idToken = idToken;
+    }
+
+    // Wrap initialization with a timeout to prevent white screen if Keycloak hangs
+    const initPromise = keycloak.init(options);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Keycloak init timeout')), 5000)
+    );
+
+    return Promise.race([initPromise, timeoutPromise])
+      .catch(err => {
+        console.warn('Échec ou timeout de l\'initialisation Keycloak:', err);
+        // Clean corrupted/expired tokens
+        if (err.message === 'Keycloak init timeout' || (err && typeof err === 'object')) {
+           localStorage.removeItem('access_token');
+           localStorage.removeItem('refresh_token');
+           localStorage.removeItem('id_token');
+        }
+        return Promise.resolve();
+      });
+  };
 }
 
 export const appConfig: ApplicationConfig = {

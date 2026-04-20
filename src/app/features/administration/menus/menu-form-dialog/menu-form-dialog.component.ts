@@ -190,8 +190,9 @@ export class MenuFormDialogComponent implements OnInit {
 
   loadProfils(): void {
     this.profilService.getAll().subscribe({
-      next: (profils: Profil[]) => {
-        this.allProfils = profils;
+      next: (response: any) => {
+        // ApiService return already response.data -> { data: [], meta: {} }
+        this.allProfils = response.data || [];
       }
     });
   }

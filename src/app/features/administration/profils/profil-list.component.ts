@@ -1,17 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { 
   NbCardModule, 
   NbButtonModule, 
   NbIconModule, 
-  NbTableModule,
-  NbDialogService,
   NbToastrService,
-  NbTooltipModule
+  NbTooltipModule,
+  NbInputModule,
+  NbFormFieldModule,
+  NbSpinnerModule
 } from '@nebular/theme';
 import { Profil, ProfilService } from '../../../core/services/profil.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ProfilFormDialogComponent } from './profil-form-dialog/profil-form-dialog.component';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profil-list',
@@ -22,18 +25,34 @@ import { ProfilFormDialogComponent } from './profil-form-dialog/profil-form-dial
     NbButtonModule,
     NbIconModule,
     NbTooltipModule,
+    NbInputModule,
+    NbFormFieldModule,
+    NbSpinnerModule,
     MatDialogModule
   ],
   template: `
-    <nb-card>
+    <nb-card [nbSpinner]="loading" nbSpinnerStatus="primary">
       <nb-card-header class="header-container">
         <div class="title-section">
           <h2>Gestion des Profils</h2>
           <p class="subtitle">Administrez les rôles et permissions des utilisateurs</p>
         </div>
-        <button nbButton status="primary" (click)="addProfil()">
-          <nb-icon icon="plus-outline"></nb-icon> NOUVEAU PROFIL
-        </button>
+        
+        <div class="header-actions">
+          <div class="search-section">
+            <nb-form-field>
+              <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
+              <input #searchInput nbInput placeholder="Rechercher un profil..." 
+                     (input)="onSearchChange($event)" class="search-input">
+              <button nbSuffix nbButton ghost (click)="clearSearch(searchInput)" *ngIf="searchTerm">
+                <nb-icon icon="close-outline"></nb-icon>
+              </button>
+            </nb-form-field>
+          </div>
+          <button nbButton status="primary" (click)="addProfil()">
+            <nb-icon icon="plus-outline"></nb-icon> NOUVEAU PROFIL
+          </button>
+        </div>
       </nb-card-header>
       
       <nb-card-body>
@@ -63,11 +82,34 @@ import { ProfilFormDialogComponent } from './profil-form-dialog/profil-form-dial
                   </div>
                 </td>
               </tr>
-              <tr *ngIf="profils.length === 0">
+              <tr *ngIf="profils.length === 0 && !loading">
                 <td colspan="4" class="no-data">Aucun profil trouvé</td>
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-footer" *ngIf="totalElements > 0">
+          <div class="pagination-info">
+            Affichage de <b>{{ (pageIndex * pageSize) + 1 }}</b> à <b>{{ getEndIndex() }}</b> sur <b>{{ totalElements }}</b> profils
+          </div>
+          <div class="pagination-controls">
+            <button nbButton size="small" ghost (click)="prevPage()" [disabled]="isFirstPage()">
+              <nb-icon icon="arrow-ios-back-outline"></nb-icon>
+            </button>
+            <div class="page-numbers">
+              <button *ngFor="let p of pages" nbButton size="small" 
+                      [status]="p === currentPage + 1 ? 'primary' : 'basic'"
+                      [appearance]="p === currentPage + 1 ? 'filled' : 'ghost'"
+                      (click)="goToPage(p)">
+                {{ p }}
+              </button>
+            </div>
+            <button nbButton size="small" ghost (click)="nextPage()" [disabled]="isLastPage()">
+              <nb-icon icon="arrow-ios-forward-outline"></nb-icon>
+            </button>
+          </div>
         </div>
       </nb-card-body>
     </nb-card>
@@ -76,6 +118,13 @@ import { ProfilFormDialogComponent } from './profil-form-dialog/profil-form-dial
     .header-container {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .header-actions {
+      display: flex;
+      gap: 1rem;
       align-items: center;
     }
     .title-section h2 {
@@ -86,6 +135,10 @@ import { ProfilFormDialogComponent } from './profil-form-dialog/profil-form-dial
       margin: 0;
       color: #8f9bb3;
       font-size: 0.9rem;
+    }
+    .search-input {
+      width: 250px;
+      border-radius: 20px;
     }
     .table-container {
       margin-top: 1rem;
@@ -126,10 +179,43 @@ import { ProfilFormDialogComponent } from './profil-form-dialog/profil-form-dial
       color: #8f9bb3;
       font-style: italic;
     }
+    
+    .pagination-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0 0.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .pagination-info {
+      font-size: 0.85rem;
+      color: #8f9bb3;
+    }
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .page-numbers {
+      display: flex;
+      gap: 0.25rem;
+    }
   `]
 })
-export class ProfilListComponent implements OnInit {
+export class ProfilListComponent implements OnInit, OnDestroy {
   profils: Profil[] = [];
+  loading = false;
+
+  // Pagination et recherche
+  totalElements = 0;
+  pageIndex = 0;
+  pageSize = 10;
+  searchTerm = '';
+
+  private searchSubject = new Subject<string>();
+  private searchSub!: Subscription;
+  private cdr = inject(ChangeDetectorRef);
 
   constructor(
     private profilService: ProfilService,
@@ -138,18 +224,97 @@ export class ProfilListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.searchSub = this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.pageIndex = 0;
+      this.loadProfils();
+    });
     this.loadProfils();
   }
 
+  ngOnDestroy(): void {
+    if (this.searchSub) this.searchSub.unsubscribe();
+  }
+
+  onSearchChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(value);
+  }
+
+  clearSearch(input: HTMLInputElement): void {
+    input.value = '';
+    this.searchSubject.next('');
+  }
+
   loadProfils(): void {
-    this.profilService.getAll().subscribe({
-      next: (data) => this.profils = data,
+    this.loading = true;
+    this.profilService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
+      next: (response: any) => {
+        // ApiService return already response.data -> { data: [], meta: {} }
+        this.profils = response.data || [];
+        const meta = response.meta || {};
+        this.totalElements = meta.totalElements || this.profils.length;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
       error: (err) => {
         console.error('Erreur chargement profils:', err);
         this.toastrService.danger('Impossible de charger les profils', 'Erreur');
+        this.loading = false;
       }
     });
   }
+
+  // --- Pagination Methods ---
+  get totalPages(): number {
+    return Math.ceil(this.totalElements / this.pageSize) || 1;
+  }
+
+  get currentPage(): number {
+    return this.pageIndex;
+  }
+
+  get pages(): number[] {
+    const pages = [];
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, this.pageIndex - 1);
+    let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
+    
+    if (endPage - startPage < maxPagesToShow - 1) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  goToPage(page: number): void {
+    this.pageIndex = page - 1;
+    this.loadProfils();
+  }
+
+  nextPage(): void {
+    if (this.pageIndex < this.totalPages - 1) {
+      this.pageIndex++;
+      this.loadProfils();
+    }
+  }
+
+  prevPage(): void {
+    if (this.pageIndex > 0) {
+      this.pageIndex--;
+      this.loadProfils();
+    }
+  }
+
+  isFirstPage(): boolean { return this.pageIndex === 0; }
+  isLastPage(): boolean { return this.pageIndex >= this.totalPages - 1; }
+  getEndIndex(): number { return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements); }
 
   addProfil(): void {
     this.dialog.open(ProfilFormDialogComponent, {
@@ -170,6 +335,7 @@ export class ProfilListComponent implements OnInit {
 
   deleteProfil(profil: Profil): void {
     if (confirm(`Êtes-vous sûr de vouloir supprimer le profil ${profil.code} ?`)) {
+      this.loading = true;
       this.profilService.delete(profil.id).subscribe({
         next: () => {
           this.toastrService.success(`Profil ${profil.code} supprimé`, 'Succès');
@@ -177,6 +343,7 @@ export class ProfilListComponent implements OnInit {
         },
         error: (err) => {
           this.toastrService.danger('Erreur lors de la suppression', 'Erreur');
+          this.loading = false;
         }
       });
     }

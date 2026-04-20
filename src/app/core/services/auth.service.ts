@@ -17,7 +17,16 @@ export class AuthService {
   ) {}
 
   public get isLoggedIn(): boolean {
-    return this.keycloak.isLoggedIn();
+    try {
+      return this.keycloak.isLoggedIn();
+    } catch (e) {
+      console.warn('Keycloak not initialized yet or error:', e);
+      return false;
+    }
+  }
+
+  get userProfile(): KeycloakProfile | undefined {
+    return this.keycloak.getKeycloakInstance().profile;
   }
 
   public login(): void {
@@ -25,6 +34,9 @@ export class AuthService {
   }
 
   public logout(): void {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('id_token');
     this.keycloak.logout(window.location.origin);
   }
 
@@ -63,12 +75,15 @@ export class AuthService {
     });
 
     return this.http.post(url, body.toString(), { headers }).pipe(
+      tap((response: any) => {
+        // Persister les tokens pour le rafraîchissement (F5)
+        localStorage.setItem('access_token', response.access_token);
+        localStorage.setItem('refresh_token', response.refresh_token);
+        if (response.id_token) localStorage.setItem('id_token', response.id_token);
+      }),
       switchMap((response: any) => {
         console.log('Login réussi via API, synchronisation Keycloak...');
         
-        // On ré-initialise Keycloak avec les tokens reçus
-        // Cela met à jour l'instance interne pour que isLoggedIn() renvoie true
-        // et que l'intercepteur ajoute le token Bearer aux requêtes futures.
         return from(this.keycloak.init({
           config: {
             url: environment.keycloak.url,
@@ -84,10 +99,7 @@ export class AuthService {
           }
         }));
       }),
-      switchMap(() => {
-        // Maintenant que le service est synchronisé, loadUserProfile ne devrait plus échouer
-        return from(this.keycloak.loadUserProfile());
-      })
+      switchMap(() => from(this.keycloak.loadUserProfile()))
     );
   }
 

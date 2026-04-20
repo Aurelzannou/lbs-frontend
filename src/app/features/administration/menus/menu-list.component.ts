@@ -1,15 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { 
   NbCardModule, 
   NbButtonModule, 
   NbIconModule, 
   NbToastrService,
-  NbTooltipModule
+  NbTooltipModule,
+  NbInputModule,
+  NbFormFieldModule,
+  NbSpinnerModule
 } from '@nebular/theme';
 import { MenuService, MenuResponse } from '../../../core/services/menu.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MenuFormDialogComponent } from './menu-form-dialog/menu-form-dialog.component';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-menu-list',
@@ -20,18 +25,34 @@ import { MenuFormDialogComponent } from './menu-form-dialog/menu-form-dialog.com
     NbButtonModule,
     NbIconModule,
     NbTooltipModule,
+    NbInputModule,
+    NbFormFieldModule,
+    NbSpinnerModule,
     MatDialogModule
   ],
   template: `
-    <nb-card>
+    <nb-card [nbSpinner]="loading" nbSpinnerStatus="primary">
       <nb-card-header class="header-container">
         <div class="title-section">
           <h2>Gestion des Menus</h2>
           <p class="subtitle">Configurez la navigation de l'application</p>
         </div>
-        <button nbButton status="primary" (click)="addMenu()">
-          <nb-icon icon="plus-outline"></nb-icon> NOUVEAU MENU
-        </button>
+        
+        <div class="header-actions">
+          <div class="search-section">
+            <nb-form-field>
+              <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
+              <input #searchInput nbInput placeholder="Rechercher un menu..." 
+                     (input)="onSearchChange($event)" class="search-input">
+              <button nbSuffix nbButton ghost (click)="clearSearch(searchInput)" *ngIf="searchTerm">
+                <nb-icon icon="close-outline"></nb-icon>
+              </button>
+            </nb-form-field>
+          </div>
+          <button nbButton status="primary" (click)="addMenu()">
+            <nb-icon icon="plus-outline"></nb-icon> NOUVEAU MENU
+          </button>
+        </div>
       </nb-card-header>
       
       <nb-card-body>
@@ -65,11 +86,34 @@ import { MenuFormDialogComponent } from './menu-form-dialog/menu-form-dialog.com
                   </div>
                 </td>
               </tr>
-              <tr *ngIf="allMenus.length === 0">
+              <tr *ngIf="allMenus.length === 0 && !loading">
                 <td colspan="6" class="no-data">Aucun menu trouvé</td>
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-footer" *ngIf="totalElements > 0">
+          <div class="pagination-info">
+            Affichage de <b>{{ (pageIndex * pageSize) + 1 }}</b> à <b>{{ getEndIndex() }}</b> sur <b>{{ totalElements }}</b> menus
+          </div>
+          <div class="pagination-controls">
+            <button nbButton size="small" ghost (click)="prevPage()" [disabled]="isFirstPage()">
+              <nb-icon icon="arrow-ios-back-outline"></nb-icon>
+            </button>
+            <div class="page-numbers">
+              <button *ngFor="let p of pages" nbButton size="small" 
+                      [status]="p === currentPage + 1 ? 'primary' : 'basic'"
+                      [appearance]="p === currentPage + 1 ? 'filled' : 'ghost'"
+                      (click)="goToPage(p)">
+                {{ p }}
+              </button>
+            </div>
+            <button nbButton size="small" ghost (click)="nextPage()" [disabled]="isLastPage()">
+              <nb-icon icon="arrow-ios-forward-outline"></nb-icon>
+            </button>
+          </div>
         </div>
       </nb-card-body>
     </nb-card>
@@ -78,6 +122,13 @@ import { MenuFormDialogComponent } from './menu-form-dialog/menu-form-dialog.com
     .header-container {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .header-actions {
+      display: flex;
+      gap: 1rem;
       align-items: center;
     }
     .title-section h2 {
@@ -88,6 +139,10 @@ import { MenuFormDialogComponent } from './menu-form-dialog/menu-form-dialog.com
       margin: 0;
       color: #8f9bb3;
       font-size: 0.9rem;
+    }
+    .search-input {
+      width: 250px;
+      border-radius: 20px;
     }
     .table-container {
       margin-top: 1rem;
@@ -135,10 +190,43 @@ import { MenuFormDialogComponent } from './menu-form-dialog/menu-form-dialog.com
       font-family: monospace;
       font-size: 0.9rem;
     }
+    
+    .pagination-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0 0.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .pagination-info {
+      font-size: 0.85rem;
+      color: #8f9bb3;
+    }
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .page-numbers {
+      display: flex;
+      gap: 0.25rem;
+    }
   `]
 })
-export class MenuListComponent implements OnInit {
+export class MenuListComponent implements OnInit, OnDestroy {
   allMenus: MenuResponse[] = [];
+  loading = false;
+
+  // Pagination et recherche
+  totalElements = 0;
+  pageIndex = 0;
+  pageSize = 10;
+  searchTerm = '';
+
+  private searchSubject = new Subject<string>();
+  private searchSub!: Subscription;
+  private cdr = inject(ChangeDetectorRef);
 
   constructor(
     private menuService: MenuService,
@@ -147,20 +235,97 @@ export class MenuListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.searchSub = this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.pageIndex = 0;
+      this.loadAllMenus();
+    });
     this.loadAllMenus();
   }
 
+  ngOnDestroy(): void {
+    if (this.searchSub) this.searchSub.unsubscribe();
+  }
+
+  onSearchChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(value);
+  }
+
+  clearSearch(input: HTMLInputElement): void {
+    input.value = '';
+    this.searchSubject.next('');
+  }
+
   loadAllMenus(): void {
-    this.menuService.getAll().subscribe({
-      next: (data) => {
-        this.allMenus = data; 
+    this.loading = true;
+    this.menuService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
+      next: (response: any) => {
+        const result = response.data || {};
+        this.allMenus = result.data || [];
+        const meta = result.meta || {};
+        this.totalElements = meta.totalElements || this.allMenus.length;
+        this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erreur chargement menus:', err);
         this.toastrService.danger('Impossible de charger les menus', 'Erreur');
+        this.loading = false;
       }
     });
   }
+
+  // --- Pagination Methods ---
+  get totalPages(): number {
+    return Math.ceil(this.totalElements / this.pageSize) || 1;
+  }
+
+  get currentPage(): number {
+    return this.pageIndex;
+  }
+
+  get pages(): number[] {
+    const pages = [];
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, this.pageIndex - 1);
+    let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
+    
+    if (endPage - startPage < maxPagesToShow - 1) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  goToPage(page: number): void {
+    this.pageIndex = page - 1;
+    this.loadAllMenus();
+  }
+
+  nextPage(): void {
+    if (this.pageIndex < this.totalPages - 1) {
+      this.pageIndex++;
+      this.loadAllMenus();
+    }
+  }
+
+  prevPage(): void {
+    if (this.pageIndex > 0) {
+      this.pageIndex--;
+      this.loadAllMenus();
+    }
+  }
+
+  isFirstPage(): boolean { return this.pageIndex === 0; }
+  isLastPage(): boolean { return this.pageIndex >= this.totalPages - 1; }
+  getEndIndex(): number { return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements); }
 
   getIconFor(code: string): string {
     return this.menuService.getIconByCode(code);
@@ -185,12 +350,16 @@ export class MenuListComponent implements OnInit {
 
   deleteMenu(menu: MenuResponse): void {
     if (confirm(`Supprimer le menu ${menu.titre} ?`)) {
+      this.loading = true;
       this.menuService.delete(menu.id).subscribe({
         next: () => {
           this.toastrService.success('Menu supprimé', 'Succès');
           this.loadAllMenus();
         },
-        error: () => this.toastrService.danger('Erreur suppression', 'Erreur')
+        error: () => {
+          this.toastrService.danger('Erreur suppression', 'Erreur');
+          this.loading = false;
+        }
       });
     }
   }
