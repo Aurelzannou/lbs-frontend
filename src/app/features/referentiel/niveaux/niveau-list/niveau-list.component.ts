@@ -206,8 +206,9 @@ export class NiveauListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  deleteNiveau(niveau: Niveau): void {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer le niveau "${niveau.libelle}" ?`)) {
+  async deleteNiveau(niveau: Niveau): Promise<void> {
+    const confirmed = await this.notification.confirm(`Êtes-vous sûr de vouloir supprimer le niveau "${niveau.libelle}" ?`);
+    if (confirmed) {
       this.loading = true;
       this.niveauService.delete(niveau.uuid!).subscribe({
         next: () => {

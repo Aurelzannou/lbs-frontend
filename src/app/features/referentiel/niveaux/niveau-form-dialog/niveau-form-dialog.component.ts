@@ -54,8 +54,15 @@ export class NiveauFormDialogComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
+
+    const confirmed = await this.notification.confirm(
+      this.isEdit ? 'Voulez-vous vraiment modifier ce niveau ?' : 'Voulez-vous vraiment créer ce niveau ?',
+      'Confirmation d\'enregistrement'
+    );
+
+    if (!confirmed) return;
 
     this.loading = true;
     const request = this.form.value;

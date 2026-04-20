@@ -7,6 +7,9 @@ import { environment } from '../environments/environment';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
 
+import { provideToastr } from 'ngx-toastr';
+import { NgSelectModule } from '@ng-select/ng-select';
+
 import { routes } from './app.routes';
 import { importProvidersFrom } from '@angular/core';
 import { NbThemeModule, NbLayoutModule, NbSidebarModule, NbMenuModule, NbDialogModule, NbWindowModule, NbToastrModule } from '@nebular/theme';
@@ -85,6 +88,12 @@ export const appConfig: ApplicationConfig = {
       useClass: ErrorInterceptor,
       multi: true
     },
+    provideToastr({
+      timeOut: 5000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      progressBar: true
+    }),
     importProvidersFrom(
       NbThemeModule.forRoot({ name: 'default' }),
       NbLayoutModule,
@@ -93,7 +102,8 @@ export const appConfig: ApplicationConfig = {
       NbDialogModule.forRoot(),
       NbWindowModule.forRoot(),
       NbToastrModule.forRoot(),
-      NbEvaIconsModule
+      NbEvaIconsModule,
+      NgSelectModule
     ),
     KeycloakService
   ]

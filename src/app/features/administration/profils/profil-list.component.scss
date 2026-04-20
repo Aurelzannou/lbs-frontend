@@ -1,0 +1,179 @@
+/* ================================================
+   PROFIL LIST — Refactored style
+   ================================================ */
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.title-section h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #222b45;
+}
+
+.subtitle {
+  margin: 0;
+  color: #8f9bb3;
+  font-size: 0.9rem;
+}
+
+.search-input {
+  width: 280px;
+  border-radius: 20px;
+}
+
+.table-container {
+  margin-top: 0;
+  overflow-x: auto;
+  min-height: 400px;
+}
+
+/* Material Table Styling */
+.professional-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+
+  th {
+    background-color: #f7f9fc;
+    color: #222b45;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05rem;
+    padding: 1rem;
+    border-bottom: 2px solid #edf1f7;
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #edf1f7;
+    vertical-align: middle;
+  }
+
+  tr:hover td {
+    background-color: #f8fbff !important;
+  }
+}
+
+.code-badge {
+  display: inline-block;
+  background: #e4e9f2;
+  color: #222b45;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.text-hint {
+  color: #8f9bb3;
+}
+
+.actions-header {
+  text-align: center !important;
+  width: 100px;
+}
+
+.actions-cell {
+  text-align: center;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  nb-icon {
+    font-size: 1.1rem;
+  }
+
+  &.edit {
+    background: #eef2ff;
+    color: #3366ff;
+    &:hover { background: #3366ff; color: white; }
+  }
+
+  &.delete {
+    background: #fff2f2;
+    color: #ff3d71;
+    &:hover { background: #ff3d71; color: white; }
+  }
+}
+
+/* No data row */
+.no-data-row td {
+  padding: 4rem 1rem !important;
+}
+
+.no-data-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #8f9bb3;
+
+  nb-icon {
+    font-size: 3rem;
+    height: 3rem;
+    width: 3rem;
+  }
+
+  p {
+    margin: 0;
+    font-style: italic;
+  }
+}
+
+/* Pagination Style */
+.pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-top: 1px solid #edf1f7;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.pagination-info {
+  font-size: 0.85rem;
+  color: #8f9bb3;
+  b { color: #222b45; }
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 0.25rem;
+}

@@ -181,8 +181,9 @@ export class EtapeListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  deleteEtape(etape: Etape): void {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer l'étape "${etape.libelle}" ?`)) {
+  async deleteEtape(etape: Etape): Promise<void> {
+    const confirmed = await this.notification.confirm(`Êtes-vous sûr de vouloir supprimer l'étape "${etape.libelle}" ?`);
+    if (confirmed) {
       this.loading = true;
       this.etapeService.delete(etape.uuid!).subscribe({
         next: () => {

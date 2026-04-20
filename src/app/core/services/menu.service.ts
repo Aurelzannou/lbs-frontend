@@ -14,6 +14,7 @@ export interface MenuResponse {
   titre: string;
   menuEnfantId: number | null;
   listeMenuEnfant: MenuResponse[];
+  profils?: any[];
 }
 
 @Injectable({

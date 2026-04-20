@@ -12,9 +12,10 @@ import {
   NbSelectModule,
   NbCheckboxModule
 } from '@nebular/theme';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { MenuService, MenuResponse } from '../../../../core/services/menu.service';
-import { Profil, ProfilService } from '../../../../core/services/profil.service';
-import { NbToastrService } from '@nebular/theme';
+import { ProfilService, Profil } from '../../../../core/services/profil.service';
 
 @Component({
   selector: 'app-menu-form-dialog',
@@ -29,8 +30,8 @@ import { NbToastrService } from '@nebular/theme';
     NbCardModule,
     NbFormFieldModule,
     NbSpinnerModule,
-    NbSelectModule,
-    NbCheckboxModule
+    NbCheckboxModule,
+    NgSelectModule
   ],
   template: `
     <nb-card [nbSpinner]="loading" nbSpinnerStatus="primary">
@@ -65,12 +66,17 @@ import { NbToastrService } from '@nebular/theme';
             </div>
             <div class="col-6 mb-3">
               <label class="label">Menu parent <span class="optional">(optionnel)</span></label>
-              <nb-select fullWidth formControlName="menuEnfantId" placeholder="Aucun (menu racine)">
-                <nb-option [value]="null">— Aucun (menu racine) —</nb-option>
-                <nb-option *ngFor="let m of parentMenus" [value]="m.id">
-                  {{ m.titre }} ({{ m.code }})
-                </nb-option>
-              </nb-select>
+              <ng-select [items]="parentMenus"
+                         bindLabel="titre"
+                         bindValue="id"
+                         formControlName="menuEnfantId"
+                         placeholder="Aucun (menu racine)"
+                         [searchable]="true"
+                         class="custom-ng-select">
+                <ng-template ng-option-tmp let-item="item">
+                  {{ item.titre }} <small class="text-hint">({{ item.code }})</small>
+                </ng-template>
+              </ng-select>
             </div>
           </div>
 
@@ -159,7 +165,7 @@ export class MenuFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private menuService = inject(MenuService);
   private profilService = inject(ProfilService);
-  private toastr = inject(NbToastrService);
+  private notification = inject(NotificationService);
 
   form!: FormGroup;
   isEdit = false;
@@ -186,6 +192,10 @@ export class MenuFormDialogComponent implements OnInit {
 
     this.loadProfils();
     this.loadParentMenus();
+
+    if (this.isEdit && this.data.profils) {
+      this.selectedProfilIds = this.data.profils.map((p: any) => p.id || p);
+    }
   }
 
   loadProfils(): void {
@@ -218,8 +228,15 @@ export class MenuFormDialogComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
+
+    const confirmed = await this.notification.confirm(
+      this.isEdit ? 'Voulez-vous vraiment modifier ce menu ?' : 'Voulez-vous vraiment créer ce menu ?',
+      'Confirmation'
+    );
+
+    if (!confirmed) return;
 
     this.loading = true;
     const formVal = this.form.value;
@@ -238,12 +255,12 @@ export class MenuFormDialogComponent implements OnInit {
 
     obs$.subscribe({
       next: () => {
-        this.toastr.success(this.isEdit ? 'Menu mis à jour' : 'Menu créé avec succès', 'Succès');
+        this.notification.success(this.isEdit ? 'Menu mis à jour' : 'Menu créé avec succès');
         this.dialogRef.close(true);
       },
       error: (err: any) => {
         console.error('Erreur:', err);
-        this.toastr.danger('Erreur lors de la sauvegarde du menu', 'Erreur');
+        this.notification.error('Erreur lors de la sauvegarde du menu');
         this.loading = false;
       }
     });

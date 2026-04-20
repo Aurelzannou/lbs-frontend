@@ -51,6 +51,16 @@ export const routes: Routes = [
       }
     ]
   },
+  {
+    path: 'scolarite',
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'eleves',
+        loadComponent: () => import('./features/scolarite/eleves/eleve-list/eleve-list.component').then(m => m.EleveListComponent)
+      }
+    ]
+  },
   // Redirection par défaut pour les routes non trouvées
   { path: '**', redirectTo: 'home' }
 ];

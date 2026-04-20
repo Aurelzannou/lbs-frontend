@@ -8,20 +8,20 @@ import {
   NbButtonModule, 
   NbIconModule, 
   NbTooltipModule,
-  NbUserModule,
   NbInputModule,
   NbFormFieldModule,
   NbSpinnerModule
 } from '@nebular/theme';
-import { UserService, User } from '../../../core/services/user.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { UserProfilDialogComponent } from './user-profil-dialog/user-profil-dialog.component';
+import { EleveService } from '../../../../core/services/eleve.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { Eleve } from '../../../../core/models/eleve.model';
+import { EleveFormDialogComponent } from '../eleve-form-dialog/eleve-form-dialog.component';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
-  selector: 'app-user-list',
+  selector: 'app-eleve-list',
   standalone: true,
   imports: [
     CommonModule,
@@ -31,7 +31,6 @@ import { animate, style, transition, trigger } from '@angular/animations';
     NbButtonModule,
     NbIconModule,
     NbTooltipModule,
-    NbUserModule,
     NbInputModule,
     NbFormFieldModule,
     NbSpinnerModule,
@@ -45,25 +44,25 @@ import { animate, style, transition, trigger } from '@angular/animations';
       ])
     ])
   ],
-  templateUrl: './user-list.component.html',
-  styleUrl: './user-list.component.scss'
+  templateUrl: './eleve-list.component.html',
+  styleUrl: './eleve-list.component.scss'
 })
-export class UserListComponent implements OnInit, OnDestroy, AfterViewInit {
-  private userService = inject(UserService);
+export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
+  private eleveService = inject(EleveService);
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns: string[] = ['user', 'login', 'keycloak', 'actions'];
-  dataSource = new MatTableDataSource<User>([]);
+  displayedColumns: string[] = ['matricule', 'identite', 'sexe', 'actions'];
+  dataSource = new MatTableDataSource<Eleve>([]);
   loading = false;
-  
+
   // Pagination et recherche
   totalElements = 0;
   pageIndex = 0;
   pageSize = 10;
   searchTerm = '';
-  
+
   private searchSubject = new Subject<string>();
   private searchSub!: Subscription;
 
@@ -102,18 +101,20 @@ export class UserListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   refresh(): void {
     this.loading = true;
-    this.userService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
+    this.eleveService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
       next: (response: any) => {
-        const result = response.data || {};
-        this.dataSource.data = result.data || [];
-        const meta = result.meta || {};
-        this.totalElements = meta.totalElements || meta.total || this.dataSource.data.length;
+        // Supposons une structure standard { data: [], meta: { totalElements: ... } }
+        const items = response.data || (Array.isArray(response) ? response : []);
+        const meta = response.meta || {};
+        
+        this.dataSource.data = items;
+        this.totalElements = meta.totalElements || meta.total || items.length;
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: (err: any) => {
-        console.error('Erreur chargement utilisateurs:', err);
-        this.notification.error('Impossible de charger les utilisateurs');
+      error: (err) => {
+        console.error('Erreur chargement élèves:', err);
+        this.notification.error('Impossible de charger les élèves');
         this.loading = false;
       }
     });
@@ -139,7 +140,7 @@ export class UserListComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     
     for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
+        pages.push(i);
     }
     return pages;
   }
@@ -167,13 +168,30 @@ export class UserListComponent implements OnInit, OnDestroy, AfterViewInit {
   isLastPage(): boolean { return this.pageIndex >= this.totalPages - 1; }
   getEndIndex(): number { return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements); }
 
-  assignProfils(user: User): void {
-    this.dialog.open(UserProfilDialogComponent, {
-      width: '500px',
-      data: user,
+  openForm(eleve?: Eleve): void {
+    this.dialog.open(EleveFormDialogComponent, {
+      width: '600px',
+      data: eleve,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {
       if (result) this.refresh();
     });
+  }
+
+  async deleteEleve(eleve: Eleve): Promise<void> {
+    const confirmed = await this.notification.confirm(`Souhaitez-vous vraiment supprimer l'élève ${eleve.nom} ${eleve.prenom} ?`);
+    if (confirmed) {
+      this.loading = true;
+      this.eleveService.delete(eleve.matricule).subscribe({
+        next: () => {
+          this.notification.success('Élève supprimé avec succès');
+          this.refresh();
+        },
+        error: () => {
+          this.notification.error('Erreur lors de la suppression');
+          this.loading = false;
+        }
+      });
+    }
   }
 }

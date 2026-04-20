@@ -8,9 +8,11 @@ import {
   NbSpinnerModule,
   NbCheckboxModule
 } from '@nebular/theme';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { FormsModule } from '@angular/forms';
 import { UserService, User } from '../../../../core/services/user.service';
-import { Profil, ProfilService } from '../../../../core/services/profil.service';
-import { NbToastrService } from '@nebular/theme';
+import { ProfilService, Profil } from '../../../../core/services/profil.service';
 
 @Component({
   selector: 'app-user-profil-dialog',
@@ -22,7 +24,9 @@ import { NbToastrService } from '@nebular/theme';
     NbIconModule,
     NbCardModule,
     NbSpinnerModule,
-    NbCheckboxModule
+    NbCheckboxModule,
+    NgSelectModule,
+    FormsModule
   ],
   template: `
     <nb-card [nbSpinner]="loading" nbSpinnerStatus="primary">
@@ -32,12 +36,20 @@ import { NbToastrService } from '@nebular/theme';
       <nb-card-body>
         <p class="mb-3 text-hint">Sélectionnez les profils applicables à cet utilisateur :</p>
         
-        <div class="profils-list">
-          <nb-checkbox *ngFor="let p of allProfils" 
-                       [checked]="isProfilSelected(p.code)"
-                       (checkedChange)="toggleProfil(p.code, $event)">
-            {{ p.libelle }} ({{ p.code }})
-          </nb-checkbox>
+        <div class="mb-4">
+          <label class="label">Profils</label>
+          <ng-select [items]="allProfils"
+                     [(ngModel)]="selectedProfilCodes"
+                     [multiple]="true"
+                     bindLabel="libelle"
+                     bindValue="code"
+                     placeholder="Sélectionnez les profils"
+                     [searchable]="true"
+                     class="custom-ng-select">
+            <ng-template ng-option-tmp let-item="item">
+              {{ item.libelle }} <small class="text-hint">({{ item.code }})</small>
+            </ng-template>
+          </ng-select>
         </div>
 
         <div class="d-flex justify-content-end gap-2 mt-4">
@@ -54,20 +66,12 @@ import { NbToastrService } from '@nebular/theme';
       margin: 0;
       min-width: 450px;
     }
-    .profils-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 15px;
-      background: #f7f9fc;
-      border-radius: 4px;
-    }
   `]
 })
 export class UserProfilDialogComponent implements OnInit {
   private userService = inject(UserService);
   private profilService = inject(ProfilService);
-  private toastr = inject(NbToastrService);
+  private notification = inject(NotificationService);
 
   loading = false;
   allProfils: Profil[] = [];
@@ -89,39 +93,33 @@ export class UserProfilDialogComponent implements OnInit {
     this.loading = true;
     this.profilService.getAll().subscribe({
       next: (response: any) => {
-        // ApiService return already response.data -> { data: [], meta: {} }
         this.allProfils = response.data || [];
         this.loading = false;
       },
       error: (err: any) => {
-        this.toastr.danger('Erreur chargement profils', 'Erreur');
+        this.notification.error('Erreur chargement profils');
         this.loading = false;
       }
     });
   }
 
-  isProfilSelected(code: string): boolean {
-    return this.selectedProfilCodes.includes(code);
-  }
+  async onSubmit(): Promise<void> {
+    const confirmed = await this.notification.confirm(
+      'Voulez-vous vraiment modifier les profils de cet utilisateur ?',
+      'Confirmation d\'assignation'
+    );
 
-  toggleProfil(code: string, checked: boolean): void {
-    if (checked) {
-      if (!this.selectedProfilCodes.includes(code)) this.selectedProfilCodes.push(code);
-    } else {
-      this.selectedProfilCodes = this.selectedProfilCodes.filter(c => c !== code);
-    }
-  }
+    if (!confirmed) return;
 
-  onSubmit(): void {
     this.loading = true;
     this.userService.updateProfils(this.data.id, this.selectedProfilCodes).subscribe({
       next: () => {
-        this.toastr.success('Profils mis à jour avec succès', 'Succès');
+        this.notification.success('Profils mis à jour avec succès');
         this.dialogRef.close(true);
       },
       error: (err: any) => {
         console.error('Erreur:', err);
-        this.toastr.danger('Erreur lors de la mise à jour des profils', 'Erreur');
+        this.notification.error('Erreur lors de la mise à jour des profils');
         this.loading = false;
       }
     });
