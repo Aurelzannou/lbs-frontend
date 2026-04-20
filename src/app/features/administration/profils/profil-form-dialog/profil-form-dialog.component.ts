@@ -11,7 +11,7 @@ import {
   NbSpinnerModule
 } from '@nebular/theme';
 import { Profil, ProfilService } from '../../../../core/services/profil.service';
-import { NbToastrService } from '@nebular/theme';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-profil-form-dialog',
@@ -27,44 +27,13 @@ import { NbToastrService } from '@nebular/theme';
     NbFormFieldModule,
     NbSpinnerModule
   ],
-  template: `
-    <nb-card [nbSpinner]="loading" nbSpinnerStatus="primary">
-      <nb-card-header>
-        {{ isEdit ? 'Modifier le Profil' : 'Nouveau Profil' }}
-      </nb-card-header>
-      <nb-card-body>
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <div class="form-group mb-3">
-            <label for="code" class="label">Code</label>
-            <input nbInput fullWidth id="code" formControlName="code" placeholder="Ex: ADMIN, LECTEUR..." [status]="form.get('code')?.invalid && form.get('code')?.touched ? 'danger' : 'basic'">
-          </div>
-
-          <div class="form-group mb-3">
-            <label for="libelle" class="label">Libellé</label>
-            <input nbInput fullWidth id="libelle" formControlName="libelle" placeholder="Ex: Administrateur..." [status]="form.get('libelle')?.invalid && form.get('libelle')?.touched ? 'danger' : 'basic'">
-          </div>
-
-          <div class="d-flex justify-content-end gap-2 mt-4">
-            <button nbButton ghost type="button" (click)="onCancel()">Annuler</button>
-            <button nbButton status="primary" type="submit" [disabled]="form.invalid || loading">
-              {{ isEdit ? 'Mettre à jour' : 'Créer' }}
-            </button>
-          </div>
-        </form>
-      </nb-card-body>
-    </nb-card>
-  `,
-  styles: [`
-    nb-card {
-      margin: 0;
-      min-width: 400px;
-    }
-  `]
+  templateUrl: './profil-form-dialog.component.html',
+  styleUrl: './profil-form-dialog.component.scss'
 })
 export class ProfilFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private profilService = inject(ProfilService);
-  private toastr = inject(NbToastrService);
+  private notification = inject(NotificationService);
 
   form!: FormGroup;
   isEdit = false;
@@ -84,8 +53,15 @@ export class ProfilFormDialogComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
+
+    const confirmed = await this.notification.confirm(
+      this.isEdit ? 'Voulez-vous vraiment modifier ce profil ?' : 'Voulez-vous vraiment créer ce profil ?',
+      'Confirmation'
+    );
+
+    if (!confirmed) return;
 
     this.loading = true;
     const request = this.form.value;
@@ -96,12 +72,12 @@ export class ProfilFormDialogComponent implements OnInit {
 
     obs$.subscribe({
       next: () => {
-        this.toastr.success(this.isEdit ? 'Profil mis à jour' : 'Profil créé avec succès', 'Succès');
+        this.notification.success(this.isEdit ? 'Profil mis à jour' : 'Profil créé avec succès');
         this.dialogRef.close(true);
       },
       error: (err) => {
         console.error('Erreur:', err);
-        this.toastr.danger('Une erreur est survenue lors de la sauvegarde', 'Erreur');
+        this.notification.error('Une erreur est survenue lors de la sauvegarde');
         this.loading = false;
       }
     });

@@ -1,0 +1,72 @@
+<div class="dialog-wrapper">
+  <div class="glass-overlay"></div>
+  
+  <nb-card class="form-card">
+    <nb-card-header class="form-header">
+      <div class="header-content">
+        <div class="title-with-icon">
+          <div class="icon-box edit-mode">
+            <nb-icon icon="shield-outline"></nb-icon>
+          </div>
+          <div class="title-text">
+            <h3>Assigner des Profils</h3>
+            <p class="subtitle">Utilisateur: {{ data.prenom }} {{ data.nom }}</p>
+          </div>
+        </div>
+        <button nbButton ghost status="basic" (click)="onCancel()" class="close-btn">
+          <nb-icon icon="close-outline"></nb-icon>
+        </button>
+      </div>
+    </nb-card-header>
+
+    <nb-card-body class="form-body">
+      <div class="professional-form">
+        <div class="form-row">
+          <div class="form-field full-width">
+            <label class="field-label">Sélection des Profils</label>
+            <ng-select [items]="allProfils"
+                       [(ngModel)]="selectedProfilCodes"
+                       [multiple]="true"
+                       bindLabel="libelle"
+                       bindValue="code"
+                       placeholder="Rechercher des profils..."
+                       [searchable]="true"
+                       class="custom-ng-select">
+              <ng-template ng-option-tmp let-item="item">
+                <div class="profil-option">
+                  <span class="profil-label">{{ item.libelle }}</span>
+                  <small class="profil-code">{{ item.code }}</small>
+                </div>
+              </ng-template>
+            </ng-select>
+            <p class="field-hint">Tous les droits associés à ces profils seront octroyés à l'utilisateur.</p>
+          </div>
+        </div>
+      </div>
+    </nb-card-body>
+
+    <nb-card-footer class="form-footer">
+      <div class="footer-actions">
+        <button nbButton 
+                status="basic" 
+                appearance="ghost"
+                (click)="onCancel()" 
+                [disabled]="loading"
+                class="cancel-btn">
+          Annuler
+        </button>
+        <button nbButton 
+                status="primary" 
+                shape="semi-round"
+                (click)="onSubmit()" 
+                [disabled]="loading" 
+                [nbSpinner]="loading" 
+                nbSpinnerStatus="control"
+                class="submit-btn shadow-btn">
+          <nb-icon icon="save-outline" *ngIf="!loading"></nb-icon>
+          Enregistrer les modifications
+        </button>
+      </div>
+    </nb-card-footer>
+  </nb-card>
+</div>

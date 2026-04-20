@@ -32,6 +32,7 @@ export class NotificationService {
    * Boîte de dialogue de confirmation (SweetAlert2)
    */
   async confirm(message: string, title: string = 'Êtes-vous sûr ?'): Promise<boolean> {
+    console.log('[NotificationService] confirm:', title, message);
     const result = await Swal.fire({
       title: title,
       text: message,

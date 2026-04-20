@@ -1,0 +1,58 @@
+<nb-card [nbSpinner]="loading" nbSpinnerStatus="primary">
+  <nb-card-header class="dialog-header">
+    <div class="header-content">
+      <nb-icon [icon]="isEdit ? 'edit-2-outline' : 'plus-outline'"></nb-icon>
+      <span>{{ isEdit ? 'Modifier' : 'Nouvelle' }} Année Scolaire</span>
+    </div>
+    <button class="close-btn" (click)="onCancel()">
+      <nb-icon icon="close-outline"></nb-icon>
+    </button>
+  </nb-card-header>
+
+  <nb-card-body>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
+      <div class="form-row">
+        <div class="form-field full">
+          <label>Code <span class="required">*</span></label>
+          <nb-form-field>
+            <nb-icon nbPrefix icon="hash-outline"></nb-icon>
+            <input nbInput fullWidth formControlName="code" placeholder="Ex: 2023-2024">
+          </nb-form-field>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field full">
+          <label>Libellé <span class="required">*</span></label>
+          <nb-form-field>
+            <nb-icon nbPrefix icon="text-outline"></nb-icon>
+            <input nbInput fullWidth formControlName="libelle" placeholder="Ex: Année Scolaire 2023-2024">
+          </nb-form-field>
+        </div>
+      </div>
+
+      <div class="form-row two-cols">
+        <div class="form-field">
+          <label>Date Début <span class="required">*</span></label>
+          <input nbInput fullWidth type="date" formControlName="dateDebut">
+        </div>
+        <div class="form-field">
+          <label>Date Fin <span class="required">*</span></label>
+          <input nbInput fullWidth type="date" formControlName="dateFin">
+        </div>
+      </div>
+
+      <div class="form-row toggle-row">
+        <label>Statut Actif</label>
+        <nb-toggle formControlName="actif" status="success"></nb-toggle>
+      </div>
+    </form>
+  </nb-card-body>
+
+  <nb-card-footer class="dialog-footer">
+    <button nbButton status="basic" (click)="onCancel()" [disabled]="loading">Annuler</button>
+    <button nbButton status="primary" (click)="onSubmit()" [disabled]="form.invalid || loading">
+      {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
+    </button>
+  </nb-card-footer>
+</nb-card>

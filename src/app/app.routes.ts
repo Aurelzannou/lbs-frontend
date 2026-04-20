@@ -25,7 +25,11 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'niveaux', pathMatch: 'full' },
       { path: 'niveaux', component: NiveauListComponent },
-      { path: 'etapes', component: EtapeListComponent }
+      { path: 'etapes', component: EtapeListComponent },
+      { 
+        path: 'annees-scolaires', 
+        loadComponent: () => import('./features/referentiel/annees-scolaires/annee-scolaire-list/annee-scolaire-list.component').then(m => m.AnneeScolaireListComponent) 
+      }
     ]
   },
   {

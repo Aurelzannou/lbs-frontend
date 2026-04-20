@@ -1,0 +1,159 @@
+<div class="dialog-wrapper">
+  <div class="glass-overlay"></div>
+  
+  <nb-card class="form-card large-card">
+    <nb-card-header class="form-header">
+      <div class="header-content">
+        <div class="title-with-icon">
+          <div class="icon-box" [ngClass]="isEdit ? 'edit-mode' : 'create-mode'">
+            <nb-icon [icon]="isEdit ? 'edit-2-outline' : 'person-add-outline'"></nb-icon>
+          </div>
+          <div class="title-text">
+            <h3>{{ isEdit ? 'Modifier' : 'Nouvel' }} Élève</h3>
+            <p class="subtitle">{{ isEdit ? 'Mise à jour du dossier scolaire' : 'Saisie d\'un nouvel élève dans la base' }}</p>
+          </div>
+        </div>
+        <button nbButton ghost status="basic" (click)="onCancel()" class="close-btn">
+          <nb-icon icon="close-outline"></nb-icon>
+        </button>
+      </div>
+    </nb-card-header>
+
+    <nb-card-body class="form-body">
+      <form [formGroup]="form" class="professional-form">
+        
+        <div class="form-row">
+          <div class="form-field col-6">
+            <label class="field-label">Matricule</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="hash-outline" pack="eva"></nb-icon>
+              <input nbInput 
+                     fullWidth 
+                     shape="semi-round" 
+                     formControlName="matricule" 
+                     [readonly]="isEdit"
+                     placeholder="Ex: MAT-2024-001"
+                     style="text-transform: uppercase"
+                     [status]="form.get('matricule')?.invalid && form.get('matricule')?.touched ? 'danger' : 'primary'">
+            </nb-form-field>
+          </div>
+          <div class="form-field col-6">
+            <label class="field-label">Sexe</label>
+            <ng-select [items]="sexes"
+                       bindLabel="label"
+                       bindValue="value"
+                       formControlName="sexe"
+                       placeholder="Choisir..."
+                       class="custom-ng-select">
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field col-6">
+            <label class="field-label">Nom</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="text-outline" pack="eva"></nb-icon>
+              <input nbInput 
+                     fullWidth 
+                     shape="semi-round" 
+                     formControlName="nom" 
+                     placeholder="Ex: DOE"
+                     [status]="form.get('nom')?.invalid && form.get('nom')?.touched ? 'danger' : 'primary'">
+            </nb-form-field>
+          </div>
+          <div class="form-field col-6">
+            <label class="field-label">Prénom(s)</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="text-outline" pack="eva"></nb-icon>
+              <input nbInput 
+                     fullWidth 
+                     shape="semi-round" 
+                     formControlName="prenom" 
+                     placeholder="Ex: John"
+                     [status]="form.get('prenom')?.invalid && form.get('prenom')?.touched ? 'danger' : 'primary'">
+            </nb-form-field>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field col-6">
+            <label class="field-label">Date de Naissance</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="calendar-outline" pack="eva"></nb-icon>
+              <input nbInput 
+                     fullWidth 
+                     type="date"
+                     shape="semi-round" 
+                     formControlName="dateNaissance" 
+                     [status]="'primary'">
+            </nb-form-field>
+          </div>
+          <div class="form-field col-6">
+            <label class="field-label">Lieu de Naissance</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="pin-outline" pack="eva"></nb-icon>
+              <input nbInput 
+                     fullWidth 
+                     shape="semi-round" 
+                     formControlName="lieuNaissance" 
+                     placeholder="Ex: Cotonou"
+                     [status]="'primary'">
+            </nb-form-field>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field col-6">
+            <label class="field-label">Téléphone</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="phone-outline" pack="eva"></nb-icon>
+              <input nbInput 
+                     fullWidth 
+                     shape="semi-round" 
+                     formControlName="telephone" 
+                     placeholder="Ex: +229 ..."
+                     [status]="'primary'">
+            </nb-form-field>
+          </div>
+          <div class="form-field col-6">
+            <label class="field-label">Email</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="email-outline" pack="eva"></nb-icon>
+              <input nbInput 
+                     fullWidth 
+                     shape="semi-round" 
+                     formControlName="email" 
+                     placeholder="Ex: john@doe.com"
+                     [status]="form.get('email')?.invalid && form.get('email')?.touched ? 'danger' : 'primary'">
+            </nb-form-field>
+          </div>
+        </div>
+      </form>
+    </nb-card-body>
+
+    <nb-card-footer class="form-footer">
+      <div class="footer-actions">
+        <button nbButton 
+                status="basic" 
+                appearance="ghost"
+                (click)="onCancel()" 
+                [disabled]="loading"
+                class="cancel-btn">
+          Annuler
+        </button>
+        <button nbButton 
+                status="primary" 
+                shape="semi-round"
+                (click)="onSubmit()" 
+                [disabled]="form.invalid || loading" 
+                [nbSpinner]="loading" 
+                nbSpinnerStatus="control"
+                class="submit-btn shadow-btn">
+          <nb-icon icon="save-outline" *ngIf="!loading"></nb-icon>
+          {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+      </div>
+    </nb-card-footer>
+  </nb-card>
+</div>

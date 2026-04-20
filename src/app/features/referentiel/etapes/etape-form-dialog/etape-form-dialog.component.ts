@@ -55,8 +55,15 @@ export class EtapeFormDialogComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
+
+    const confirmed = await this.notification.confirm(
+      this.isEdit ? 'Voulez-vous vraiment modifier cette étape ?' : 'Voulez-vous vraiment enregistrer cette étape ?',
+      'Confirmation'
+    );
+
+    if (!confirmed) return;
 
     this.loading = true;
     const request = this.form.value;

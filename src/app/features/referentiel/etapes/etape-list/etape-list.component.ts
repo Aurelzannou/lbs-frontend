@@ -17,6 +17,8 @@ import { EtapeService } from '../../../../core/services/etape.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Etape } from '../../../../core/models/etape.model';
 import { EtapeFormDialogComponent } from '../etape-form-dialog/etape-form-dialog.component';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
@@ -62,13 +64,26 @@ export class EtapeListComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Etape>([]);
   loading = false;
   totalElements = 0;
-  pageIndex = 0; // 0-based
+  pageIndex = 0; // 0-based pour l'affichage interne
   pageSize = 25;
+  searchTerm = '';
+
+  private searchSubject = new Subject<string>();
+  private searchSub!: Subscription;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
+    // Debounce : attend 300ms après la dernière frappe avant d'appeler le backend
+    this.searchSub = this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
+      this.refresh();
+    });
     this.refresh();
   }
 
@@ -78,13 +93,18 @@ export class EtapeListComponent implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  ngOnDestroy(): void {
+    this.searchSub?.unsubscribe();
+  }
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+  onSearchChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(value);
+  }
+
+  clearSearch(inputEl: HTMLInputElement): void {
+    inputEl.value = '';
+    this.searchSubject.next('');
   }
 
   // --- Custom Pagination Methods (Server-Side) ---
@@ -105,7 +125,7 @@ export class EtapeListComponent implements OnInit, AfterViewInit {
   }
 
   goToPage(page: number): void {
-    const index = page - 1;
+    const index = page - 1; // Convertir en 0-based
     if (index < 0 || index >= this.totalPages) return;
     this.pageIndex = index;
     this.refresh();
@@ -132,12 +152,16 @@ export class EtapeListComponent implements OnInit, AfterViewInit {
   isLastPage(): boolean {
     return this.pageIndex >= this.totalPages - 1;
   }
+
+  getEndIndex(): number {
+    return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements);
+  }
   // --------------------------------
 
   refresh(): void {
     this.loading = true;
-    // L'API utilise une pagination 1-based
-    this.etapeService.getAll(this.pageIndex + 1, this.pageSize).subscribe({
+    // L'API utilise une pagination 1-based (page 1 = première page)
+    this.etapeService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
       next: (response: any) => {
         // Gérer la structure de réponse paginée { data: [...], meta: {...} }
         const items = response.data || (Array.isArray(response) ? response : []);
@@ -147,7 +171,7 @@ export class EtapeListComponent implements OnInit, AfterViewInit {
 
         this.dataSource.data = items;
 
-        // Mettre à jour le paginator caché
+        // Mettre à jour le paginator caché pour la compatibilité Material
         if (this.paginator) {
           this.paginator.length = this.totalElements;
           this.paginator.pageIndex = this.pageIndex;
@@ -160,7 +184,8 @@ export class EtapeListComponent implements OnInit, AfterViewInit {
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.error('[EtapeList] erreur de chargement:', err);
         this.notification.error('Impossible de charger les étapes');
         this.loading = false;
       }

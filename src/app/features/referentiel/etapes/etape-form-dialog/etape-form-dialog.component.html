@@ -9,8 +9,8 @@
             <nb-icon [icon]="isEdit ? 'edit-2-outline' : 'plus-outline'"></nb-icon>
           </div>
           <div class="title-text">
-            <h3>{{ isEdit ? 'Modifier' : 'Nouvelle' }} Étape</h3>
-            <p class="subtitle">{{ isEdit ? 'Mise à jour du workflow' : 'Définition d\'une nouvelle étape' }}</p>
+            <h3>{{ isEdit ? 'Modifier l\'' : 'Nouvelle' }} Étape</h3>
+            <p class="subtitle">{{ isEdit ? 'Mise à jour des informations' : 'Définition d\'une nouvelle étape administrative' }}</p>
           </div>
         </div>
         <button nbButton ghost status="basic" (click)="onCancel()" class="close-btn">
@@ -19,18 +19,19 @@
       </div>
     </nb-card-header>
 
-    <nb-card-body class="form-body custom-scrollbar">
+    <nb-card-body class="form-body">
       <form [formGroup]="form" class="professional-form">
         <div class="form-row">
           <div class="form-field full-width">
-            <label class="field-label">Code de l'Étape</label>
+            <label class="field-label">Code de l'étape</label>
             <nb-form-field>
               <nb-icon nbPrefix icon="hash-outline" pack="eva"></nb-icon>
               <input nbInput 
                      fullWidth 
                      shape="semi-round" 
                      formControlName="code" 
-                     placeholder="Ex: INS, PRE_INS..."
+                     placeholder="Ex: INSCRIPTION, VALIDATION..."
+                     style="text-transform: uppercase"
                      [status]="form.get('code')?.invalid && form.get('code')?.touched ? 'danger' : 'primary'">
             </nb-form-field>
             <div class="field-error" *ngIf="form.get('code')?.invalid && form.get('code')?.touched">
@@ -48,7 +49,7 @@
                      fullWidth 
                      shape="semi-round" 
                      formControlName="libelle" 
-                     placeholder="Ex: Inscription"
+                     placeholder="Ex: Inscription des élèves"
                      [status]="form.get('libelle')?.invalid && form.get('libelle')?.touched ? 'danger' : 'primary'">
             </nb-form-field>
             <div class="field-error" *ngIf="form.get('libelle')?.invalid && form.get('libelle')?.touched">
@@ -59,14 +60,15 @@
 
         <div class="form-row">
           <div class="form-field full-width">
-            <label class="field-label">Description (Optionnel)</label>
+            <label class="field-label">Description (optionnel)</label>
             <textarea nbInput 
                       fullWidth 
                       shape="semi-round" 
                       formControlName="description" 
-                      rows="4" 
-                      placeholder="Décrivez brièvement le rôle de cette étape..."
-                      status="primary"></textarea>
+                      placeholder="Détails sur cette étape..."
+                      rows="3"
+                      [status]="'primary'">
+            </textarea>
           </div>
         </div>
       </form>

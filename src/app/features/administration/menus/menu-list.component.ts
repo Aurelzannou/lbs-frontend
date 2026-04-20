@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ChangeDetectorR
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort } from '@angular/material/sort';
+import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { 
   NbCardModule, 
@@ -26,6 +27,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
     CommonModule,
     MatTableModule,
     MatSortModule,
+    MatPaginatorModule,
     NbCardModule,
     NbButtonModule,
     NbIconModule,
@@ -58,13 +60,14 @@ export class MenuListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Pagination et recherche
   totalElements = 0;
-  pageIndex = 0;
+  pageIndex = 0; // 0-based pour l'affichage interne
   pageSize = 10;
   searchTerm = '';
 
   private searchSubject = new Subject<string>();
   private searchSub!: Subscription;
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
@@ -73,7 +76,7 @@ export class MenuListComponent implements OnInit, OnDestroy, AfterViewInit {
       distinctUntilChanged()
     ).subscribe(term => {
       this.searchTerm = term;
-      this.pageIndex = 0;
+      this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
       this.refresh();
     });
     this.refresh();
@@ -100,6 +103,7 @@ export class MenuListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   refresh(): void {
     this.loading = true;
+    // L'API utilise une pagination 1-based
     this.menuService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
       next: (response: any) => {
         const result = response.data || {};
@@ -128,22 +132,16 @@ export class MenuListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   get pages(): number[] {
     const pages = [];
-    const maxPagesToShow = 5;
-    let startPage = Math.max(1, this.pageIndex - 1);
-    let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
-    
-    if (endPage - startPage < maxPagesToShow - 1) {
-        startPage = Math.max(1, endPage - maxPagesToShow + 1);
-    }
-    
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
+    for (let i = 0; i < this.totalPages; i++) {
+      pages.push(i + 1);
     }
     return pages;
   }
 
   goToPage(page: number): void {
-    this.pageIndex = page - 1;
+    const index = page - 1; // Convertir en 0-based
+    if (index < 0 || index >= this.totalPages) return;
+    this.pageIndex = index;
     this.refresh();
   }
 

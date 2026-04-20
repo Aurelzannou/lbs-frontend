@@ -1,108 +1,152 @@
-<nb-card [nbSpinner]="loading" nbSpinnerStatus="primary">
-  <nb-card-header class="header-container">
-    <div class="title-section">
-      <h2>Gestion des Élèves</h2>
-      <p class="subtitle">Consultez et gérez le registre des élèves</p>
+<div class="page-wrapper" [class.loading]="loading">
+
+  <!-- ===== TOOLBAR ===== -->
+  <div class="toolbar">
+    <!-- Recherche -->
+    <div class="search-box">
+      <span class="search-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </span>
+      <input
+        class="search-input"
+        placeholder="Rechercher des élèves..."
+        (input)="onSearchChange($event)"
+        #searchInput
+      />
     </div>
-    
-    <div class="header-actions">
-      <div class="search-section">
-        <nb-form-field>
-          <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
-          <input #searchInput nbInput placeholder="Rechercher par nom ou matricule..." 
-                 (input)="onSearchChange($event)" class="search-input">
-          <button nbSuffix nbButton ghost (click)="clearSearch(searchInput)" *ngIf="searchTerm">
-            <nb-icon icon="close-outline"></nb-icon>
-          </button>
-        </nb-form-field>
-      </div>
-      <button nbButton status="primary" (click)="openForm()">
-        <nb-icon icon="plus-outline"></nb-icon> NOUVEL ÉLÈVE
+
+    <!-- Boutons droite -->
+    <div class="toolbar-actions">
+      <button class="btn-refresh" (click)="refresh()" title="Actualiser">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        Actualiser
+      </button>
+
+      <button class="btn-add" (click)="openForm()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Nouvel Élève
       </button>
     </div>
-  </nb-card-header>
-  
-  <nb-card-body>
-    <div class="table-container">
-      <table mat-table [dataSource]="dataSource" matSort class="custom-table professional-table">
-        
+  </div>
+
+  <!-- ===== TABLE CARD ===== -->
+  <div class="table-card">
+
+    <!-- Spinner overlay -->
+    <div class="spinner-overlay" *ngIf="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table" mat-table [dataSource]="dataSource" matSort>
+
         <!-- Matricule Column -->
         <ng-container matColumnDef="matricule">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Matricule </th>
-          <td mat-cell *matCellDef="let row"> 
-             <span class="matricule-badge">{{ row.matricule }}</span>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Matricule</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="badge-code">{{ row.matricule }}</span>
           </td>
         </ng-container>
 
-        <!-- Identity Column (Nom & Prénom) -->
+        <!-- Identité Column -->
         <ng-container matColumnDef="identite">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Nom & Prénom </th>
-          <td mat-cell *matCellDef="let row"> 
-            <strong>{{ row.nom }}</strong> {{ row.prenom }}
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Identité</th>
+          <td mat-cell *matCellDef="let row">
+            <div class="user-info-cell">
+              <nb-user [name]="row.nom + ' ' + row.prenom" 
+                       [title]="row.email || 'Pas d\'email'"
+                       size="medium"
+                       [onlyPicture]="false">
+              </nb-user>
+            </div>
           </td>
         </ng-container>
 
         <!-- Sexe Column -->
         <ng-container matColumnDef="sexe">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Sexe </th>
-          <td mat-cell *matCellDef="let row"> 
-             <span class="sexe-tag" [ngClass]="row.sexe?.toLowerCase()">
-               {{ row.sexe === 'M' ? 'Masculin' : (row.sexe === 'F' ? 'Féminin' : row.sexe) }}
-             </span>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Sexe</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="badge-sex" [class.male]="row.sexe === 'M'" [class.female]="row.sexe === 'F'">
+              {{ row.sexe === 'M' ? 'Masculin' : 'Féminin' }}
+            </span>
           </td>
         </ng-container>
 
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef class="actions-header"> Actions </th>
-          <td mat-cell *matCellDef="let row" class="actions-cell">
-            <div class="action-buttons">
+          <th mat-header-cell *matHeaderCellDef class="col-actions">Opérations</th>
+          <td mat-cell *matCellDef="let row" class="col-actions">
+            <div class="action-group">
+              <!-- Éditer -->
               <button class="icon-btn edit" (click)="openForm(row)" title="Modifier">
-                <nb-icon icon="edit-2-outline"></nb-icon>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
               </button>
+              <!-- Supprimer -->
               <button class="icon-btn delete" (click)="deleteEleve(row)" title="Supprimer">
-                <nb-icon icon="trash-2-outline"></nb-icon>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                  <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                </svg>
               </button>
             </div>
           </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [@rowsAnimation]></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="data-row" [@rowsAnimation]></tr>
 
-        <!-- No data row -->
-        <tr class="mat-row no-data-row" *matNoDataRow>
-          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-            <div class="no-data-content" *ngIf="!loading">
-              <nb-icon icon="people-outline"></nb-icon>
-              <p>Aucun élève trouvé pour "{{ searchTerm }}"</p>
+        <!-- Aucun résultat -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="no-data-cell" [attr.colspan]="displayedColumns.length">
+            <div class="empty-state" *ngIf="!loading">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="#cbd5e1" stroke-width="1.5">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <p>Aucun élève trouvé pour "{{ searchInput.value }}"</p>
+              <button class="btn-reset" (click)="clearSearch(searchInput)">Réinitialiser la recherche</button>
             </div>
           </td>
         </tr>
       </table>
     </div>
 
-    <!-- Pagination -->
-    <div class="pagination-footer" *ngIf="totalElements > 0">
-      <div class="pagination-info">
-        Affichage de <b>{{ (pageIndex * pageSize) + 1 }}</b> à <b>{{ getEndIndex() }}</b> sur <b>{{ totalElements }}</b> élèves
-      </div>
-      <div class="pagination-controls">
-        <button nbButton size="small" ghost (click)="prevPage()" [disabled]="isFirstPage()">
-          <nb-icon icon="arrow-ios-back-outline"></nb-icon>
+    <!-- ===== FOOTER PAGINATION ===== -->
+    <div class="table-footer">
+      <span class="pagination-info">
+        Affichage de
+        <strong>{{ pageIndex * pageSize + 1 }}</strong>
+        à
+        <strong>{{ getEndIndex() }}</strong>
+        sur
+        <strong>{{ totalElements }}</strong>
+      </span>
+
+      <div class="pagination-nav">
+        <button class="nav-arrow" (click)="prevPage()" [disabled]="isFirstPage()" title="Page précédente">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
         </button>
-        <div class="page-numbers">
-          <button *ngFor="let p of pages" nbButton size="small" 
-                  [status]="p === currentPage + 1 ? 'primary' : 'basic'"
-                  [appearance]="p === currentPage + 1 ? 'filled' : 'ghost'"
-                  (click)="goToPage(p)">
-            {{ p }}
-          </button>
-        </div>
-        <button nbButton size="small" ghost (click)="nextPage()" [disabled]="isLastPage()">
-          <nb-icon icon="arrow-ios-forward-outline"></nb-icon>
+        <button class="nav-arrow" (click)="nextPage()" [disabled]="isLastPage()" title="Page suivante">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
         </button>
       </div>
     </div>
-  </nb-card-body>
-</nb-card>
+
+  </div><!-- /table-card -->
+
+  <!-- Hidden paginator for mat-table compatibility -->
+  <mat-paginator [pageSize]="pageSize" [length]="totalElements" style="display:none"></mat-paginator>
+
+</div>

@@ -1,0 +1,136 @@
+<div class="dialog-wrapper">
+  <div class="glass-overlay"></div>
+  
+  <nb-card class="form-card">
+    <nb-card-header class="form-header">
+      <div class="header-content">
+        <div class="title-with-icon">
+          <div class="icon-box" [ngClass]="isEdit ? 'edit-mode' : 'create-mode'">
+            <nb-icon [icon]="isEdit ? 'edit-2-outline' : 'plus-outline'"></nb-icon>
+          </div>
+          <div class="title-text">
+            <h3>{{ isEdit ? 'Modifier le' : 'Nouveau' }} Menu</h3>
+            <p class="subtitle">{{ isEdit ? 'Mise à jour des informations' : 'Configuration de l\'entrée de navigation' }}</p>
+          </div>
+        </div>
+        <button nbButton ghost status="basic" (click)="onCancel()" class="close-btn">
+          <nb-icon icon="close-outline"></nb-icon>
+        </button>
+      </div>
+    </nb-card-header>
+
+    <nb-card-body class="form-body">
+      <form [formGroup]="form" class="professional-form">
+        <div class="form-row">
+          <div class="form-field col-6">
+            <label class="field-label">Titre du Menu</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="text-outline" pack="eva"></nb-icon>
+              <input nbInput 
+                     fullWidth 
+                     shape="semi-round" 
+                     formControlName="titre" 
+                     placeholder="Ex: Tableau de bord"
+                     [status]="form.get('titre')?.invalid && form.get('titre')?.touched ? 'danger' : 'primary'">
+            </nb-form-field>
+          </div>
+          <div class="form-field col-6">
+            <label class="field-label">Code (Unique)</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="hash-outline" pack="eva"></nb-icon>
+              <input nbInput 
+                     fullWidth 
+                     shape="semi-round" 
+                     formControlName="code" 
+                     placeholder="Ex: DASHBOARD"
+                     style="text-transform: uppercase"
+                     [status]="form.get('code')?.invalid && form.get('code')?.touched ? 'danger' : 'primary'">
+            </nb-form-field>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field full-width">
+            <label class="field-label">Chemin (URL)</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="link-outline" pack="eva"></nb-icon>
+              <input nbInput 
+                     fullWidth 
+                     shape="semi-round" 
+                     formControlName="path" 
+                     placeholder="Ex: /referentiel/niveaux"
+                     [status]="'primary'">
+            </nb-form-field>
+            <p class="field-hint">Laissez vide si c'est un menu parent (groupe).</p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field col-6">
+            <label class="field-label">Ordre</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="layers-outline" pack="eva"></nb-icon>
+              <input nbInput 
+                     fullWidth 
+                     type="number"
+                     shape="semi-round" 
+                     formControlName="ordre" 
+                     [status]="form.get('ordre')?.invalid && form.get('ordre')?.touched ? 'danger' : 'primary'">
+            </nb-form-field>
+          </div>
+          <div class="form-field col-6">
+            <label class="field-label">Menu Parent</label>
+            <ng-select [items]="parentMenus"
+                       bindLabel="titre"
+                       bindValue="id"
+                       formControlName="menuEnfantId"
+                       placeholder="Aucun (Racine)"
+                       class="custom-ng-select">
+              <ng-template ng-option-tmp let-item="item">
+                {{ item.titre }} <small class="text-muted">({{ item.code }})</small>
+              </ng-template>
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field full-width">
+            <label class="field-label">Profils autorisés</label>
+            <div class="profils-selection-grid">
+              <div class="profil-item" *ngFor="let p of allProfils">
+                <nb-checkbox [checked]="isProfilSelected(p.id)"
+                             (checkedChange)="toggleProfil(p.id, $event)">
+                  {{ p.libelle }}
+                </nb-checkbox>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </nb-card-body>
+
+    <nb-card-footer class="form-footer">
+      <div class="footer-actions">
+        <button nbButton 
+                status="basic" 
+                appearance="ghost"
+                (click)="onCancel()" 
+                [disabled]="loading"
+                class="cancel-btn">
+          Annuler
+        </button>
+        <button nbButton 
+                status="primary" 
+                shape="semi-round"
+                (click)="onSubmit()" 
+                [disabled]="form.invalid || loading" 
+                [nbSpinner]="loading" 
+                nbSpinnerStatus="control"
+                class="submit-btn shadow-btn">
+          <nb-icon icon="save-outline" *ngIf="!loading"></nb-icon>
+          {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+      </div>
+    </nb-card-footer>
+  </nb-card>
+</div>
