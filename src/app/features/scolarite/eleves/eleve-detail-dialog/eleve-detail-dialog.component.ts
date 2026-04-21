@@ -21,8 +21,7 @@ import { Eleve } from '../../../../core/models/eleve.model';
     NbUserModule
   ],
   template: `
-    <div class="dialog-wrapper">
-      <nb-card class="detail-card">
+    <nb-card class="detail-card">
         <nb-card-header class="header">
           <div class="header-content">
             <div class="title-with-icon">
@@ -95,25 +94,29 @@ import { Eleve } from '../../../../core/models/eleve.model';
           <button nbButton status="primary" fullWidth (click)="close()">Fermer</button>
         </nb-card-footer>
       </nb-card>
-    </div>
   `,
   styles: [`
-    .dialog-wrapper {
-      max-width: 500px;
-      width: 100%;
-    }
     .detail-card {
       margin: 0;
-      border-radius: 1rem;
+      border-radius: 12px;
       overflow: hidden;
+      width: 100%;
+      border: none !important;
     }
     .header {
-      background: #f8fafc;
-      padding: 1.25rem 1.5rem;
+      padding: 0 !important;
+      background: #374151 !important;
+      color: white !important;
+      border: none !important;
+      min-height: 0 !important;
+      width: 100% !important;
+      display: block !important;
       .header-content {
+        padding: 1.5rem 2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        width: 100% !important;
       }
       .title-with-icon {
         display: flex;
@@ -130,8 +133,8 @@ import { Eleve } from '../../../../core/models/eleve.model';
           justify-content: center;
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-        h3 { margin: 0; font-size: 1.2rem; font-weight: 800; color: #fffbeb; letter-spacing: -0.01em; }
-        .subtitle { margin: 0; font-size: 0.75rem; color: #fde68a; font-weight: 600; opacity: 0.8; }
+        h3 { margin: 0; font-size: 1.2rem; font-weight: 800; color: white; letter-spacing: -0.01em; }
+        .subtitle { margin: 0; font-size: 0.75rem; color: #94a3b8; font-weight: 600; opacity: 0.9; }
       }
     }
     .body { padding: 2rem; }
@@ -195,9 +198,10 @@ import { Eleve } from '../../../../core/models/eleve.model';
       button { 
         height: 3rem; 
         font-weight: 800; 
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        background: #374151;
+        color: white;
         border: none;
-        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        box-shadow: 0 4px 12px rgba(55, 65, 81, 0.3);
       }
     }
   `]
