@@ -22,61 +22,47 @@
     <nb-card-body class="form-body">
       <form [formGroup]="form" class="professional-form">
         
+        <!-- Identité -->
         <div class="form-row">
           <div class="form-field col-6">
-            <label class="field-label">Matricule</label>
-            <nb-form-field>
-              <nb-icon nbPrefix icon="hash-outline" pack="eva"></nb-icon>
-              <input nbInput 
-                     fullWidth 
-                     shape="semi-round" 
-                     formControlName="matricule" 
-                     [readonly]="isEdit"
-                     placeholder="Ex: MAT-2024-001"
-                     style="text-transform: uppercase"
-                     [status]="form.get('matricule')?.invalid && form.get('matricule')?.touched ? 'danger' : 'primary'">
-            </nb-form-field>
-          </div>
-          <div class="form-field col-6">
-            <label class="field-label">Sexe</label>
-            <ng-select [items]="sexes"
-                       bindLabel="label"
-                       bindValue="value"
-                       formControlName="sexe"
-                       placeholder="Choisir..."
-                       class="custom-ng-select">
-            </ng-select>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-field col-6">
-            <label class="field-label">Nom</label>
+            <label class="field-label">Nom de famille</label>
             <nb-form-field>
               <nb-icon nbPrefix icon="text-outline" pack="eva"></nb-icon>
               <input nbInput 
                      fullWidth 
                      shape="semi-round" 
                      formControlName="nom" 
-                     placeholder="Ex: DOE"
-                     [status]="form.get('nom')?.invalid && form.get('nom')?.touched ? 'danger' : 'primary'">
+                     placeholder="Ex: KOFFI"
+                     style="text-transform: uppercase"
+                     [status]="form.get('nom')?.invalid && form.get('nom')?.touched ? 'danger' : 'basic'">
             </nb-form-field>
           </div>
           <div class="form-field col-6">
             <label class="field-label">Prénom(s)</label>
             <nb-form-field>
-              <nb-icon nbPrefix icon="text-outline" pack="eva"></nb-icon>
+              <nb-icon nbPrefix icon="person-outline" pack="eva"></nb-icon>
               <input nbInput 
                      fullWidth 
                      shape="semi-round" 
                      formControlName="prenom" 
-                     placeholder="Ex: John"
-                     [status]="form.get('prenom')?.invalid && form.get('prenom')?.touched ? 'danger' : 'primary'">
+                     placeholder="Ex: Jean-Eudes"
+                     [status]="form.get('prenom')?.invalid && form.get('prenom')?.touched ? 'danger' : 'basic'">
             </nb-form-field>
           </div>
         </div>
 
+        <!-- Sexe & Naissance -->
         <div class="form-row">
+          <div class="form-field col-6">
+            <label class="field-label">Sexe</label>
+            <ng-select [items]="sexes"
+                       bindLabel="label"
+                       bindValue="value"
+                       formControlName="sexe"
+                       placeholder="Genre de l'élève"
+                       class="custom-ng-select">
+            </ng-select>
+          </div>
           <div class="form-field col-6">
             <label class="field-label">Date de Naissance</label>
             <nb-form-field>
@@ -86,49 +72,51 @@
                      type="date"
                      shape="semi-round" 
                      formControlName="dateNaissance" 
-                     [status]="'primary'">
-            </nb-form-field>
-          </div>
-          <div class="form-field col-6">
-            <label class="field-label">Lieu de Naissance</label>
-            <nb-form-field>
-              <nb-icon nbPrefix icon="pin-outline" pack="eva"></nb-icon>
-              <input nbInput 
-                     fullWidth 
-                     shape="semi-round" 
-                     formControlName="lieuNaissance" 
-                     placeholder="Ex: Cotonou"
-                     [status]="'primary'">
+                     [status]="'basic'">
             </nb-form-field>
           </div>
         </div>
 
+        <!-- Classe & Scolarité -->
         <div class="form-row">
-          <div class="form-field col-6">
-            <label class="field-label">Téléphone</label>
-            <nb-form-field>
-              <nb-icon nbPrefix icon="phone-outline" pack="eva"></nb-icon>
-              <input nbInput 
-                     fullWidth 
-                     shape="semi-round" 
-                     formControlName="telephone" 
-                     placeholder="Ex: +229 ..."
-                     [status]="'primary'">
-            </nb-form-field>
+          <div class="form-field col-12">
+            <label class="field-label">Classe d'affectation</label>
+            <ng-select [items]="classes"
+                       bindLabel="libelle"
+                       bindValue="id"
+                       formControlName="classeId"
+                       placeholder="Sélectionnez la classe..."
+                       class="custom-ng-select">
+            </ng-select>
           </div>
-          <div class="form-field col-6">
-            <label class="field-label">Email</label>
+        </div>
+
+        <!-- Provenance -->
+        <div class="form-row">
+          <div class="form-field col-12">
+            <label class="field-label">Provenance / École d'origine</label>
             <nb-form-field>
-              <nb-icon nbPrefix icon="email-outline" pack="eva"></nb-icon>
+              <nb-icon nbPrefix icon="home-outline" pack="eva"></nb-icon>
               <input nbInput 
                      fullWidth 
                      shape="semi-round" 
-                     formControlName="email" 
-                     placeholder="Ex: john@doe.com"
-                     [status]="form.get('email')?.invalid && form.get('email')?.touched ? 'danger' : 'primary'">
+                     formControlName="provenance" 
+                     placeholder="Ex: École Primaire Publique de ..."
+                     [status]="'basic'">
             </nb-form-field>
           </div>
         </div>
+
+        <!-- État de santé -->
+        <div class="form-row" style="margin-top: 0.5rem;">
+          <div class="form-field col-12">
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="souffrant" formControlName="souffrant" class="custom-checkbox">
+              <label for="souffrant" class="checkbox-label">L'élève présente-t-il des problèmes de santé ?</label>
+            </div>
+          </div>
+        </div>
+
       </form>
     </nb-card-body>
 

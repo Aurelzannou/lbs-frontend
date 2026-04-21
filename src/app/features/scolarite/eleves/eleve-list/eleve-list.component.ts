@@ -18,6 +18,7 @@ import { EleveService } from '../../../../core/services/eleve.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Eleve } from '../../../../core/models/eleve.model';
 import { EleveFormDialogComponent } from '../eleve-form-dialog/eleve-form-dialog.component';
+import { EleveDetailDialogComponent } from '../eleve-detail-dialog/eleve-detail-dialog.component';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -38,7 +39,8 @@ import { animate, style, transition, trigger } from '@angular/animations';
     NbFormFieldModule,
     NbSpinnerModule,
     NbUserModule,
-    MatDialogModule
+    MatDialogModule,
+    EleveDetailDialogComponent
   ],
   animations: [
     trigger('rowsAnimation', [
@@ -57,7 +59,7 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns: string[] = ['matricule', 'identite', 'sexe', 'actions'];
+  displayedColumns: string[] = ['identite', 'sexe', 'dateNaissance', 'classe', 'souffrant', 'provenance', 'actions'];
   dataSource = new MatTableDataSource<Eleve>([]);
   loading = false;
 
@@ -178,7 +180,7 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openForm(eleve?: Eleve): void {
     this.dialog.open(EleveFormDialogComponent, {
-      width: '600px',
+      width: '700px',
       data: eleve,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {
@@ -186,11 +188,19 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  openDetail(eleve: Eleve): void {
+    this.dialog.open(EleveDetailDialogComponent, {
+      width: '500px',
+      data: eleve,
+      panelClass: 'professional-dialog'
+    });
+  }
+
   async deleteEleve(eleve: Eleve): Promise<void> {
     const confirmed = await this.notification.confirm(`Souhaitez-vous vraiment supprimer l'élève ${eleve.nom} ${eleve.prenom} ?`);
     if (confirmed) {
       this.loading = true;
-      this.eleveService.delete(eleve.matricule).subscribe({
+      this.eleveService.delete(eleve.uuid!).subscribe({
         next: () => {
           this.notification.success('Élève supprimé avec succès');
           this.refresh();

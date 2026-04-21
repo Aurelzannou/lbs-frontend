@@ -13,6 +13,8 @@ import {
 import { EleveService } from '../../../../core/services/eleve.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Eleve } from '../../../../core/models/eleve.model';
+import { ClasseService } from '../../../../core/services/classe.service';
+import { Classe } from '../../../../core/models/classe.model';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
@@ -36,11 +38,13 @@ import { NgSelectModule } from '@ng-select/ng-select';
 export class EleveFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private eleveService = inject(EleveService);
+  private classeService = inject(ClasseService);
   private notification = inject(NotificationService);
 
   form!: FormGroup;
   isEdit = false;
   loading = false;
+  classes: Classe[] = [];
 
   sexes = [
     { label: 'Masculin', value: 'M' },
@@ -55,15 +59,25 @@ export class EleveFormDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadClasses();
     this.form = this.fb.group({
-      matricule: [this.data?.matricule || '', Validators.required],
       nom: [this.data?.nom || '', Validators.required],
       prenom: [this.data?.prenom || '', Validators.required],
       sexe: [this.data?.sexe || null, Validators.required],
       dateNaissance: [this.data?.dateNaissance || ''],
-      lieuNaissance: [this.data?.lieuNaissance || ''],
-      telephone: [this.data?.telephone || ''],
-      email: [this.data?.email || '', [Validators.email]]
+      souffrant: [this.data?.souffrant || false],
+      provenance: [this.data?.provenance || ''],
+      classeId: [this.data?.classeId || null, Validators.required],
+      actif: [this.data?.actif ?? true]
+    });
+  }
+
+  private loadClasses(): void {
+    this.classeService.getAll(0, 100).subscribe({
+      next: (res) => {
+        this.classes = res.data || (Array.isArray(res) ? res : []);
+      },
+      error: (err) => console.error('Erreur chargement classes:', err)
     });
   }
 
@@ -81,7 +95,7 @@ export class EleveFormDialogComponent implements OnInit {
     const request = this.form.value;
 
     const obs$ = this.isEdit
-      ? this.eleveService.update(this.data.matricule, request)
+      ? this.eleveService.update(this.data.uuid!, request)
       : this.eleveService.create(request);
 
     obs$.subscribe({

@@ -1,15 +1,18 @@
+import { Classe } from './classe.model';
+
 export interface Eleve {
   id?: number;
-  matricule: string;
+  uuid?: string;
   nom: string;
   prenom: string;
-  dateNaissance: string;
-  lieuNaissance: string;
   sexe: string;
-  adresse?: string;
-  telephone?: string;
-  email?: string;
+  dateNaissance: string;
+  souffrant: boolean;
+  provenance: string;
+  actif?: boolean;
   photo?: string;
+  classeId?: number;
+  classe?: Classe;
 }
 
 export interface Inscription {

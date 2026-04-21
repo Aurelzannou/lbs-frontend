@@ -194,10 +194,18 @@
   color: #1d4ed8;
   border: 1px solid #bfdbfe;
   border-radius: 4px;
-  padding: 0.15rem 0.5rem;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  font-weight: 700;
   font-size: 0.8rem;
+}
+
+.badge-classe {
+  display: inline-block;
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  font-weight: 700;
+  font-size: 0.75rem;
 }
 
 .user-info-cell {
@@ -229,6 +237,35 @@
   &.female {
     background: #fdf2f8;
     color: #9d174d;
+  }
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &.active {
+    background: #ecfdf5;
+    color: #047857;
+    &::before { background: #10b981; }
+  }
+
+  &.inactive {
+    background: #f1f5f9;
+    color: #475569;
+    &::before { background: #94a3b8; }
   }
 }
 
@@ -274,6 +311,7 @@
     transform: scale(1.12);
   }
 
+  &.detail  { background: #e0f2fe; color: #0369a1; }
   &.view   { background: #dbeafe; color: #1d4ed8; }
   &.edit   { background: #fef9c3; color: #92400e; }
   &.delete { background: #fee2e2; color: #b91c1c; }
