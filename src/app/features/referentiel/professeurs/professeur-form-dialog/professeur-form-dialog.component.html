@@ -1,0 +1,54 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h3>{{ isEdit ? 'Modifier le Professeur' : 'Nouveau Professeur' }}</h3>
+    <button class="close-btn" (click)="onCancel()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-content">
+    <div class="form-grid">
+      <!-- Nom -->
+      <div class="form-field">
+        <label>Nom</label>
+        <input nbInput fullWidth placeholder="Nom" formControlName="nom" 
+               [status]="form.get('nom')?.invalid && form.get('nom')?.touched ? 'danger' : 'basic'">
+      </div>
+
+      <!-- Prénom -->
+      <div class="form-field">
+        <label>Prénom</label>
+        <input nbInput fullWidth placeholder="Prénom" formControlName="prenom"
+               [status]="form.get('prenom')?.invalid && form.get('prenom')?.touched ? 'danger' : 'basic'">
+      </div>
+
+      <!-- Téléphone -->
+      <div class="form-field">
+        <label>Téléphone</label>
+        <input nbInput fullWidth placeholder="Téléphone" formControlName="num">
+      </div>
+
+      <!-- Email -->
+      <div class="form-field">
+        <label>Email</label>
+        <input nbInput fullWidth placeholder="Email" formControlName="email"
+               [status]="form.get('email')?.invalid && form.get('email')?.touched ? 'danger' : 'basic'">
+      </div>
+
+      <!-- Code / Matricule -->
+      <div class="form-field">
+        <label>Matricule / Code</label>
+        <input nbInput fullWidth placeholder="Code" formControlName="code">
+      </div>
+    </div>
+  </form>
+
+  <div class="dialog-footer">
+    <button nbButton ghost status="basic" (click)="onCancel()" [disabled]="saving">Annuler</button>
+    <button nbButton status="primary" (click)="onSubmit()" [disabled]="form.invalid || saving" [nbSpinner]="saving">
+      {{ isEdit ? 'Enregistrer' : 'Créer le professeur' }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,222 @@
+@import '../../../../../styles.scss';
+
+.page-wrapper {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+  
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    display: flex;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 10px 12px 10px 38px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(19, 82, 226, 0.1);
+    }
+  }
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-refresh, .btn-add {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-refresh {
+  background: white;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  &:hover { background: #f8fafc; color: var(--primary-color); }
+}
+
+.btn-add {
+  background: var(--primary-color);
+  color: white;
+  &:hover { background: #0e41b8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(19, 82, 226, 0.2); }
+}
+
+.table-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--card-shadow);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th.mat-header-cell {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    padding: 16px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  td.mat-cell {
+    padding: 16px;
+    color: #1e293b;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f1f5f9;
+  }
+}
+
+.data-row {
+  transition: background 0.2s;
+  &:hover { background: #f1f5f9; }
+}
+
+.price-text {
+  font-weight: 600;
+  color: #059669;
+}
+
+.col-actions {
+  width: 100px;
+  text-align: right;
+}
+
+.action-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &.edit {
+    color: #64748b;
+    &:hover { background: #eff6ff; color: #2563eb; }
+  }
+  &.delete {
+    color: #94a3b8;
+    &:hover { background: #fef2f2; color: #ef4444; }
+  }
+}
+
+.table-footer {
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.pagination-info {
+  font-size: 0.85rem;
+  color: #64748b;
+  strong { color: #1e293b; }
+}
+
+.pagination-nav {
+  display: flex;
+  gap: 6px;
+}
+
+.nav-arrow {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+  color: #475569;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) { border-color: var(--primary-color); color: var(--primary-color); background: #eff6ff; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.spinner-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(19, 82, 226, 0.1);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #94a3b8;
+}

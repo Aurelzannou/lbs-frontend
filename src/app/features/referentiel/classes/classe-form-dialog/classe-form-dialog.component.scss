@@ -1,0 +1,82 @@
+@import '../../../../../styles.scss';
+
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+.dialog-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #edf1f7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f9fc;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #222b45;
+  }
+
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: #8f9bb3;
+    cursor: pointer;
+    display: flex;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    &:hover { background: #edf1f7; color: #222b45; }
+  }
+}
+
+.dialog-content {
+  padding: 1.5rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4b5563;
+  }
+}
+
+.error-text {
+  font-size: 0.75rem;
+  color: #ff3d71;
+}
+
+.dialog-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #edf1f7;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  background: #f7f9fc;
+}
+
+// Adaptation NgSelect pour correspondre au design Nebular
+:host ::v-deep .custom-ng-select {
+  .ng-select-container {
+    border: 1px solid #edf1f7 !important;
+    background-color: #f7f9fc !important;
+    border-radius: 4px !important;
+    min-height: 40px !important;
+  }
+}

@@ -1,0 +1,56 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h3>{{ isEdit ? 'Modifier le Coefficient' : 'Nouveau Coefficient' }}</h3>
+    <button class="close-btn" (click)="onCancel()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-content">
+    <div class="form-grid">
+      <!-- Niveau -->
+      <div class="form-field">
+        <label>Niveau</label>
+        <ng-select
+          [items]="niveaux"
+          bindLabel="libelle"
+          bindValue="id"
+          formControlName="niveauId"
+          placeholder="Sélectionner un niveau"
+          class="custom-ng-select"
+          [loading]="loading">
+        </ng-select>
+      </div>
+
+      <!-- Matière -->
+      <div class="form-field">
+        <label>Matière</label>
+        <ng-select
+          [items]="matieres"
+          bindLabel="libelle"
+          bindValue="id"
+          formControlName="matiereId"
+          placeholder="Sélectionner une matière"
+          class="custom-ng-select"
+          [loading]="loading">
+        </ng-select>
+      </div>
+
+      <!-- Valeur -->
+      <div class="form-field">
+        <label>Valeur du coefficient</label>
+        <input nbInput fullWidth type="number" formControlName="valeur" 
+               [status]="form.get('valeur')?.invalid && form.get('valeur')?.touched ? 'danger' : 'basic'">
+      </div>
+    </div>
+  </form>
+
+  <div class="dialog-footer">
+    <button nbButton ghost status="basic" (click)="onCancel()" [disabled]="saving">Annuler</button>
+    <button nbButton status="primary" (click)="onSubmit()" [disabled]="form.invalid || saving || loading" [nbSpinner]="saving">
+      {{ isEdit ? 'Enregistrer' : 'Créer le coefficient' }}
+    </button>
+  </div>
+</div>

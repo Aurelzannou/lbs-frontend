@@ -1,0 +1,33 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h3>{{ isEdit ? 'Modifier le Type d\'Acte' : 'Nouveau Type d\'Acte' }}</h3>
+    <button class="close-btn" (click)="onCancel()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-content">
+    <div class="form-grid">
+      <div class="form-field">
+        <label>Code</label>
+        <input nbInput fullWidth placeholder="Ex: NAISS" formControlName="code" 
+               [status]="form.get('code')?.invalid && form.get('code')?.touched ? 'danger' : 'basic'">
+      </div>
+
+      <div class="form-field">
+        <label>Libellé</label>
+        <input nbInput fullWidth placeholder="Ex: Acte de Naissance" formControlName="libelle"
+               [status]="form.get('libelle')?.invalid && form.get('libelle')?.touched ? 'danger' : 'basic'">
+      </div>
+    </div>
+  </form>
+
+  <div class="dialog-footer">
+    <button nbButton ghost status="basic" (click)="onCancel()" [disabled]="saving">Annuler</button>
+    <button nbButton status="primary" (click)="onSubmit()" [disabled]="form.invalid || saving" [nbSpinner]="saving">
+      {{ isEdit ? 'Enregistrer' : 'Créer le type' }}
+    </button>
+  </div>
+</div>

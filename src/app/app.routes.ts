@@ -29,6 +29,58 @@ export const routes: Routes = [
       { 
         path: 'annees-scolaires', 
         loadComponent: () => import('./features/referentiel/annees-scolaires/annee-scolaire-list/annee-scolaire-list.component').then(m => m.AnneeScolaireListComponent) 
+      },
+      { 
+        path: 'classes', 
+        loadComponent: () => import('./features/referentiel/classes/classe-list/classe-list.component').then(m => m.ClasseListComponent) 
+      },
+      { 
+        path: 'professeurs', 
+        loadComponent: () => import('./features/referentiel/professeurs/professeur-list/professeur-list.component').then(m => m.ProfesseurListComponent) 
+      },
+      { 
+        path: 'matieres', 
+        loadComponent: () => import('./features/referentiel/matieres/matiere-list/matiere-list.component').then(m => m.MatiereListComponent) 
+      },
+      { 
+        path: 'caisses', 
+        loadComponent: () => import('./features/referentiel/caisses/caisse-list/caisse-list.component').then(m => m.CaisseListComponent) 
+      },
+      { 
+        path: 'categories-depenses', 
+        loadComponent: () => import('./features/referentiel/categories-depenses/categorie-depense-list/categorie-depense-list.component').then(m => m.CategorieDepenseListComponent) 
+      },
+      { 
+        path: 'coefficients', 
+        loadComponent: () => import('./features/referentiel/coefficients/coefficient-list/coefficient-list.component').then(m => m.CoefficientListComponent) 
+      },
+      { 
+        path: 'frais-scolaires', 
+        loadComponent: () => import('./features/referentiel/frais-scolaires/frais-scolaire-list/frais-scolaire-list.component').then(m => m.FraisScolaireListComponent) 
+      },
+      { 
+        path: 'modes-paiements', 
+        loadComponent: () => import('./features/referentiel/modes-paiements/mode-paiement-list/mode-paiement-list.component').then(m => m.ModePaiementListComponent) 
+      },
+      { 
+        path: 'periodes-academiques', 
+        loadComponent: () => import('./features/referentiel/periodes-academiques/periode-academique-list/periode-academique-list.component').then(m => m.PeriodeAcademiqueListComponent) 
+      },
+      { 
+        path: 'types-actes', 
+        loadComponent: () => import('./features/referentiel/types-actes/type-acte-list/type-acte-list.component').then(m => m.TypeActeListComponent) 
+      },
+      { 
+        path: 'types-frais', 
+        loadComponent: () => import('./features/referentiel/types-frais/type-frais-list/type-frais-list.component').then(m => m.TypeFraisListComponent) 
+      },
+      { 
+        path: 'types-operations', 
+        loadComponent: () => import('./features/referentiel/types-operations/type-operation-list/type-operation-list.component').then(m => m.TypeOperationListComponent) 
+      },
+      { 
+        path: 'statuts-inscriptions', 
+        loadComponent: () => import('./features/referentiel/statuts-inscriptions/statut-inscription-list/statut-inscription-list.component').then(m => m.StatutInscriptionListComponent) 
       }
     ]
   },
