@@ -7,6 +7,7 @@ export interface Eleve {
   prenom: string;
   sexe: string;
   dateNaissance: string;
+  age?: number;
   souffrant: boolean;
   provenance: string;
   actif?: boolean;

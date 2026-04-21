@@ -76,6 +76,16 @@
             {{ row.dateNaissance | date:'dd/MM/yyyy' }}
           </td>
         </ng-container>
+        
+        <!-- Age Column -->
+        <ng-container matColumnDef="age">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Âge</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="badge-age" *ngIf="row.age !== null && row.age !== undefined">
+              {{ row.age }} ans
+            </span>
+          </td>
+        </ng-container>
 
         <!-- Classe Column -->
         <ng-container matColumnDef="classe">

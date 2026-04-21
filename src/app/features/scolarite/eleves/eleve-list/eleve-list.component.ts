@@ -59,7 +59,7 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns: string[] = ['identite', 'sexe', 'dateNaissance', 'classe', 'souffrant', 'provenance', 'actions'];
+  displayedColumns: string[] = ['identite', 'sexe', 'dateNaissance', 'age', 'classe', 'souffrant', 'provenance', 'actions'];
   dataSource = new MatTableDataSource<Eleve>([]);
   loading = false;
 
