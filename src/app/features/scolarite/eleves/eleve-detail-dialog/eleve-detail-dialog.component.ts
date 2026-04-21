@@ -122,16 +122,16 @@ import { Eleve } from '../../../../core/models/eleve.model';
         .icon-box {
           width: 2.75rem;
           height: 2.75rem;
-          background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-          color: #92400e;
+          background: #fbbf24;
+          color: #451a03;
           border-radius: 0.75rem;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-        h3 { margin: 0; font-size: 1.2rem; font-weight: 800; color: #451a03; letter-spacing: -0.01em; }
-        .subtitle { margin: 0; font-size: 0.75rem; color: #b45309; font-weight: 600; opacity: 0.8; }
+        h3 { margin: 0; font-size: 1.2rem; font-weight: 800; color: #fffbeb; letter-spacing: -0.01em; }
+        .subtitle { margin: 0; font-size: 0.75rem; color: #fde68a; font-weight: 600; opacity: 0.8; }
       }
     }
     .body { padding: 2rem; }

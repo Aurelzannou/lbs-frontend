@@ -38,6 +38,26 @@ import { FooterComponent } from '../components/footer/footer.component';
     
     .menu-sidebar {
       z-index: 1000;
+      ::ng-deep .main-container {
+        background: #fffcf0 !important;
+      }
+      ::ng-deep nb-menu {
+        .menu-item {
+          .menu-icon { color: #92400e; }
+          .menu-title { color: #451a03; }
+          &:hover {
+            .menu-icon, .menu-title { color: #000000 !important; }
+          }
+          &.active {
+            .menu-icon, .menu-title { color: #000000 !important; }
+          }
+        }
+      }
+    }
+
+    nb-layout-header {
+      border-bottom: 2px solid #fef3c7;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.05);
     }
   `],
 })

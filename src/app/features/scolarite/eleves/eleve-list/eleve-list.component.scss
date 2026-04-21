@@ -111,9 +111,9 @@
 /* ---- TABLE CARD ---- */
 .table-card {
   background: white;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   position: relative;
 }
@@ -122,7 +122,7 @@
 .spinner-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,8 +132,8 @@
 .spinner {
   width: 36px;
   height: 36px;
-  border: 3px solid #e5e7eb;
-  border-top-color: #3b82f6;
+  border: 3px solid #f1f5f9;
+  border-top-color: #fbbf24;
   border-radius: 50%;
   animation: spin 0.75s linear infinite;
 }
@@ -154,22 +154,22 @@
 
   /* En-tête */
   th {
-    background: #2d3748;
-    color: #e2e8f0;
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-transform: none;
-    letter-spacing: 0;
-    padding: 0.7rem 1rem;
+    background: #78350f;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1.15rem 1rem;
     border-bottom: none;
     white-space: nowrap;
   }
 
   /* Ligne */
   td {
-    padding: 0.65rem 1rem;
-    color: #374151;
-    border-bottom: 1px solid #f3f4f6;
+    padding: 0.85rem 1rem;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
     vertical-align: middle;
   }
 }
@@ -179,11 +179,11 @@
   transition: background 0.15s;
 
   &:nth-child(even) td {
-    background: #fafafa;
+    background: #f8fafc;
   }
 
   &:hover td {
-    background: #eff6ff !important;
+    background: #fffbeb !important;
   }
 }
 
@@ -360,19 +360,19 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1rem;
-  border-top: 1px solid #f3f4f6;
-  background: #fafafa;
+  border-top: 1px solid #f1f5f9;
+  background: #f8fafc;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
 .pagination-info {
   font-size: 0.82rem;
-  color: #6b7280;
+  color: #64748b;
 
   strong {
-    color: #374151;
-    font-weight: 600;
+    color: #1e293b;
+    font-weight: 700;
   }
 }
 
@@ -386,9 +386,9 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e2e8f0;
   background: white;
-  color: #374151;
+  color: #475569;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -396,9 +396,9 @@
   transition: all 0.15s;
 
   &:hover:not(:disabled) {
-    background: #eff6ff;
-    border-color: #3b82f6;
-    color: #3b82f6;
+    background: #f1f5f9;
+    border-color: #fbbf24;
+    color: #b45309;
   }
 
   &:disabled {

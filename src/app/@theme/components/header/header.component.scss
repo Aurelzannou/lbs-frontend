@@ -41,10 +41,12 @@
       border-left: 1px solid nb-theme(divider-color);
       white-space: nowrap;
       text-decoration: none;
-      color: nb-theme(text-basic-color);
+      color: nb-theme(color-primary-800);
+      font-family: 'Outfit', sans-serif;
       
       span {
-        font-weight: bold;
+        font-weight: 900;
+        color: nb-theme(color-primary-500);
       }
     }
   }
