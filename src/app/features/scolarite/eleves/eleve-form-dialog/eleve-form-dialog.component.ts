@@ -72,6 +72,22 @@ export class EleveFormDialogComponent implements OnInit {
     });
   }
 
+  get calculatedAge(): number | null {
+    const dob = this.form.get('dateNaissance')?.value;
+    if (!dob) return null;
+    
+    const birthDate = new Date(dob);
+    if (isNaN(birthDate.getTime())) return null;
+
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  }
+
   private loadClasses(): void {
     this.classeService.getAll(0, 100).subscribe({
       next: (res) => {

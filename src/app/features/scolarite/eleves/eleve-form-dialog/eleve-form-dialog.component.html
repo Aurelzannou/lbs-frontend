@@ -61,7 +61,12 @@
             </ng-select>
           </div>
           <div class="form-field col-6">
-            <label class="field-label">Date de Naissance</label>
+            <label class="field-label">
+              Date de Naissance 
+              <span class="age-hint" *ngIf="calculatedAge !== null">
+                ({{ calculatedAge }} ans)
+              </span>
+            </label>
             <nb-form-field>
               <nb-icon nbPrefix icon="calendar-outline" pack="eva"></nb-icon>
               <input nbInput 
