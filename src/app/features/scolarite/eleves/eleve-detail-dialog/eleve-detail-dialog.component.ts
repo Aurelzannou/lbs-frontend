@@ -64,7 +64,7 @@ import { Eleve } from '../../../../core/models/eleve.model';
             </div>
             <div class="detail-item">
               <label>Classe</label>
-              <span class="badge male" *ngIf="data.classe">{{ data.classe.libelle }}</span>
+              <span class="badge male" *ngIf="data.classe">{{ data.classe.code }}</span>
               <span class="text-muted" *ngIf="!data.classe">Non assignée</span>
             </div>
             <div class="detail-item">

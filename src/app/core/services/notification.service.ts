@@ -13,7 +13,17 @@ export class NotificationService {
     this.toastr.success(message, title);
   }
 
-  error(message: string, title: string = 'Erreur'): void {
+  error(error: any, title: string = 'Erreur'): void {
+    let message = 'Une erreur est survenue';
+    
+    if (typeof error === 'string') {
+      message = error;
+    } else if (error?.error?.message) {
+      message = error.error.message;
+    } else if (error?.message) {
+      message = error.message;
+    }
+
     console.log('[NotificationService] error:', message);
     this.toastr.danger(message, title);
   }

@@ -15,7 +15,7 @@
         <label>Niveau</label>
         <ng-select
           [items]="niveaux"
-          bindLabel="libelle"
+          bindLabel="code"
           bindValue="id"
           formControlName="niveauId"
           placeholder="Sélectionner un niveau"
@@ -29,7 +29,7 @@
         <label>Matière</label>
         <ng-select
           [items]="matieres"
-          bindLabel="libelle"
+          bindLabel="code"
           bindValue="id"
           formControlName="matiereId"
           placeholder="Sélectionner une matière"

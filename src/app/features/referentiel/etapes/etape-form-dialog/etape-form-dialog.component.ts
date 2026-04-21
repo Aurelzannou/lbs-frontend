@@ -77,8 +77,7 @@ export class EtapeFormDialogComponent implements OnInit {
         this.notification.success(this.isEdit ? 'Étape mise à jour' : 'Étape créée avec succès');
         this.dialogRef.close(true);
       },
-      error: () => {
-        this.notification.error('Une erreur est survenue');
+      error: (err) => {
         this.loading = false;
       }
     });

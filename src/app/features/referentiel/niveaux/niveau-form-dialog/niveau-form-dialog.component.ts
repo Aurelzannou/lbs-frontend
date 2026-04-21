@@ -76,8 +76,7 @@ export class NiveauFormDialogComponent implements OnInit {
         this.notification.success(this.isEdit ? 'Niveau mis à jour' : 'Niveau créé avec succès');
         this.dialogRef.close(true);
       },
-      error: () => {
-        this.notification.error('Une erreur est survenue');
+      error: (err) => {
         this.loading = false;
       }
     });

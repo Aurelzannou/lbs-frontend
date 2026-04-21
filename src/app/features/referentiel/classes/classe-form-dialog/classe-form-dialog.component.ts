@@ -92,8 +92,6 @@ export class ClasseFormDialogComponent implements OnInit {
           this.dialogRef.close(true);
         },
         error: (err) => {
-          console.error('Erreur sauvegarde classe:', err);
-          this.notification.error('Erreur lors de la sauvegarde');
           this.saving = false;
         }
       });

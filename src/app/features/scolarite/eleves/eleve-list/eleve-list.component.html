@@ -82,7 +82,7 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Classe</th>
           <td mat-cell *matCellDef="let row">
             <span class="badge-classe" *ngIf="row.classe">
-              {{ row.classe.libelle }}
+              {{ row.classe.code }}
             </span>
             <span class="text-muted" *ngIf="!row.classe">Non assignée</span>
           </td>
