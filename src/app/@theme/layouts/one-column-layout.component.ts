@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NbLayoutModule, NbSidebarModule } from '@nebular/theme';
+import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../components/header/header.component';
 import { FooterComponent } from '../components/footer/footer.component';
 
@@ -11,22 +12,23 @@ import { FooterComponent } from '../components/footer/footer.component';
     NbSidebarModule,
     HeaderComponent,
     FooterComponent,
+    CommonModule
   ],
   template: `
     <nb-layout>
-      <nb-layout-header fixed>
+      <nb-layout-header fixed *ngIf="!onlyContent">
         <app-header></app-header>
       </nb-layout-header>
 
-      <nb-sidebar class="menu-sidebar" tag="menu-sidebar" responsive>
+      <nb-sidebar class="menu-sidebar" tag="menu-sidebar" responsive *ngIf="!onlyContent">
         <ng-content select="nb-menu"></ng-content>
       </nb-sidebar>
 
       <nb-layout-column>
-        <ng-content select="router-outlet"></ng-content>
+        <ng-content></ng-content>
       </nb-layout-column>
 
-      <nb-layout-footer fixed>
+      <nb-layout-footer fixed *ngIf="!onlyContent">
         <app-footer></app-footer>
       </nb-layout-footer>
     </nb-layout>
@@ -61,4 +63,6 @@ import { FooterComponent } from '../components/footer/footer.component';
     }
   `],
 })
-export class OneColumnLayoutComponent {}
+export class OneColumnLayoutComponent {
+  @Input() onlyContent: boolean = false;
+}

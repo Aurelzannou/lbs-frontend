@@ -14,7 +14,8 @@ import {
   NbFormFieldModule,
   NbSpinnerModule,
   NbTagModule,
-  NbUserModule
+  NbUserModule,
+  NbDialogService
 } from '@nebular/theme';
 import { DossierEleveService } from '../../../../core/services/dossier-eleve.service';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -57,7 +58,7 @@ import { DossierEleveFormDialogComponent } from '../dossier-eleve-form-dialog/do
 export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewInit {
   private dossierService = inject(DossierEleveService);
   private notification = inject(NotificationService);
-  private dialog = inject(MatDialog);
+  private dialog = inject(NbDialogService);
   private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
 
@@ -129,10 +130,11 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
 
   openForm(dossier?: DossierEleve): void {
     this.dialog.open(DossierEleveFormDialogComponent, {
-      width: '800px',
-      data: dossier,
-      panelClass: 'professional-dialog'
-    }).afterClosed().subscribe(result => {
+      context: {
+        data: dossier
+      },
+      closeOnBackdropClick: false,
+    }).onClose.subscribe(result => {
       if (result) this.refresh();
     });
   }

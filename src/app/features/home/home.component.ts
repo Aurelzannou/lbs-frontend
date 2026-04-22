@@ -293,7 +293,9 @@ export class HomeComponent {
   }
 
   get isTuteurLoggedIn() {
-    return !!this.tuteurAuthService.currentTuteurValue;
+    // Vérifier soit le service tuteur spécifique, soit le rôle dans Keycloak
+    const businessRoles = this.authService.getBusinessRoles();
+    return !!this.tuteurAuthService.currentTuteurValue || businessRoles.includes('TUTEUR');
   }
 
   navigateToParent() {

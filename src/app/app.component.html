@@ -1,10 +1,4 @@
-<app-one-column-layout *ngIf="showLayout">
-  <nb-menu [items]="menu"></nb-menu>
+<app-one-column-layout [onlyContent]="!showLayout">
+  <nb-menu [items]="menu" *ngIf="showLayout"></nb-menu>
   <router-outlet></router-outlet>
 </app-one-column-layout>
-
-<nb-layout *ngIf="!showLayout">
-  <nb-layout-column>
-    <router-outlet></router-outlet>
-  </nb-layout-column>
-</nb-layout>

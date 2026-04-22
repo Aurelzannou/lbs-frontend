@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { NbMenuItem } from '@nebular/theme';
+import { AuthService } from './auth.service';
 
 export interface MenuResponse {
   id: number;
@@ -23,13 +24,22 @@ export interface MenuResponse {
 export class MenuService {
   private readonly apiUrl = `${environment.apiUrl}/api/menus`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   /**
    * Récupère les menus de l'utilisateur connecté et les convertit au format NbMenuItem
    */
   getMenuItems(): Observable<NbMenuItem[]> {
-    return this.http.get<any>(`${this.apiUrl}/my-menu`).pipe(
+    const selectedProfile = this.authService.getSelectedProfile();
+    let params = new HttpParams();
+    if (selectedProfile) {
+      params = params.set('profilCode', selectedProfile);
+    }
+
+    return this.http.get<any>(`${this.apiUrl}/my-menu`, { params }).pipe(
       map(response => {
         // La structure est ApiResponse -> { data: MenuResponse[] }
         const menus = response.data || [];

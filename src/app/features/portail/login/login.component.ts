@@ -37,8 +37,16 @@ export class PortalLoginComponent implements OnInit {
   private notification = inject(NotificationService);
 
   ngOnInit(): void {
+    if (this.authService.isLoggingOut) {
+      return;
+    }
+    
     if (this.authService.isLoggedIn) {
-      this.router.navigate(['/portail/dashboard']);
+      const storedToken = localStorage.getItem('access_token');
+      const roles = storedToken 
+        ? this.authService.getRolesFromToken(storedToken)
+        : this.authService.getBusinessRoles();
+      this.authService.redirectAfterLogin(roles);
     }
   }
 
@@ -59,9 +67,10 @@ export class PortalLoginComponent implements OnInit {
       const { email, password } = this.loginForm.value;
 
       this.authService.loginWithCredentials(email!, password!).subscribe({
-        next: () => {
+        next: (result: any) => {
           this.notification.success('Connexion réussie', 'Bienvenue sur votre portail');
-          this.router.navigate(['/portail/dashboard']);
+          const roles = result?.businessRoles ?? this.authService.getBusinessRoles();
+          this.authService.redirectAfterLogin(roles);
         },
         error: (err) => {
           console.error(err);

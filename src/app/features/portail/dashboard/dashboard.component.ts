@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
+import { TuteurAuthService } from '../../../core/services/tuteur-auth.service';
 
 @Component({
   selector: 'app-portal-dashboard',
@@ -216,6 +217,7 @@ import { KeycloakService } from 'keycloak-angular';
 })
 export class PortalDashboardComponent implements OnInit {
   private authService = inject(AuthService);
+  private tuteurAuthService = inject(TuteurAuthService);
   private keycloakService = inject(KeycloakService);
 
   userName: string = 'Parent';
@@ -230,6 +232,6 @@ export class PortalDashboardComponent implements OnInit {
   }
 
   logout() {
-    this.authService.logout();
+    this.tuteurAuthService.logout();
   }
 }

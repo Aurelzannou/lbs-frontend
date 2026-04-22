@@ -27,31 +27,35 @@ export class TuteurAuthService {
     }
   }
 
+  private authService = inject(AuthService);
+
   public get isTuteurLoggedIn(): boolean {
-    return !!localStorage.getItem('tuteur_token');
+    return this.authService.isLoggedIn && this.authService.getRoles().includes('TUTEUR');
   }
 
   login(credentials: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/api/portail/auth/login`, credentials).pipe(
+    // On utilise maintenant le login Keycloak via AuthService
+    return this.authService.loginWithCredentials(credentials.email, credentials.password).pipe(
       tap(response => {
-        localStorage.setItem('tuteur_token', response.token);
-        localStorage.setItem('tuteur_data', JSON.stringify(response));
-        this.tuteurSubject.next(response);
+        // Optionnel : stocker des infos spécifiques tuteur si besoin
+        localStorage.setItem('tuteur_data', JSON.stringify(response.profile));
+        this.tuteurSubject.next(response.profile);
       })
     );
   }
 
   register(tuteur: any): Observable<any> {
+    // L'URL reste la même car le backend gère maintenant la création Keycloak
     return this.http.post<any>(`${this.apiUrl}/api/portail/auth/register`, tuteur);
   }
 
-  private authService: AuthService = inject(AuthService);
-
   logout(): void {
-    this.authService.logout();
+    this.tuteurSubject.next(null);
+    this.authService.logout('/portail/login');
   }
 
   getToken(): string | null {
-    return localStorage.getItem('tuteur_token');
+    // On retourne le token Keycloak maintenant
+    return localStorage.getItem('access_token');
   }
 }

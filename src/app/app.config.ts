@@ -6,7 +6,6 @@ import { KeycloakService, KeycloakBearerInterceptor } from 'keycloak-angular';
 import { environment } from '../environments/environment';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
-import { TuteurAuthInterceptor } from './core/interceptors/tuteur-auth.interceptor';
 
 import { provideToastr } from 'ngx-toastr';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -73,11 +72,6 @@ export const appConfig: ApplicationConfig = {
       useFactory: initializeKeycloak,
       multi: true,
       deps: [KeycloakService]
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TuteurAuthInterceptor,
-      multi: true
     },
     {
       provide: HTTP_INTERCEPTORS,

@@ -14,7 +14,7 @@ import { OnInit } from '@angular/core';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, OneColumnLayoutComponent, NbMenuModule, NbLayoutModule, CommonModule],
+  imports: [RouterOutlet, OneColumnLayoutComponent, NbMenuModule, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

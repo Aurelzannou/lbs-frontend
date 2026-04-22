@@ -9,7 +9,9 @@ import {
   NbFormFieldModule, 
   NbIconModule,
   NbSpinnerModule,
-  NbToggleModule
+  NbToggleModule,
+  NbDialogRef,
+  NbCardModule
 } from '@nebular/theme';
 import { DossierEleveService } from '../../../../core/services/dossier-eleve.service';
 import { EleveService } from '../../../../core/services/eleve.service';
@@ -34,7 +36,8 @@ import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
     NbFormFieldModule,
     NbIconModule,
     NbSpinnerModule,
-    NbToggleModule
+    NbToggleModule,
+    NbCardModule
   ],
   templateUrl: './dossier-eleve-form-dialog.component.html',
   styleUrl: './dossier-eleve-form-dialog.component.scss'
@@ -55,14 +58,14 @@ export class DossierEleveFormDialogComponent implements OnInit {
   classes: Classe[] = [];
   annees: AnneeScolaire[] = [];
 
+  data: DossierEleve = null as any;
+
   constructor(
-    public dialogRef: MatDialogRef<DossierEleveFormDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DossierEleve
-  ) {
-    this.isEdit = !!data;
-  }
+    public dialogRef: NbDialogRef<DossierEleveFormDialogComponent>
+  ) {}
 
   ngOnInit(): void {
+    this.isEdit = !!this.data;
     this.initForm();
     this.loadData();
   }

@@ -47,29 +47,24 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Ne pas rediriger si un logout est en cours (phase transitoire avant Keycloak logout)
+    if (this.authService.isLoggingOut) {
+      return;
+    }
+
     // Si déjà connecté, rediriger selon les rôles
     if (this.authService.isLoggedIn) {
-      const roles = this.authService.getRoles();
-      const relevantRoles = this.filterRelevantRoles(roles);
+      // Lire les rôles depuis le token stocké pour cohérence avec onSubmit
+      const storedToken = localStorage.getItem('access_token');
+      const businessRoles = storedToken
+        ? this.authService.getRolesFromToken(storedToken)
+        : this.authService.getBusinessRoles();
 
-      if (relevantRoles.includes('TUTEUR') && relevantRoles.length === 1) {
-        this.router.navigate(['/portail/dashboard']);
-      } else if (relevantRoles.length > 1) {
-        this.router.navigate(['/auth/select-profile']);
-      } else if (relevantRoles.includes('ADMIN') || relevantRoles.includes('SECRETAIRE')) {
-        this.router.navigate(['/dashboard']);
-      } else {
-        // Par défaut vers le portail
-        this.router.navigate(['/portail/dashboard']);
-      }
+      this.authService.redirectAfterLogin(businessRoles);
       return;
     }
   }
 
-  private filterRelevantRoles(roles: string[]): string[] {
-    const technicalRoles = ['offline_access', 'uma_authorization', 'default-roles-lbs'];
-    return roles.filter(role => !technicalRoles.includes(role) && !role.startsWith('default-roles-'));
-  }
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
@@ -86,22 +81,12 @@ export class LoginComponent implements OnInit {
     const { username, password } = this.loginForm.value;
 
     this.authService.loginWithCredentials(username, password).subscribe({
-      next: () => {
-        const roles = this.authService.getRoles();
-        const relevantRoles = this.filterRelevantRoles(roles);
+      next: (result: any) => {
+        // Les rôles sont extraits directement du JWT — fiables immédiatement
+        const businessRoles: string[] = result?.businessRoles ?? this.authService.getBusinessRoles();
         
-        console.log('Rôles détectés par le Front :', roles);
-        console.log('Rôles filtrés :', relevantRoles);
-        
-        if (relevantRoles.includes('TUTEUR') && relevantRoles.length === 1) {
-          this.router.navigate(['/portail/dashboard']);
-        } else if (relevantRoles.length > 1) {
-          this.router.navigate(['/auth/select-profile']);
-        } else if (relevantRoles.includes('ADMIN') || relevantRoles.includes('SECRETAIRE')) {
-          this.router.navigate(['/dashboard']);
-        } else {
-          this.router.navigate(['/portail/dashboard']);
-        }
+        console.log('Rôles métier détectés :', businessRoles);
+        this.authService.redirectAfterLogin(businessRoles);
       },
       error: (err) => {
         this.loading = false;
@@ -110,4 +95,6 @@ export class LoginComponent implements OnInit {
       }
     });
   }
+
+
 }
