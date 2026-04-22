@@ -106,10 +106,9 @@ export class ProfilListComponent implements OnInit, OnDestroy, AfterViewInit {
     // L'API utilise une pagination 1-based
     this.profilService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
       next: (response: any) => {
-        // ApiService return response.data -> { data: [], meta: {} }
-        const result = response.data || {};
-        this.dataSource.data = result.data || [];
-        const meta = result.meta || {};
+        // L'ApiService retourne déjà response.data qui contient { data: [], meta: {} }
+        this.dataSource.data = response.data || [];
+        const meta = response.meta || {};
         this.totalElements = meta.totalElements || meta.total || this.dataSource.data.length;
         this.loading = false;
         this.cdr.detectChanges();

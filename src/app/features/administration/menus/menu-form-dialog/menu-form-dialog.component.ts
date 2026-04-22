@@ -82,14 +82,18 @@ import { ProfilService, Profil } from '../../../../core/services/profil.service'
 
           <div class="mb-3">
             <label class="label">Profils autorisés</label>
-            <div class="profils-list mt-2">
-              <nb-checkbox *ngFor="let p of allProfils" 
-                           [checked]="isProfilSelected(p.id)"
-                           (checkedChange)="toggleProfil(p.id, $event)">
-                {{ p.libelle }} ({{ p.code }})
-              </nb-checkbox>
-            </div>
-            <p class="hint" *ngIf="allProfils.length === 0">Aucun profil disponible</p>
+            <ng-select [items]="allProfils"
+                       bindLabel="libelle"
+                       bindValue="id"
+                       formControlName="profilIds"
+                       [multiple]="true"
+                       [closeOnSelect]="false"
+                       placeholder="Choisir les profils..."
+                       class="custom-ng-select">
+              <ng-template ng-option-tmp let-item="item">
+                {{ item.libelle }} <small class="text-hint">({{ item.code }})</small>
+              </ng-template>
+            </ng-select>
           </div>
 
           <div class="d-flex justify-content-end gap-2 mt-4">
@@ -187,45 +191,39 @@ export class MenuFormDialogComponent implements OnInit {
       code: [this.data?.code || '', Validators.required],
       path: [this.data?.path || ''],
       ordre: [this.data?.ordre || 1, [Validators.required, Validators.min(1)]],
-      menuEnfantId: [this.data?.menuEnfantId || null]
+      menuEnfantId: [this.data?.menuEnfantId || null],
+      profilIds: [[]]
     });
 
     this.loadProfils();
     this.loadParentMenus();
 
     if (this.isEdit && this.data.profils) {
-      this.selectedProfilIds = this.data.profils.map((p: any) => p.id || p);
+      const ids = this.data.profils.map((p: any) => p.id || p);
+      this.form.patchValue({ profilIds: ids });
     }
   }
 
   loadProfils(): void {
-    this.profilService.getAll().subscribe({
+    this.profilService.getAll(1, 100).subscribe({
       next: (response: any) => {
-        // ApiService return already response.data -> { data: [], meta: {} }
+        // L'ApiService retourne déjà response.data qui contient { data: [], meta: {} }
         this.allProfils = response.data || [];
       }
     });
   }
 
   loadParentMenus(): void {
-    this.menuService.getAll().subscribe({
-      next: (menus: MenuResponse[]) => {
+    // On demande une grande page pour être sûr d'avoir tous les menus parents potentiels
+    this.menuService.getAll(1, 100).subscribe({
+      next: (response: any) => {
+        // Le Backend renvoie ApiResponse -> { data: { data: MenuResponse[], meta: {} } }
+        const items = response.data?.data || [];
         // N'afficher que les menus racines (sans parent) comme candidats parents
-        this.parentMenus = menus.filter(m => m.menuEnfantId == null);
-      }
+        this.parentMenus = items.filter((m: any) => m.menuEnfantId == null);
+      },
+      error: (err) => console.error('Erreur chargement menus parents:', err)
     });
-  }
-
-  isProfilSelected(id: number): boolean {
-    return this.selectedProfilIds.includes(id);
-  }
-
-  toggleProfil(id: number, checked: boolean): void {
-    if (checked) {
-      if (!this.selectedProfilIds.includes(id)) this.selectedProfilIds.push(id);
-    } else {
-      this.selectedProfilIds = this.selectedProfilIds.filter(pid => pid !== id);
-    }
   }
 
   async onSubmit(): Promise<void> {
@@ -241,12 +239,10 @@ export class MenuFormDialogComponent implements OnInit {
     this.loading = true;
     const formVal = this.form.value;
     const request = {
-      titre: formVal.titre,
+      ...formVal,
       code: formVal.code.toUpperCase(),
       path: formVal.path || null,
-      ordre: formVal.ordre,
-      menuEnfantId: formVal.menuEnfantId || null,
-      profilIds: this.selectedProfilIds
+      menuEnfantId: formVal.menuEnfantId || null
     };
 
     const obs$ = this.isEdit
