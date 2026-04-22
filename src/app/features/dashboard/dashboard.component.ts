@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, MatCardModule, MatIconModule, MatButtonModule, RouterModule],
   template: `
     <div class="dashboard-container">
       <!-- Welcome Banner -->
@@ -90,7 +91,7 @@ import { MatButtonModule } from '@angular/material/button';
             <h2>Actions Rapides</h2>
           </header>
           <div class="actions-grid">
-            <button mat-flat-button class="action-btn yellow-btn">
+            <button mat-flat-button class="action-btn yellow-btn" routerLink="/scolarite/inscriptions">
               <mat-icon>person_add</mat-icon> Inscrire un élève
             </button>
             <button mat-flat-button class="action-btn outline-btn">

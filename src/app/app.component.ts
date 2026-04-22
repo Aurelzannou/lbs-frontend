@@ -32,7 +32,8 @@ export class AppComponent implements OnInit {
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
       this.showLayout = !event.urlAfterRedirects.includes('/login') && 
-                        !event.urlAfterRedirects.includes('/register');
+                        !event.urlAfterRedirects.includes('/register') &&
+                        !event.urlAfterRedirects.includes('/portail');
 
       // Si l'utilisateur est connecté et que le menu n'est pas encore chargé
       if (this.showLayout && this.authService.isLoggedIn && this.menu.length === 0) {

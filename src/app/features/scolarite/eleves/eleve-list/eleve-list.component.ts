@@ -19,6 +19,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { Eleve } from '../../../../core/models/eleve.model';
 import { EleveFormDialogComponent } from '../eleve-form-dialog/eleve-form-dialog.component';
 import { EleveDetailDialogComponent } from '../eleve-detail-dialog/eleve-detail-dialog.component';
+import { DossierEleveFormDialogComponent } from '../../inscriptions/dossier-eleve-form-dialog/dossier-eleve-form-dialog.component';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -192,6 +193,14 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialog.open(EleveDetailDialogComponent, {
       width: '500px',
       data: eleve,
+      panelClass: 'professional-dialog'
+    });
+  }
+
+  openInscriptionForm(eleve: Eleve): void {
+    this.dialog.open(DossierEleveFormDialogComponent, {
+      width: '800px',
+      data: { eleveId: eleve.id, eleve: eleve },
       panelClass: 'professional-dialog'
     });
   }

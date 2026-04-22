@@ -14,6 +14,8 @@ export interface Eleve {
   photo?: string;
   classeId?: number;
   classe?: Classe;
+  tuteurId?: number;
+  tuteur?: any; // To be replaced with Tuteur when imported
 }
 
 export interface Inscription {

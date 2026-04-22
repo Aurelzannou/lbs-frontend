@@ -52,8 +52,14 @@ export class CategorieDepenseFormDialogComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.valid) {
+      const confirmed = await this.notification.confirm(
+        this.isEdit ? 'Voulez-vous modifier cette catégorie ?' : 'Voulez-vous créer cette catégorie ?',
+        'Confirmation'
+      );
+      if (!confirmed) return;
+
       this.saving = true;
       const val = this.form.value;
       

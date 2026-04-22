@@ -87,8 +87,14 @@ export class FraisScolaireFormDialogComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.valid) {
+      const confirmed = await this.notification.confirm(
+        this.isEdit ? 'Voulez-vous modifier ces frais ?' : 'Voulez-vous créer ces frais ?',
+        'Confirmation'
+      );
+      if (!confirmed) return;
+
       this.saving = true;
       const val = this.form.value;
       

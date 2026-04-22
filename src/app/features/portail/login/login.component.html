@@ -1,0 +1,47 @@
+<div class="login-container">
+  <div class="login-overlay"></div>
+  
+  <mat-card class="login-card">
+    <div class="card-header">
+      <div class="logo-container">
+        <img src="assets/images/logo.png" alt="LBS Logo" class="logo">
+      </div>
+      <h2>Portail Tuteur</h2>
+      <p>Connectez-vous pour suivre la scolarité de vos enfants</p>
+    </div>
+
+    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="votre@email.com">
+          <mat-icon matPrefix>email</mat-icon>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">L'email est requis</mat-error>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Format d'email invalide</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mot de passe</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Le mot de passe est requis</mat-error>
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-raised-button color="primary" class="btn-login" [disabled]="loginForm.invalid || loading" type="submit">
+            SE CONNECTER
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer class="card-footer">
+      <p>Pas encore de compte ? <a routerLink="/portail/register">Inscrivez-vous ici</a></p>
+    </mat-card-footer>
+  </mat-card>
+</div>

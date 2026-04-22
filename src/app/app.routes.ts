@@ -7,6 +7,7 @@ import { NiveauListComponent } from './features/referentiel/niveaux/niveau-list/
 import { EtapeListComponent } from './features/referentiel/etapes/etape-list/etape-list.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
+import { tuteurGuard } from './core/guards/tuteur.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -62,10 +63,7 @@ export const routes: Routes = [
         path: 'modes-paiements', 
         loadComponent: () => import('./features/referentiel/modes-paiements/mode-paiement-list/mode-paiement-list.component').then(m => m.ModePaiementListComponent) 
       },
-      { 
-        path: 'periodes-academiques', 
-        loadComponent: () => import('./features/referentiel/periodes-academiques/periode-academique-list/periode-academique-list.component').then(m => m.PeriodeAcademiqueListComponent) 
-      },
+
       { 
         path: 'types-actes', 
         loadComponent: () => import('./features/referentiel/types-actes/type-acte-list/type-acte-list.component').then(m => m.TypeActeListComponent) 
@@ -114,6 +112,34 @@ export const routes: Routes = [
       {
         path: 'eleves',
         loadComponent: () => import('./features/scolarite/eleves/eleve-list/eleve-list.component').then(m => m.EleveListComponent)
+      },
+      {
+        path: 'inscriptions',
+        loadComponent: () => import('./features/scolarite/inscriptions/dossier-eleve-list/dossier-eleve-list.component').then(m => m.DossierEleveListComponent)
+      }
+    ]
+  },
+  {
+    path: 'portail',
+    children: [
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+      { 
+        path: 'login', 
+        loadComponent: () => import('./features/portail/login/login.component').then(m => m.PortalLoginComponent) 
+      },
+      { 
+        path: 'register', 
+        loadComponent: () => import('./features/portail/register/register.component').then(m => m.PortalRegisterComponent) 
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/portail/dashboard/dashboard.component').then(m => m.PortalDashboardComponent),
+        canActivate: [tuteurGuard]
+      },
+      {
+        path: 'inscription',
+        loadComponent: () => import('./features/portail/inscription/inscription.component').then(m => m.PortalInscriptionComponent),
+        canActivate: [tuteurGuard]
       }
     ]
   },

@@ -52,8 +52,14 @@ export class TypeActeFormDialogComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.valid) {
+      const confirmed = await this.notification.confirm(
+        this.isEdit ? 'Voulez-vous modifier ce type d\'acte ?' : 'Voulez-vous créer ce type d\'acte ?',
+        'Confirmation'
+      );
+      if (!confirmed) return;
+
       this.saving = true;
       const val = this.form.value;
       

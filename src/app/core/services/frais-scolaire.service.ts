@@ -32,4 +32,11 @@ export class FraisScolaireService {
   delete(uuid: string): Observable<void> {
     return this.api.delete<void>(`${this.endpoint}/${uuid}`);
   }
+
+  getFraisByClasseAndAnnee(classeId: number, anneeId: number): Observable<FraisScolaire[]> {
+    const params = new HttpParams()
+      .set('classeId', classeId.toString())
+      .set('anneeScolaireId', anneeId.toString());
+    return this.api.get<FraisScolaire[]>(`${this.endpoint}/search`, params);
+  }
 }

@@ -52,8 +52,14 @@ export class TypeFraisFormDialogComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.valid) {
+      const confirmed = await this.notification.confirm(
+        this.isEdit ? 'Voulez-vous modifier ce type de frais ?' : 'Voulez-vous créer ce type de frais ?',
+        'Confirmation'
+      );
+      if (!confirmed) return;
+
       this.saving = true;
       const val = this.form.value;
       
