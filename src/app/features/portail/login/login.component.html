@@ -1,47 +1,96 @@
-<div class="login-container">
-  <div class="login-overlay"></div>
-  
-  <mat-card class="login-card">
-    <div class="card-header">
+<div class="login-wrapper">
+  <!-- Section Illustration (Gauche) -->
+  <div class="illustration-section portal-bg">
+    <div class="overlay"></div>
+    <div class="content">
       <div class="logo-container">
-        <img src="assets/images/logo.png" alt="LBS Logo" class="logo">
+        <div class="logo-circle">LBS</div>
+        <h1>LBS Education</h1>
+        <p>Portail Parents</p>
       </div>
-      <h2>Portail Tuteur</h2>
-      <p>Connectez-vous pour suivre la scolarité de vos enfants</p>
-    </div>
-
-    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
-
-    <mat-card-content>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email" placeholder="votre@email.com">
-          <mat-icon matPrefix>email</mat-icon>
-          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">L'email est requis</mat-error>
-          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Format d'email invalide</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Mot de passe</mat-label>
-          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
-          <mat-icon matPrefix>lock</mat-icon>
-          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
-            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </button>
-          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Le mot de passe est requis</mat-error>
-        </mat-form-field>
-
-        <div class="actions">
-          <button mat-raised-button color="primary" class="btn-login" [disabled]="loginForm.invalid || loading" type="submit">
-            SE CONNECTER
-          </button>
+      <div class="welcome-text">
+        <h2>Bienvenue sur votre espace</h2>
+        <p>Inscrivez vos enfants et gérez leur parcours scolaire en quelques clics.</p>
+      </div>
+      <div class="features-list">
+        <div class="feature-item">
+          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+          <span>Inscription en ligne simplifiée</span>
         </div>
-      </form>
-    </mat-card-content>
+        <div class="feature-item">
+          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+          <span>Paiement sécurisé par Mobile Money</span>
+        </div>
+        <div class="feature-item">
+          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+          <span>Suivi des dossiers en temps réel</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <mat-card-footer class="card-footer">
-      <p>Pas encore de compte ? <a routerLink="/portail/register">Inscrivez-vous ici</a></p>
-    </mat-card-footer>
-  </mat-card>
+  <!-- Section Formulaire (Droite) -->
+  <div class="form-section">
+    <div class="login-container">
+      <nb-card [nbSpinner]="loading" nbSpinnerStatus="primary">
+        <nb-card-header>
+          <h3>Connexion Parent</h3>
+          <p class="subtitle">Accédez à votre compte pour continuer</p>
+        </nb-card-header>
+        <nb-card-body>
+          <nb-alert *ngIf="error" status="danger" closable (close)="error = null">
+            {{ error }}
+          </nb-alert>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="form-control-group">
+              <label class="label" for="email">Adresse Email</label>
+              <input 
+                nbInput 
+                fullWidth 
+                id="email" 
+                formControlName="email" 
+                placeholder="Ex: parent@exemple.com"
+                [status]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid ? 'danger' : 'basic'">
+            </div>
+
+            <div class="form-control-group">
+              <label class="label" for="password">Mot de passe</label>
+              <div class="password-input-wrapper">
+                <input 
+                  nbInput 
+                  fullWidth 
+                  id="password" 
+                  [type]="showPassword ? 'text' : 'password'" 
+                  formControlName="password" 
+                  placeholder="********"
+                  [status]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid ? 'danger' : 'basic'">
+                <button type="button" nbButton ghost (click)="showPassword = !showPassword" class="toggle-password">
+                  <nb-icon [icon]="showPassword ? 'eye-outline' : 'eye-off-outline'"></nb-icon>
+                </button>
+              </div>
+            </div>
+
+            <button nbButton fullWidth status="primary" size="large" [disabled]="loading || loginForm.invalid">
+              Se connecter
+            </button>
+          </form>
+        </nb-card-body>
+        <nb-card-footer>
+          <div class="footer-register">
+            <span>Nouvel utilisateur ?</span>
+            <a routerLink="/portail/register">Créer un compte</a>
+          </div>
+          <p class="copyright">© 2026 LBS Education. Tous droits réservés.</p>
+        </nb-card-footer>
+      </nb-card>
+      
+      <div class="back-home">
+        <a routerLink="/home">
+          <nb-icon icon="arrow-back-outline"></nb-icon>
+          Retour à l'accueil
+        </a>
+      </div>
+    </div>
+  </div>
 </div>

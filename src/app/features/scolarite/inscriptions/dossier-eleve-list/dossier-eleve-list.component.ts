@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ChangeDetectorRef, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort } from '@angular/material/sort';
@@ -58,6 +59,7 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
 
   displayedColumns: string[] = ['numero', 'eleve', 'classe', 'annee', 'statut', 'actions'];
   dataSource = new MatTableDataSource<DossierEleve>([]);
@@ -84,6 +86,13 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
       this.refresh();
     });
     this.refresh();
+
+    // Ouvrir le formulaire automatiquement si demandé (depuis le dashboard)
+    this.route.queryParams.subscribe(params => {
+      if (params['openForm'] === 'true') {
+        this.openForm();
+      }
+    });
   }
 
   ngAfterViewInit(): void {

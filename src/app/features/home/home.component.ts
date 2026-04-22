@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { TuteurAuthService } from '../../core/services/tuteur-auth.service';
 
@@ -284,9 +284,9 @@ import { TuteurAuthService } from '../../core/services/tuteur-auth.service';
   `]
 })
 export class HomeComponent {
-  private authService = inject(AuthService);
-  private tuteurAuthService = inject(TuteurAuthService);
-  private router = inject(Router);
+  private authService: AuthService = inject(AuthService);
+  private tuteurAuthService: TuteurAuthService = inject(TuteurAuthService);
+  private router: Router = inject(Router);
 
   get isAdminLoggedIn() {
     return this.authService.isLoggedIn;

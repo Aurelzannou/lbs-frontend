@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NbMenuModule, NbMenuItem } from '@nebular/theme';
+import { NbMenuModule, NbMenuItem, NbLayoutModule } from '@nebular/theme';
 import { OneColumnLayoutComponent } from './@theme/layouts/one-column-layout.component';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
@@ -14,7 +14,7 @@ import { OnInit } from '@angular/core';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, OneColumnLayoutComponent, NbMenuModule, CommonModule],
+  imports: [RouterOutlet, OneColumnLayoutComponent, NbMenuModule, NbLayoutModule, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -33,6 +33,8 @@ export class AppComponent implements OnInit {
     ).subscribe((event: any) => {
       this.showLayout = !event.urlAfterRedirects.includes('/login') && 
                         !event.urlAfterRedirects.includes('/register') &&
+                        !event.urlAfterRedirects.includes('/auth') &&
+                        !event.urlAfterRedirects.includes('/home') &&
                         !event.urlAfterRedirects.includes('/portail');
 
       // Si l'utilisateur est connecté et que le menu n'est pas encore chargé

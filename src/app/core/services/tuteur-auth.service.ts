@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -44,11 +45,10 @@ export class TuteurAuthService {
     return this.http.post<any>(`${this.apiUrl}/api/portail/auth/register`, tuteur);
   }
 
+  private authService: AuthService = inject(AuthService);
+
   logout(): void {
-    localStorage.removeItem('tuteur_token');
-    localStorage.removeItem('tuteur_data');
-    this.tuteurSubject.next(null);
-    this.router.navigate(['/portail/login']);
+    this.authService.logout();
   }
 
   getToken(): string | null {

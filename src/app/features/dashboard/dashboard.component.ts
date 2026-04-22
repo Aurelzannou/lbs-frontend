@@ -91,7 +91,9 @@ import { RouterModule } from '@angular/router';
             <h2>Actions Rapides</h2>
           </header>
           <div class="actions-grid">
-            <button mat-flat-button class="action-btn yellow-btn" routerLink="/scolarite/inscriptions">
+            <button mat-flat-button class="action-btn yellow-btn" 
+                    routerLink="/scolarite/inscriptions" 
+                    [queryParams]="{ openForm: 'true' }">
               <mat-icon>person_add</mat-icon> Inscrire un élève
             </button>
             <button mat-flat-button class="action-btn outline-btn">

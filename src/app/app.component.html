@@ -3,4 +3,8 @@
   <router-outlet></router-outlet>
 </app-one-column-layout>
 
-<router-outlet *ngIf="!showLayout"></router-outlet>
+<nb-layout *ngIf="!showLayout">
+  <nb-layout-column>
+    <router-outlet></router-outlet>
+  </nb-layout-column>
+</nb-layout>

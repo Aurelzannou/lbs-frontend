@@ -1,14 +1,14 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { TuteurAuthService } from '../services/tuteur-auth.service';
+import { AuthService } from '../services/auth.service';
 
 export const tuteurGuard = () => {
-  const authService = inject(TuteurAuthService);
+  const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.isTuteurLoggedIn) {
+  if (authService.isLoggedIn && authService.getRoles().includes('TUTEUR')) {
     return true;
   }
 
-  return router.parseUrl('/portail/login');
+  return router.parseUrl('/login');
 };

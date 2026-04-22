@@ -14,6 +14,11 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { 
+    path: 'auth/select-profile', 
+    loadComponent: () => import('./features/auth/select-profile/select-profile.component').then(m => m.ProfileSelectionComponent),
+    canActivate: [AuthGuard]
+  },
   {
     path: 'dashboard',
     component: DashboardComponent,
