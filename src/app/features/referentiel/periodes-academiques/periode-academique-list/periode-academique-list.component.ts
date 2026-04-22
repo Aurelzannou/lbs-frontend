@@ -55,7 +55,7 @@ export class PeriodeAcademiqueListComponent implements OnInit, OnDestroy, AfterV
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns: string[] = ['code', 'libelle', 'dates', 'actions'];
+  displayedColumns: string[] = ['anneeScolaire', 'code', 'libelle', 'dates', 'actions'];
   dataSource = new MatTableDataSource<PeriodeAcademique>([]);
   loading = false;
 

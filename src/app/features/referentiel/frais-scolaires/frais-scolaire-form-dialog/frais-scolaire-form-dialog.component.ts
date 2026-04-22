@@ -11,9 +11,13 @@ import {
 } from '@nebular/theme';
 import { FraisScolaireService } from '../../../../core/services/frais-scolaire.service';
 import { ClasseService } from '../../../../core/services/classe.service';
+import { AnneeScolaireService } from '../../../../core/services/annee-scolaire.service';
+import { TypeFraisService } from '../../../../core/services/type-frais.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { FraisScolaire } from '../../../../core/models/frais-scolaire.model';
 import { Classe } from '../../../../core/models/classe.model';
+import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
+import { TypeFrais } from '../../../../core/models/type-frais.model';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
@@ -39,39 +43,47 @@ export class FraisScolaireFormDialogComponent implements OnInit {
   public data = inject<FraisScolaire | undefined>(MAT_DIALOG_DATA);
   private fraisScolaireService = inject(FraisScolaireService);
   private classeService = inject(ClasseService);
+  private anneeScolaireService = inject(AnneeScolaireService);
+  private typeFraisService = inject(TypeFraisService);
   private notification = inject(NotificationService);
 
   form!: FormGroup;
   loading = false;
   saving = false;
   classes: Classe[] = [];
+  anneesScolaires: AnneeScolaire[] = [];
+  typesFrais: TypeFrais[] = [];
   isEdit = false;
 
   ngOnInit(): void {
     this.isEdit = !!this.data;
     this.initForm();
-    this.loadClasses();
+    this.loadData();
   }
 
   private initForm(): void {
     this.form = this.fb.group({
-      classeId: [this.data?.classe?.id || null, [Validators.required]],
+      anneeScolaireId: [this.data?.anneeScolaireId || this.data?.anneeScolaire?.id || null, [Validators.required]],
+      typeFraisId: [this.data?.typeFraisId || this.data?.typeFrais?.id || null, [Validators.required]],
+      classeId: [this.data?.classeId || this.data?.classe?.id || null, [Validators.required]],
       code: [this.data?.code || '', [Validators.required]],
       montant: [this.data?.montant || 0, [Validators.required, Validators.min(0)]]
     });
   }
 
-  private loadClasses(): void {
+  private loadData(): void {
     this.loading = true;
-    this.classeService.getAll(1, 100).subscribe({
-      next: (res) => {
-        this.classes = res.data || [];
-        this.loading = false;
-      },
-      error: () => {
-        this.notification.error('Erreur chargement classes');
-        this.loading = false;
-      }
+    
+    // Load Classes
+    this.classeService.getAll(1, 100).subscribe(res => this.classes = res.data || []);
+    
+    // Load Annees Scolaires
+    this.anneeScolaireService.getAll(1, 100).subscribe(res => this.anneesScolaires = res.data || []);
+    
+    // Load Types de Frais
+    this.typeFraisService.getAll(1, 100).subscribe(res => {
+      this.typesFrais = res.data || [];
+      this.loading = false;
     });
   }
 

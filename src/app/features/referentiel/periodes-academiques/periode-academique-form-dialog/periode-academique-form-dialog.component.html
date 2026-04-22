@@ -10,6 +10,20 @@
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-content">
     <div class="form-grid">
+      <!-- Année Scolaire -->
+      <div class="form-field">
+        <label>Année Scolaire</label>
+        <ng-select
+          [items]="anneesScolaires"
+          bindLabel="code"
+          bindValue="id"
+          formControlName="anneeScolaireId"
+          placeholder="Sélectionner l'année"
+          class="custom-ng-select"
+          [loading]="loading">
+        </ng-select>
+      </div>
+
       <!-- Code -->
       <div class="form-field">
         <label>Code</label>

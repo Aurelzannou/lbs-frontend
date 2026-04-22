@@ -59,8 +59,9 @@ export class CoefficientFormDialogComponent implements OnInit {
 
   private initForm(): void {
     this.form = this.fb.group({
-      niveauId: [this.data?.niveau?.id || null, [Validators.required]],
-      matiereId: [this.data?.matiere?.id || null, [Validators.required]],
+      niveauId: [this.data?.niveauId || this.data?.niveau?.id || null, [Validators.required]],
+      matiereId: [this.data?.matiereId || this.data?.matiere?.id || null, [Validators.required]],
+      code: [this.data?.code || '', [Validators.required]],
       valeur: [this.data?.valeur || 1, [Validators.required, Validators.min(1)]]
     });
   }

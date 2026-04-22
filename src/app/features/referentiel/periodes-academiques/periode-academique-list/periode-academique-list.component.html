@@ -33,6 +33,12 @@
 
     <div class="table-wrapper">
       <table class="data-table" mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="anneeScolaire">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Année</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="badge-code">{{ row.anneeScolaire?.code }}</span>
+          </td>
+        </ng-container>
         <ng-container matColumnDef="code">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
           <td mat-cell *matCellDef="let row">

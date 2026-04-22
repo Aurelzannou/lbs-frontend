@@ -35,7 +35,19 @@
       <table class="data-table" mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="classe">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Classe</th>
-          <td mat-cell *matCellDef="let row">{{ row.classe?.libelle }}</td>
+          <td mat-cell *matCellDef="let row">{{ row.classe?.code }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="typeFrais">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Type de Frais</th>
+          <td mat-cell *matCellDef="let row">{{ row.typeFrais?.libelle }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="anneeScolaire">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Année</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="badge-code">{{ row.anneeScolaire?.code }}</span>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="code">

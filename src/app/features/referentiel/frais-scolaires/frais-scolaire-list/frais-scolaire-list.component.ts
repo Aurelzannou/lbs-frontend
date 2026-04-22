@@ -55,7 +55,7 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns: string[] = ['classe', 'code', 'montant', 'actions'];
+  displayedColumns: string[] = ['classe', 'typeFrais', 'anneeScolaire', 'code', 'montant', 'actions'];
   dataSource = new MatTableDataSource<FraisScolaire>([]);
   loading = false;
 

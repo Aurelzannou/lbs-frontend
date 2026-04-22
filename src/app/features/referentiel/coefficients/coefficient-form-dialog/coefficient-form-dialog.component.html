@@ -38,6 +38,13 @@
         </ng-select>
       </div>
 
+      <!-- Code -->
+      <div class="form-field">
+        <label>Code</label>
+        <input nbInput fullWidth placeholder="Ex: COEFF-MAT1-NIV1" formControlName="code"
+               [status]="form.get('code')?.invalid && form.get('code')?.touched ? 'danger' : 'basic'">
+      </div>
+
       <!-- Valeur -->
       <div class="form-field">
         <label>Valeur du coefficient</label>

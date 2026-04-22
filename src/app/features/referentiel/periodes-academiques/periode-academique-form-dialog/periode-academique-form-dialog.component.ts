@@ -11,8 +11,11 @@ import {
   NbDatepickerModule
 } from '@nebular/theme';
 import { PeriodeAcademiqueService } from '../../../../core/services/periode-academique.service';
+import { AnneeScolaireService } from '../../../../core/services/annee-scolaire.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { PeriodeAcademique } from '../../../../core/models/periode-academique.model';
+import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-periode-academique-form-dialog',
@@ -26,7 +29,8 @@ import { PeriodeAcademique } from '../../../../core/models/periode-academique.mo
     NbFormFieldModule,
     NbIconModule,
     NbSpinnerModule,
-    NbDatepickerModule
+    NbDatepickerModule,
+    NgSelectModule
   ],
   templateUrl: './periode-academique-form-dialog.component.html',
   styleUrl: './periode-academique-form-dialog.component.scss'
@@ -36,23 +40,42 @@ export class PeriodeAcademiqueFormDialogComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<PeriodeAcademiqueFormDialogComponent>);
   public data = inject<PeriodeAcademique | undefined>(MAT_DIALOG_DATA);
   private periodeService = inject(PeriodeAcademiqueService);
+  private anneeScolaireService = inject(AnneeScolaireService);
   private notification = inject(NotificationService);
 
   form!: FormGroup;
+  loading = false;
   saving = false;
+  anneesScolaires: AnneeScolaire[] = [];
   isEdit = false;
 
   ngOnInit(): void {
     this.isEdit = !!this.data;
     this.initForm();
+    this.loadAnnees();
   }
 
   private initForm(): void {
     this.form = this.fb.group({
+      anneeScolaireId: [this.data?.anneeScolaireId || this.data?.anneeScolaire?.id || null, [Validators.required]],
       code: [this.data?.code || '', [Validators.required, Validators.maxLength(20)]],
       libelle: [this.data?.libelle || '', [Validators.required]],
       dateDebut: [this.data?.dateDebut ? new Date(this.data.dateDebut) : null, [Validators.required]],
       dateFin: [this.data?.dateFin ? new Date(this.data.dateFin) : null, [Validators.required]]
+    });
+  }
+
+  private loadAnnees(): void {
+    this.loading = true;
+    this.anneeScolaireService.getAll(1, 100).subscribe({
+      next: (res) => {
+        this.anneesScolaires = res.data || [];
+        this.loading = false;
+      },
+      error: () => {
+        this.notification.error('Erreur chargement années scolaires');
+        this.loading = false;
+      }
     });
   }
 

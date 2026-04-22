@@ -10,12 +10,40 @@
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-content">
     <div class="form-grid">
+      <!-- Année Scolaire -->
+      <div class="form-field">
+        <label>Année Scolaire</label>
+        <ng-select
+          [items]="anneesScolaires"
+          bindLabel="code"
+          bindValue="id"
+          formControlName="anneeScolaireId"
+          placeholder="Sélectionner l'année"
+          class="custom-ng-select"
+          [loading]="loading">
+        </ng-select>
+      </div>
+
+      <!-- Type de Frais -->
+      <div class="form-field">
+        <label>Type de Frais</label>
+        <ng-select
+          [items]="typesFrais"
+          bindLabel="libelle"
+          bindValue="id"
+          formControlName="typeFraisId"
+          placeholder="Sélectionner le type"
+          class="custom-ng-select"
+          [loading]="loading">
+        </ng-select>
+      </div>
+
       <!-- Classe -->
       <div class="form-field">
         <label>Classe concernée</label>
         <ng-select
           [items]="classes"
-          bindLabel="libelle"
+          bindLabel="code"
           bindValue="id"
           formControlName="classeId"
           placeholder="Sélectionner une classe"
@@ -24,11 +52,11 @@
         </ng-select>
       </div>
 
-      <!-- Libellé -->
+      <!-- Code/Libellé -->
       <div class="form-field">
-        <label>Libellé des frais</label>
-        <input nbInput fullWidth placeholder="Ex: Scolarité, Inscription..." formControlName="libelle"
-               [status]="form.get('libelle')?.invalid && form.get('libelle')?.touched ? 'danger' : 'basic'">
+        <label>Code/Libellé des frais</label>
+        <input nbInput fullWidth placeholder="Ex: SCOL-2024, INSCR..." formControlName="code"
+               [status]="form.get('code')?.invalid && form.get('code')?.touched ? 'danger' : 'basic'">
       </div>
 
       <!-- Montant -->
