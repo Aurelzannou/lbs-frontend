@@ -241,6 +241,18 @@
   }
 }
 
+// ── Retour accueil ────────────────────────────────────────────────────────────
+.back-home {
+  margin-top: 1.25rem; text-align: center;
+  a {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    text-decoration: none; color: #94a3b8; font-size: 0.88rem; font-weight: 600;
+    transition: color 0.2s;
+    mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
+    &:hover { color: #d97706; }
+  }
+}
+
 // ── Material form field overrides ─────────────────────────────────────────────
 ::ng-deep {
   .login-card mat-form-field {
