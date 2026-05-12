@@ -9,8 +9,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NbLayoutModule, NbAlertModule, NbIconModule } from '@nebular/theme';
-
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -22,8 +20,7 @@ import { NbLayoutModule, NbAlertModule, NbIconModule } from '@nebular/theme';
     MatCardModule,
     MatInputModule, MatFormFieldModule,
     MatIconModule,
-    MatProgressSpinnerModule,
-    NbLayoutModule, NbAlertModule, NbIconModule
+    MatProgressSpinnerModule
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']

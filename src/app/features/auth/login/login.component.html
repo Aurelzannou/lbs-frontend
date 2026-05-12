@@ -1,90 +1,120 @@
 <div class="login-wrapper">
-  <!-- Section Illustration (Gauche) -->
+
+  <!-- ── Panneau gauche – illustration ── -->
   <div class="illustration-section">
     <div class="overlay"></div>
     <div class="content">
+
       <div class="logo-container">
         <h1>LBS</h1>
-        <p>Legal Business Solutions</p>
+        <p>LEGAL BUSINESS SOLUTIONS</p>
       </div>
+
       <div class="welcome-text">
         <h2>Bienvenue sur votre plateforme</h2>
         <p>Gérez vos actes et vos processus métiers en toute simplicité.</p>
       </div>
+
       <div class="features-list">
         <div class="feature-item">
-          <mat-icon></mat-icon>
+          <mat-icon>category</mat-icon>
           <span>Gestion de référentiels</span>
         </div>
         <div class="feature-item">
-          <mat-icon></mat-icon>
+          <mat-icon>security</mat-icon>
           <span>Sécurité renforcée</span>
         </div>
         <div class="feature-item">
-          <mat-icon></mat-icon>
+          <mat-icon>touch_app</mat-icon>
           <span>Interface intuitive</span>
         </div>
       </div>
+
     </div>
   </div>
 
-  <!-- Section Formulaire (Droite) -->
+  <!-- ── Panneau droit – formulaire ── -->
   <div class="form-section">
     <div class="login-container">
-      <mat-card>
+
+      <mat-card class="login-card">
+
         <mat-card-header>
+          <div class="card-logo">
+            <mat-icon>admin_panel_settings</mat-icon>
+          </div>
           <h3>Connexion</h3>
           <p class="subtitle">Entrez vos identifiants pour continuer</p>
         </mat-card-header>
+
         <mat-card-content>
-          @if (error) {<div class="alert alert-danger"><button class="alert-close" (click)="error = null">&times;</button>
-            {{ error }}
-          </div>}
+
+          <!-- Message d'erreur -->
+          @if (error) {
+            <div class="alert-error">
+              <mat-icon>error_outline</mat-icon>
+              <span>{{ error }}</span>
+              <button class="alert-close" (click)="error = null">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          }
 
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <div class="form-control-group">
-              <label class="label" for="username">Nom d'utilisateur</label>
-              <input matInput 
-                id="username" 
-                formControlName="username" 
-                placeholder="Ex: john.doe"
-                >
-              <p class="error-text" *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.hasError('required')">
-                Le nom d'utilisateur est requis.
-              </p>
-            </div>
 
-            <div class="form-control-group">
-              <label class="label" for="password">Mot de passe</label>
-              <div class="password-input-wrapper">
-                <input matInput 
-                  id="password" 
-                  [type]="showPassword ? 'text' : 'password'" 
-                  formControlName="password" 
-                  placeholder="********"
-                  >
-                <button type="button" mat-icon-button (click)="togglePassword()" class="toggle-password">
-                  <mat-icon></mat-icon>
-                </button>
-              </div>
-              <p class="error-text" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')">
-                Le mot de passe est requis.
-              </p>
-            </div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nom d'utilisateur</mat-label>
+              <mat-icon matPrefix>person_outline</mat-icon>
+              <input matInput
+                     formControlName="username"
+                     placeholder="Ex: john.doe"
+                     autocomplete="username">
+              <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+                Le nom d'utilisateur est requis
+              </mat-error>
+            </mat-form-field>
 
-            <button mat-button status="primary" size="large" [disabled]="loading || loginForm.invalid">
-              Se connecter
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Mot de passe</mat-label>
+              <mat-icon matPrefix>lock_outline</mat-icon>
+              <input matInput
+                     [type]="showPassword ? 'text' : 'password'"
+                     formControlName="password"
+                     placeholder="••••••••"
+                     autocomplete="current-password">
+              <button mat-icon-button matSuffix type="button"
+                      (click)="togglePassword()"
+                      [attr.aria-label]="showPassword ? 'Cacher' : 'Afficher'">
+                <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                Le mot de passe est requis
+              </mat-error>
+            </mat-form-field>
+
+            <button mat-flat-button
+                    class="submit-btn"
+                    color="primary"
+                    type="submit"
+                    [disabled]="loading || loginForm.invalid">
+              <mat-spinner *ngIf="loading" diameter="20" class="btn-spinner"></mat-spinner>
+              <span *ngIf="!loading">Se connecter</span>
+              <span *ngIf="loading">Connexion en cours…</span>
             </button>
+
           </form>
         </mat-card-content>
+
         <mat-card-actions>
-          <div class="footer-register">
+          <p class="footer-register">
             <span>Pas encore de compte ?</span>
             <a routerLink="/register">S'inscrire</a>
-          </div>
+          </p>
           <p class="copyright">© 2026 LBS. Tous droits réservés.</p>
         </mat-card-actions>
+
       </mat-card>
     </div>
   </div>
+
 </div>
