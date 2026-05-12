@@ -2,16 +2,15 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbButtonModule, 
-  NbInputModule, 
-  NbFormFieldModule, 
-  NbIconModule,
-  NbSpinnerModule
-} from '@nebular/theme';
 import { ModePaiementService } from '../../../../core/services/mode-paiement.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { ModePaiement } from '../../../../core/models/mode-paiement.model';
+import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-mode-paiement-form-dialog',
@@ -20,11 +19,11 @@ import { ModePaiement } from '../../../../core/models/mode-paiement.model';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule,
-    NbInputModule,
-    NbFormFieldModule,
-    NbIconModule,
-    NbSpinnerModule
+    NbButtonModule, NbInputModule, NbSpinnerModule,
+    MatButtonModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './mode-paiement-form-dialog.component.html',
   styleUrl: './mode-paiement-form-dialog.component.scss'

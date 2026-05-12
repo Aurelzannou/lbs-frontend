@@ -2,16 +2,15 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbButtonModule, 
-  NbInputModule, 
-  NbFormFieldModule, 
-  NbIconModule,
-  NbSpinnerModule
-} from '@nebular/theme';
 import { TypeFraisService } from '../../../../core/services/type-frais.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { TypeFrais } from '../../../../core/models/type-frais.model';
+import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-type-frais-form-dialog',
@@ -20,11 +19,11 @@ import { TypeFrais } from '../../../../core/models/type-frais.model';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule,
-    NbInputModule,
-    NbFormFieldModule,
-    NbIconModule,
-    NbSpinnerModule
+    NbButtonModule, NbInputModule, NbSpinnerModule,
+    MatButtonModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './type-frais-form-dialog.component.html',
   styleUrl: './type-frais-form-dialog.component.scss'

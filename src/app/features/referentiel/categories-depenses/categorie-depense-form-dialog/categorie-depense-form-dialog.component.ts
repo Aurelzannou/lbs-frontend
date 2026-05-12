@@ -2,16 +2,15 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbButtonModule, 
-  NbInputModule, 
-  NbFormFieldModule, 
-  NbIconModule,
-  NbSpinnerModule
-} from '@nebular/theme';
 import { CategorieDepenseService } from '../../../../core/services/categorie-depense.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CategorieDepense } from '../../../../core/models/categorie-depense.model';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-categorie-depense-form-dialog',
@@ -20,11 +19,11 @@ import { CategorieDepense } from '../../../../core/models/categorie-depense.mode
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule,
-    NbInputModule,
-    NbFormFieldModule,
-    NbIconModule,
-    NbSpinnerModule
+    MatButtonModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    NbButtonModule, NbInputModule, NbSpinnerModule
   ],
   templateUrl: './categorie-depense-form-dialog.component.html',
   styleUrl: './categorie-depense-form-dialog.component.scss'

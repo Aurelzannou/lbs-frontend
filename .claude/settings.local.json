@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx ng *)",
+      "Bash(cd \"c:\\\\Users\\\\di\\\\Desktop\\\\lbs-frontend\" && npx ng build --configuration development 2>&1 | grep -v \"WARNING\\\\|Deprecation\\\\|@import\\\\|Sass\\\\|More info\\\\|sass-lang\" > /tmp/build_errors.txt 2>&1; cat /tmp/build_errors.txt | head -300)",
+      "Read(//tmp/**)"
+    ]
+  }
+}

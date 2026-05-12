@@ -1,117 +1,174 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NbMediaBreakpointsService, NbMenuService, NbSidebarService, NbThemeService } from '@nebular/theme';
-import { KeycloakService } from 'keycloak-angular';
-import { map, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { KeycloakService } from 'keycloak-angular';
 import { AuthService } from '../../../core/services/auth.service';
-import { NbIconModule, NbSelectModule, NbActionsModule, NbUserModule, NbContextMenuModule, NbButtonModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
     CommonModule,
-    NbIconModule,
-    NbSelectModule,
-    NbActionsModule,
-    NbUserModule,
-    NbContextMenuModule,
-    NbButtonModule,
+    RouterModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule
   ],
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
-})
-export class HeaderComponent implements OnInit, OnDestroy {
+  template: `
+    <mat-toolbar class="app-header">
+      <div class="header-left">
+        <button mat-icon-button (click)="onToggleSidebar()" class="menu-toggle">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <a class="logo-text" routerLink="/dashboard">
+          LBS-<span class="logo-bold">Admin</span>
+        </a>
+      </div>
 
-  private destroy$: Subject<void> = new Subject<void>();
-  userPictureOnly: boolean = false;
-  user: any = { name: '', picture: '' };
-  authenticated: boolean = false;
-
-  themes = [
-    { value: 'default', name: 'Light' },
-    { value: 'dark', name: 'Dark' },
-    { value: 'cosmic', name: 'Cosmic' },
-    { value: 'corporate', name: 'Corporate' },
-  ];
-
-  currentTheme = 'default';
-
-  userMenu = [ { title: 'Profil', data: 'profile' }, { title: 'Déconnexion', data: 'logout' } ];
-
-  constructor(
-    private sidebarService: NbSidebarService,
-    private menuService: NbMenuService,
-    private themeService: NbThemeService,
-    private breakpointService: NbMediaBreakpointsService,
-    private keycloakService: KeycloakService,
-    private authService: AuthService,
-    private router: Router
-  ) {}
-
-  ngOnInit() {
-    this.currentTheme = this.themeService.currentTheme;
-
-    this.loadUserInfo();
-
-    const { xl } = this.breakpointService.getBreakpointsMap();
-    this.themeService.onMediaQueryChange()
-      .pipe(
-        map(([, currentBreakpoint]) => currentBreakpoint.width < xl),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((isLessThanXl: boolean) => this.userPictureOnly = isLessThanXl);
-
-    this.themeService.onThemeChange()
-      .pipe(
-        map(({ name }) => name),
-        takeUntil(this.destroy$),
-      )
-      .subscribe(themeName => this.currentTheme = themeName);
-
-    this.menuService.onItemClick()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((event) => {
-        if (event.item.data === 'logout') {
-          this.logout();
+      <div class="header-right">
+        @if (authenticated) {
+          <div class="user-info" [matMenuTriggerFor]="userMenu">
+            <div class="user-avatar">{{ userInitial }}</div>
+            <span class="user-name">{{ userName }}</span>
+            <mat-icon class="dropdown-icon">expand_more</mat-icon>
+          </div>
+          <mat-menu #userMenu="matMenu" class="user-menu-panel">
+            <button mat-menu-item routerLink="/profile">
+              <mat-icon>person</mat-icon>
+              <span>Mon Profil</span>
+            </button>
+            <button mat-menu-item (click)="logout()" class="logout-item">
+              <mat-icon>logout</mat-icon>
+              <span>Déconnexion</span>
+            </button>
+          </mat-menu>
+        } @else {
+          <button mat-flat-button color="primary" routerLink="/login" class="login-btn">
+            <mat-icon>login</mat-icon>
+            Connexion
+          </button>
         }
-      });
-  }
+      </div>
+    </mat-toolbar>
+  `,
+  styles: [`
+    .app-header {
+      background: white;
+      border-bottom: 2px solid #fef3c7;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 1rem;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-  async loadUserInfo() {
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .menu-toggle {
+      color: #64748b;
+      &:hover { color: #0f172a; }
+    }
+
+    .logo-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      color: #0f172a;
+      text-decoration: none;
+      padding-left: 0.75rem;
+      border-left: 1px solid #e2e8f0;
+
+      .logo-bold {
+        font-weight: 900;
+        color: #d97706;
+      }
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      padding: 0.5rem 0.75rem;
+      border-radius: 12px;
+      transition: background 0.2s;
+
+      &:hover { background: #f8fafc; }
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      color: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: #334155;
+      font-size: 0.9rem;
+    }
+
+    .dropdown-icon {
+      color: #94a3b8;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .login-btn {
+      border-radius: 10px;
+    }
+  `]
+})
+export class HeaderComponent implements OnInit {
+  @Output() toggleSidebar = new EventEmitter<void>();
+
+  private keycloakService = inject(KeycloakService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  authenticated = false;
+  userName = '';
+  userInitial = '';
+
+  async ngOnInit() {
     this.authenticated = await this.keycloakService.isLoggedIn();
     if (this.authenticated) {
       const profile = await this.keycloakService.loadUserProfile();
-      this.user.name = `${profile.firstName} ${profile.lastName}`;
+      this.userName = `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || 'Utilisateur';
+      this.userInitial = this.userName.charAt(0).toUpperCase();
     }
   }
 
-  login() {
-    this.router.navigate(['/login']);
+  onToggleSidebar(): void {
+    this.toggleSidebar.emit();
   }
 
-  logout() {
+  logout(): void {
     this.authService.logout();
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  changeTheme(themeName: string) {
-    this.themeService.changeTheme(themeName);
-  }
-
-  toggleSidebar(): boolean {
-    this.sidebarService.toggle(true, 'menu-sidebar');
-    return false;
-  }
-
-  navigateHome() {
-    this.menuService.navigateHome();
-    return false;
   }
 }

@@ -8,12 +8,8 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
 
 import { provideToastr } from 'ngx-toastr';
-import { NgSelectModule } from '@ng-select/ng-select';
 
 import { routes } from './app.routes';
-import { importProvidersFrom } from '@angular/core';
-import { NbThemeModule, NbLayoutModule, NbSidebarModule, NbMenuModule, NbDialogModule, NbWindowModule, NbToastrModule } from '@nebular/theme';
-import { NbEvaIconsModule } from '@nebular/eva-icons';
 
 function initializeKeycloak(keycloak: KeycloakService) {
   return () => {
@@ -94,17 +90,6 @@ export const appConfig: ApplicationConfig = {
       preventDuplicates: true,
       progressBar: true
     }),
-    importProvidersFrom(
-      NbThemeModule.forRoot({ name: 'default' }),
-      NbLayoutModule,
-      NbSidebarModule.forRoot(),
-      NbMenuModule.forRoot(),
-      NbDialogModule.forRoot(),
-      NbWindowModule.forRoot(),
-      NbToastrModule.forRoot(),
-      NbEvaIconsModule,
-      NgSelectModule
-    ),
     KeycloakService
   ]
 };

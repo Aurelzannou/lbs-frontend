@@ -1,26 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { 
-  NbCardModule, 
-  NbUserModule, 
-  NbIconModule, 
-  NbButtonModule,
-  NbTagModule,
-  NbListModule
-} from '@nebular/theme';
 import { AuthService } from '../../core/services/auth.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { NbUserModule, NbTagModule, NbListModule, NbCardModule, NbIconModule, NbButtonModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
     CommonModule,
-    NbCardModule,
+    MatCardModule,
     NbUserModule,
+    NbCardModule,
     NbIconModule,
     NbButtonModule,
     NbTagModule,
-    NbListModule
+    NbListModule,
+    MatIconModule,
+    MatButtonModule
   ],
   template: `
     <div class="profile-container">

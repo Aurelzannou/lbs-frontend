@@ -19,17 +19,24 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        if ([401, 403].includes(error.status)) {
-          this.authService.logout();
-        }
-        
-        // Notification automatique pour les erreurs de conflit (doublons) ou autres erreurs API
-        if (error.status === 409 || error.status === 400 || error.status === 500) {
-          this.notification.error(error);
+        // Ne pas traiter les erreurs pour les appels Keycloak (token endpoint, etc.)
+        if (request.url.includes('/realms/') || request.url.includes('/openid-connect/')) {
+          return throwError(() => error);
         }
 
-        const errorMessage = error.error?.message || error.statusText;
-        console.error('API Error:', errorMessage);
+        if (error.status === 401) {
+          // Token expiré ou invalide — rediriger vers login sans boucle
+          if (!this.authService.isLoggingOut) {
+            this.authService.logout();
+          }
+        } else if (error.status === 403) {
+          this.notification.warning('Vous n\'avez pas les droits pour effectuer cette action.');
+        } else if (error.status === 409 || error.status === 400) {
+          this.notification.error(error);
+        } else if (error.status === 500) {
+          this.notification.error('Une erreur serveur est survenue. Veuillez réessayer.');
+        }
+
         return throwError(() => error);
       })
     );

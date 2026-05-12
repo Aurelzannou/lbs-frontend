@@ -2,17 +2,16 @@ import { Component, Inject, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbButtonModule, 
-  NbInputModule, 
-  NbIconModule, 
-  NbCardModule,
-  NbFormFieldModule,
-  NbSpinnerModule
-} from '@nebular/theme';
 import { EtapeService } from '../../../../core/services/etape.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Etape } from '../../../../core/models/etape.model';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NbIconModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-etape-form-dialog',
@@ -21,12 +20,12 @@ import { Etape } from '../../../../core/models/etape.model';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule,
-    NbInputModule,
-    NbIconModule,
-    NbCardModule,
-    NbFormFieldModule,
-    NbSpinnerModule
+    MatButtonModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    NbIconModule
   ],
   templateUrl: './etape-form-dialog.component.html',
   styleUrl: './etape-form-dialog.component.scss'

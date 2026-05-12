@@ -1,23 +1,9 @@
 @use '@angular/material' as mat;
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
-// Toasts, Select and SweetAlert
+// Toasts and SweetAlert
 @import 'ngx-toastr/toastr';
-@import '@ng-select/ng-select/themes/default.theme.css';
 @import 'sweetalert2/dist/sweetalert2.min.css';
-
-// @nebular styles
-@import 'app/@theme/styles/themes';
-@import 'app/@theme/styles/overrides';
-@import 'app/@theme/styles/layout';
-@import '@nebular/theme/styles/globals';
-
-// install the framework
-@include nb-install() {
-  @include nb-theme-global();
-  @include nb-overrides();
-  @include ngx-layout();
-}
 
 :root {
   --primary-color: #fbbf24;
@@ -67,24 +53,12 @@ h1, h2, h3, h4, .brand {
 }
 
 /* Professional Table Overrides (Dark Amber Header + Neutral Body) */
-.table-card, nb-card.form-card, nb-card.detail-card {
+.table-card {
   background: white !important;
   border-radius: 12px !important;
   border: 1px solid #e2e8f0 !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
   overflow: hidden !important;
-  
-  nb-card-header {
-    padding: 0 !important;
-    border-bottom: none !important;
-  }
-}
-
-/* Specific Dialog Header Fix */
-.form-header, .header {
-  padding: 0 !important;
-  width: 100% !important;
-  display: block !important;
 }
 
 .data-table, .mat-table {
@@ -126,25 +100,6 @@ h1, h2, h3, h4, .brand {
   background: #f1f5f9 !important;
   border-color: #fbbf24 !important;
   color: #b45309 !important;
-}
-
-/* Centralized NgSelect Professional Styles */
-.custom-ng-select .ng-select-container {
-  border: 1px solid #e2e8f0 !important;
-  background-color: white !important;
-  border-radius: 8px !important;
-  min-height: 42px !important;
-  box-shadow: none !important;
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: #fbbf24 !important;
-  }
-}
-
-.ng-select.ng-select-focused .ng-select-container {
-  border-color: #fbbf24 !important;
-  box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1) !important;
 }
 
 /* Global Button Styles */

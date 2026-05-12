@@ -1,18 +1,16 @@
 import { Component, Inject, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbButtonModule, 
-  NbIconModule, 
-  NbCardModule,
-  NbSpinnerModule,
-  NbCheckboxModule
-} from '@nebular/theme';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule } from '@angular/forms';
 import { UserService, User } from '../../../../core/services/user.service';
 import { ProfilService, Profil } from '../../../../core/services/profil.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NbIconModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-user-profil-dialog',
@@ -20,11 +18,11 @@ import { ProfilService, Profil } from '../../../../core/services/profil.service'
   imports: [
     CommonModule,
     MatDialogModule,
-    NbButtonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
     NbIconModule,
-    NbCardModule,
-    NbSpinnerModule,
-    NbCheckboxModule,
     NgSelectModule,
     FormsModule
   ],

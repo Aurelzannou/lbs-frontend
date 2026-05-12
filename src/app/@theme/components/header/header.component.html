@@ -1,13 +1,13 @@
 <div class="header-container">
   <div class="logo-container">
     <a (click)="toggleSidebar()" href="#" class="sidebar-toggle">
-      <nb-icon icon="menu-2-outline"></nb-icon>
+      <mat-icon></mat-icon>
     </a>
     <a class="logo" href="#" (click)="navigateHome()">LBS-<span>Admin</span></a>
   </div>
-  <nb-select [selected]="currentTheme" (selectedChange)="changeTheme($event)" status="primary">
-    <nb-option *ngFor="let theme of themes" [value]="theme.value"> {{ theme.name }}</nb-option>
-  </nb-select>
+  <mat-select [selected]="currentTheme" (selectedChange)="changeTheme($event)" status="primary">
+    <mat-option *ngFor="let theme of themes" [value]="theme.value"> {{ theme.name }}</mat-option>
+  </mat-select>
 </div>
 
 <div class="header-container">
@@ -21,8 +21,8 @@
     </nb-action>
     <ng-template #guest>
       <nb-action>
-        <button nbButton status="primary" size="small" (click)="login()">
-          <nb-icon icon="log-in-outline"></nb-icon>
+        <button mat-flat-button color="primary" (click)="login()">
+          <mat-icon></mat-icon>
           Connexion
         </button>
       </nb-action>

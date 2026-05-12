@@ -2,18 +2,16 @@ import { Component, Inject, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbButtonModule, 
-  NbInputModule, 
-  NbIconModule, 
-  NbCardModule,
-  NbFormFieldModule,
-  NbSpinnerModule,
-  NbToggleModule
-} from '@nebular/theme';
 import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { AnneeScolaireService } from '../../../../core/services/annee-scolaire.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NbToggleModule, NbIconModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-annee-scolaire-form-dialog',
@@ -22,13 +20,12 @@ import { AnneeScolaireService } from '../../../../core/services/annee-scolaire.s
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule,
-    NbInputModule,
-    NbIconModule,
-    NbCardModule,
-    NbFormFieldModule,
-    NbSpinnerModule,
-    NbToggleModule
+    MatButtonModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    NbToggleModule, NbIconModule
   ],
   templateUrl: './annee-scolaire-form-dialog.component.html',
   styleUrl: './annee-scolaire-form-dialog.component.scss'

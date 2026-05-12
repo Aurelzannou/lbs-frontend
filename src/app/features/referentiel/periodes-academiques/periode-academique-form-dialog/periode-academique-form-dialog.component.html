@@ -27,27 +27,27 @@
       <!-- Code -->
       <div class="form-field">
         <label>Code</label>
-        <input nbInput fullWidth placeholder="Ex: TRIM1" formControlName="code" 
-               [status]="form.get('code')?.invalid && form.get('code')?.touched ? 'danger' : 'basic'">
+        <input matInput placeholder="Ex: TRIM1" formControlName="code" 
+               >
       </div>
 
       <!-- Libellé -->
       <div class="form-field">
         <label>Libellé</label>
-        <input nbInput fullWidth placeholder="Ex: Premier Trimestre" formControlName="libelle"
-               [status]="form.get('libelle')?.invalid && form.get('libelle')?.touched ? 'danger' : 'basic'">
+        <input matInput placeholder="Ex: Premier Trimestre" formControlName="libelle"
+               >
       </div>
 
       <!-- Dates -->
       <div class="form-row">
         <div class="form-field">
           <label>Date Début</label>
-          <input nbInput fullWidth [nbDatepicker]="pickerDebut" formControlName="dateDebut" placeholder="jj/mm/aaaa">
+          <input matInput [nbDatepicker]="pickerDebut" formControlName="dateDebut" placeholder="jj/mm/aaaa">
           <nb-datepicker #pickerDebut></nb-datepicker>
         </div>
         <div class="form-field">
           <label>Date Fin</label>
-          <input nbInput fullWidth [nbDatepicker]="pickerFin" formControlName="dateFin" placeholder="jj/mm/aaaa">
+          <input matInput [nbDatepicker]="pickerFin" formControlName="dateFin" placeholder="jj/mm/aaaa">
           <nb-datepicker #pickerFin></nb-datepicker>
         </div>
       </div>
@@ -55,8 +55,8 @@
   </form>
 
   <div class="dialog-footer">
-    <button nbButton ghost status="basic" (click)="onCancel()" [disabled]="saving">Annuler</button>
-    <button nbButton status="primary" (click)="onSubmit()" [disabled]="form.invalid || saving" [nbSpinner]="saving">
+    <button mat-icon-button (click)="onCancel()" [disabled]="saving">Annuler</button>
+    <button mat-button status="primary" (click)="onSubmit()" [disabled]="form.invalid || saving">
       {{ isEdit ? 'Enregistrer' : 'Créer la période' }}
     </button>
   </div>

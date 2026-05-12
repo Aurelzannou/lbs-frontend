@@ -4,15 +4,6 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbCardModule, 
-  NbButtonModule, 
-  NbIconModule, 
-  NbInputModule, 
-  NbTooltipModule,
-  NbFormFieldModule,
-  NbSpinnerModule
-} from '@nebular/theme';
 import { AnneeScolaireService } from '../../../../core/services/annee-scolaire.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
@@ -20,6 +11,13 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AnneeScolaireFormDialogComponent } from '../annee-scolaire-form-dialog/annee-scolaire-form-dialog.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-annee-scolaire-list',
@@ -30,19 +28,18 @@ import { AnneeScolaireFormDialogComponent } from '../annee-scolaire-form-dialog/
     MatPaginatorModule, 
     MatSortModule, 
     MatDialogModule,
-    NbCardModule,
-    NbButtonModule,
-    NbIconModule,
-    NbInputModule,
-    NbTooltipModule,
-    NbFormFieldModule,
-    NbSpinnerModule
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatInputModule, MatFormFieldModule,
+    MatTooltipModule,
+    MatProgressSpinnerModule
   ],
   animations: [
     trigger('rowsAnimation', [
       transition('void => *', [
         style({ height: '*', opacity: '0', transform: 'translateX(-20px)', 'box-shadow': 'none' }),
-        animate('0.3s ease-out', style({ height: '*', opacity: '1', transform: 'translateX(0)' })),
+        animate('0.3s ease-out', style({ height: '*', opacity: '1', transform: 'translateX(0)' }))
       ])
     ])
   ],

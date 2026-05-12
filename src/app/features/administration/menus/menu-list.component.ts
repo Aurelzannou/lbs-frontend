@@ -4,21 +4,19 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbCardModule, 
-  NbButtonModule, 
-  NbIconModule, 
-  NbTooltipModule,
-  NbInputModule,
-  NbFormFieldModule,
-  NbSpinnerModule
-} from '@nebular/theme';
 import { MenuService, MenuResponse } from '../../../core/services/menu.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { MenuFormDialogComponent } from './menu-form-dialog/menu-form-dialog.component';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-menu-list',
@@ -28,20 +26,19 @@ import { animate, style, transition, trigger } from '@angular/animations';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    NbCardModule,
-    NbButtonModule,
-    NbIconModule,
-    NbTooltipModule,
-    NbInputModule,
-    NbFormFieldModule,
-    NbSpinnerModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatInputModule, MatFormFieldModule,
+    MatProgressSpinnerModule,
     MatDialogModule
   ],
   animations: [
     trigger('rowsAnimation', [
       transition('void => *', [
         style({ height: '*', opacity: '0', transform: 'translateX(-20px)', 'box-shadow': 'none' }),
-        animate('0.3s ease-out', style({ height: '*', opacity: '1', transform: 'translateX(0)' })),
+        animate('0.3s ease-out', style({ height: '*', opacity: '1', transform: 'translateX(0)' }))
       ])
     ])
   ],

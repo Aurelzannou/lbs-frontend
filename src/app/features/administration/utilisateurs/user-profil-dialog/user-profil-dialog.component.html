@@ -1,25 +1,25 @@
 <div class="dialog-wrapper">
   <div class="glass-overlay"></div>
   
-  <nb-card class="form-card">
-    <nb-card-header class="form-header">
+  <mat-card class="form-card">
+    <mat-card-header class="form-header">
       <div class="header-content">
         <div class="title-with-icon">
           <div class="icon-box edit-mode">
-            <nb-icon icon="shield-outline"></nb-icon>
+            <mat-icon></mat-icon>
           </div>
           <div class="title-text">
             <h3>Assigner des Profils</h3>
             <p class="subtitle">Utilisateur: {{ data.prenom }} {{ data.nom }}</p>
           </div>
         </div>
-        <button nbButton ghost status="basic" (click)="onCancel()" class="close-btn">
-          <nb-icon icon="close-outline"></nb-icon>
+        <button mat-icon-button (click)="onCancel()" class="close-btn">
+          <mat-icon></mat-icon>
         </button>
       </div>
-    </nb-card-header>
+    </mat-card-header>
 
-    <nb-card-body class="form-body">
+    <mat-card-content class="form-body">
       <div class="professional-form">
         <div class="form-row">
           <div class="form-field full-width">
@@ -43,30 +43,25 @@
           </div>
         </div>
       </div>
-    </nb-card-body>
+    </mat-card-content>
 
-    <nb-card-footer class="form-footer">
+    <mat-card-actions class="form-footer">
       <div class="footer-actions">
-        <button nbButton 
-                status="basic" 
-                appearance="ghost"
-                (click)="onCancel()" 
+        <button mat-button
+                (click)="onCancel()"
                 [disabled]="loading"
                 class="cancel-btn">
           Annuler
         </button>
-        <button nbButton 
-                status="primary" 
-                shape="semi-round"
-                (click)="onSubmit()" 
-                [disabled]="loading" 
-                [nbSpinner]="loading" 
-                nbSpinnerStatus="control"
+        <button mat-button
+                status="primary"
+                (click)="onSubmit()"
+                [disabled]="loading"
                 class="submit-btn shadow-btn">
           <nb-icon icon="save-outline" *ngIf="!loading"></nb-icon>
           Enregistrer les modifications
         </button>
       </div>
-    </nb-card-footer>
-  </nb-card>
+    </mat-card-actions>
+  </mat-card>
 </div>

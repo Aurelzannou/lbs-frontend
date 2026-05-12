@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { NbMenuItem } from '@nebular/theme';
 import { AuthService } from './auth.service';
 
 export interface MenuResponse {
@@ -10,12 +9,21 @@ export interface MenuResponse {
   uuid: string;
   code: string;
   description: string;
+  icon: string;
   path: string;
   ordre: number;
   titre: string;
   menuEnfantId: number | null;
   listeMenuEnfant: MenuResponse[];
   profils?: any[];
+}
+
+export interface MenuItem {
+  title: string;
+  icon?: string;
+  link?: string;
+  children?: MenuItem[];
+  expanded?: boolean;
 }
 
 @Injectable({
@@ -30,9 +38,9 @@ export class MenuService {
   ) {}
 
   /**
-   * Récupère les menus de l'utilisateur connecté et les convertit au format NbMenuItem
+   * Récupère les menus de l'utilisateur connecté et les convertit au format MenuItem
    */
-  getMenuItems(): Observable<NbMenuItem[]> {
+  getMenuItems(): Observable<MenuItem[]> {
     const selectedProfile = this.authService.getSelectedProfile();
     let params = new HttpParams();
     if (selectedProfile) {
@@ -41,27 +49,25 @@ export class MenuService {
 
     return this.http.get<any>(`${this.apiUrl}/my-menu`, { params }).pipe(
       map(response => {
-        // La structure est ApiResponse -> { data: MenuResponse[] }
         const menus = response.data || [];
-        return this.mapToNbMenuItems(menus);
+        return this.mapToMenuItems(menus);
       })
     );
   }
 
-  private mapToNbMenuItems(menus: MenuResponse[]): NbMenuItem[] {
+  private mapToMenuItems(menus: MenuResponse[]): MenuItem[] {
     return menus.map(menu => {
       const enfants = menu.listeMenuEnfant && menu.listeMenuEnfant.length > 0
-        ? this.mapToNbMenuItems(menu.listeMenuEnfant)
+        ? this.mapToMenuItems(menu.listeMenuEnfant)
         : undefined;
 
-      const item: NbMenuItem = {
+      const item: MenuItem = {
         title: menu.titre,
         link: menu.path || undefined,
-        icon: this.getIconByCode(menu.code),
+        icon: menu.icon || this.getIconByCode(menu.code),
         children: enfants
       };
 
-      // Si c'est un groupe parent (pas de path → pas de lien, seulement des enfants)
       if (!menu.path && enfants && enfants.length > 0) {
         item.link = undefined;
         item.expanded = false;
@@ -107,7 +113,7 @@ export class MenuService {
   }
 
   /**
-   * Helper pour mapper un code de menu à une icône Nebular/Eva
+   * Fallback: mapper un code de menu à une icône Eva
    */
   getIconByCode(code: string): string {
     const iconMap: { [key: string]: string } = {

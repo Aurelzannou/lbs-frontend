@@ -4,15 +4,12 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { 
-  NbButtonModule, 
-  NbCardModule, 
-  NbInputModule, 
-  NbIconModule, 
-  NbSpinnerModule, 
-  NbAlertModule 
-} from '@nebular/theme';
-
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-portal-login',
   standalone: true,
@@ -20,13 +17,12 @@ import {
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
-    NbButtonModule,
-    NbCardModule,
-    NbInputModule,
-    NbIconModule,
-    NbSpinnerModule,
-    NbAlertModule
-  ],
+    MatButtonModule,
+    MatCardModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatProgressSpinnerModule
+    ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })

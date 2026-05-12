@@ -2,17 +2,6 @@ import { Component, OnInit, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { 
-  NbButtonModule, 
-  NbCardModule, 
-  NbInputModule, 
-  NbSelectModule, 
-  NbIconModule, 
-  NbSpinnerModule, 
-  NbStepperModule, 
-  NbFormFieldModule 
-} from '@nebular/theme';
-
 import { EleveService } from '../../../core/services/eleve.service';
 import { ClasseService } from '../../../core/services/classe.service';
 import { AnneeScolaireService } from '../../../core/services/annee-scolaire.service';
@@ -28,6 +17,14 @@ import { AnneeScolaire } from '../../../core/models/annee-scolaire.model';
 
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { NbStepperModule, NbIconModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-portal-inscription',
@@ -35,15 +32,14 @@ import { map, switchMap } from 'rxjs/operators';
   imports: [
     CommonModule, 
     ReactiveFormsModule, 
-    NbButtonModule, 
-    NbCardModule, 
-    NbInputModule, 
-    NbSelectModule, 
-    NbIconModule, 
-    NbSpinnerModule,
-    NbStepperModule,
-    NbFormFieldModule
-  ],
+    MatButtonModule, 
+    MatCardModule, 
+    MatInputModule, MatFormFieldModule, 
+    MatSelectModule, 
+    MatIconModule, 
+    MatProgressSpinnerModule,
+    NbStepperModule, NbIconModule
+    ],
   templateUrl: './inscription.component.html',
   styleUrl: './inscription.component.scss'
 })

@@ -2,20 +2,18 @@ import { Component, Inject, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbButtonModule, 
-  NbInputModule, 
-  NbIconModule, 
-  NbCardModule,
-  NbFormFieldModule,
-  NbSpinnerModule,
-  NbSelectModule,
-  NbCheckboxModule
-} from '@nebular/theme';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MenuService, MenuResponse } from '../../../../core/services/menu.service';
 import { ProfilService, Profil } from '../../../../core/services/profil.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { NbCardModule, NbButtonModule, NbIconModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-menu-form-dialog',
@@ -24,13 +22,12 @@ import { ProfilService, Profil } from '../../../../core/services/profil.service'
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule,
-    NbInputModule,
-    NbIconModule,
-    NbCardModule,
-    NbFormFieldModule,
-    NbSpinnerModule,
-    NbCheckboxModule,
+    MatButtonModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    NbCardModule, NbButtonModule, NbIconModule, NbInputModule, NbSpinnerModule,
     NgSelectModule
   ],
   template: `

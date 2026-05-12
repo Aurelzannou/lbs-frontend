@@ -2,20 +2,19 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbButtonModule, 
-  NbInputModule, 
-  NbFormFieldModule, 
-  NbIconModule,
-  NbSpinnerModule,
-  NbSelectModule
-} from '@nebular/theme';
 import { ClasseService } from '../../../../core/services/classe.service';
 import { NiveauService } from '../../../../core/services/niveau.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Classe } from '../../../../core/models/classe.model';
 import { Niveau } from '../../../../core/models/niveau.model';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-classe-form-dialog',
@@ -24,12 +23,12 @@ import { NgSelectModule } from '@ng-select/ng-select';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule,
-    NbInputModule,
-    NbFormFieldModule,
-    NbIconModule,
-    NbSpinnerModule,
-    NbSelectModule,
+    NbButtonModule, NbInputModule, NbSpinnerModule,
+    MatButtonModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
     NgSelectModule
   ],
   templateUrl: './classe-form-dialog.component.html',

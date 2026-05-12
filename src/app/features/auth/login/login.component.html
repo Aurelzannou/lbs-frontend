@@ -13,15 +13,15 @@
       </div>
       <div class="features-list">
         <div class="feature-item">
-          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+          <mat-icon></mat-icon>
           <span>Gestion de référentiels</span>
         </div>
         <div class="feature-item">
-          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+          <mat-icon></mat-icon>
           <span>Sécurité renforcée</span>
         </div>
         <div class="feature-item">
-          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+          <mat-icon></mat-icon>
           <span>Interface intuitive</span>
         </div>
       </div>
@@ -31,26 +31,24 @@
   <!-- Section Formulaire (Droite) -->
   <div class="form-section">
     <div class="login-container">
-      <nb-card [nbSpinner]="loading" nbSpinnerStatus="primary">
-        <nb-card-header>
+      <mat-card>
+        <mat-card-header>
           <h3>Connexion</h3>
           <p class="subtitle">Entrez vos identifiants pour continuer</p>
-        </nb-card-header>
-        <nb-card-body>
-          <nb-alert *ngIf="error" status="danger" closable (close)="error = null">
+        </mat-card-header>
+        <mat-card-content>
+          @if (error) {<div class="alert alert-danger"><button class="alert-close" (click)="error = null">&times;</button>
             {{ error }}
-          </nb-alert>
+          </div>}
 
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <div class="form-control-group">
               <label class="label" for="username">Nom d'utilisateur</label>
-              <input 
-                nbInput 
-                fullWidth 
+              <input matInput 
                 id="username" 
                 formControlName="username" 
                 placeholder="Ex: john.doe"
-                [status]="loginForm.get('username')?.touched && loginForm.get('username')?.invalid ? 'danger' : 'basic'">
+                >
               <p class="error-text" *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.hasError('required')">
                 Le nom d'utilisateur est requis.
               </p>
@@ -59,16 +57,14 @@
             <div class="form-control-group">
               <label class="label" for="password">Mot de passe</label>
               <div class="password-input-wrapper">
-                <input 
-                  nbInput 
-                  fullWidth 
+                <input matInput 
                   id="password" 
                   [type]="showPassword ? 'text' : 'password'" 
                   formControlName="password" 
                   placeholder="********"
-                  [status]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid ? 'danger' : 'basic'">
-                <button type="button" nbButton ghost (click)="togglePassword()" class="toggle-password">
-                  <nb-icon [icon]="showPassword ? 'eye-outline' : 'eye-off-outline'"></nb-icon>
+                  >
+                <button type="button" mat-icon-button (click)="togglePassword()" class="toggle-password">
+                  <mat-icon></mat-icon>
                 </button>
               </div>
               <p class="error-text" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')">
@@ -76,19 +72,19 @@
               </p>
             </div>
 
-            <button nbButton fullWidth status="primary" size="large" [disabled]="loading || loginForm.invalid">
+            <button mat-button status="primary" size="large" [disabled]="loading || loginForm.invalid">
               Se connecter
             </button>
           </form>
-        </nb-card-body>
-        <nb-card-footer>
+        </mat-card-content>
+        <mat-card-actions>
           <div class="footer-register">
             <span>Pas encore de compte ?</span>
             <a routerLink="/register">S'inscrire</a>
           </div>
           <p class="copyright">© 2026 LBS. Tous droits réservés.</p>
-        </nb-card-footer>
-      </nb-card>
+        </mat-card-actions>
+      </mat-card>
     </div>
   </div>
 </div>

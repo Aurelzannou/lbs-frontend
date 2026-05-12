@@ -5,18 +5,6 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbCardModule, 
-  NbButtonModule, 
-  NbIconModule, 
-  NbTooltipModule,
-  NbInputModule,
-  NbFormFieldModule,
-  NbSpinnerModule,
-  NbTagModule,
-  NbUserModule,
-  NbDialogService
-} from '@nebular/theme';
 import { DossierEleveService } from '../../../../core/services/dossier-eleve.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { DossierEleve } from '../../../../core/models/dossier-eleve.model';
@@ -24,6 +12,14 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { DossierEleveFormDialogComponent } from '../dossier-eleve-form-dialog/dossier-eleve-form-dialog.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { NbTagModule, NbUserModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-dossier-eleve-list',
@@ -33,13 +29,12 @@ import { DossierEleveFormDialogComponent } from '../dossier-eleve-form-dialog/do
     MatTableModule, 
     MatSortModule, 
     MatPaginatorModule,
-    NbCardModule,
-    NbButtonModule,
-    NbIconModule,
-    NbTooltipModule,
-    NbInputModule,
-    NbFormFieldModule,
-    NbSpinnerModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatInputModule, MatFormFieldModule,
+    MatProgressSpinnerModule,
     NbTagModule,
     NbUserModule,
     MatDialogModule
@@ -48,7 +43,7 @@ import { DossierEleveFormDialogComponent } from '../dossier-eleve-form-dialog/do
     trigger('rowsAnimation', [
       transition('void => *', [
         style({ height: '*', opacity: '0', transform: 'translateX(-20px)', 'box-shadow': 'none' }),
-        animate('0.3s ease-out', style({ height: '*', opacity: '1', transform: 'translateX(0)' })),
+        animate('0.3s ease-out', style({ height: '*', opacity: '1', transform: 'translateX(0)' }))
       ])
     ])
   ],
@@ -58,7 +53,7 @@ import { DossierEleveFormDialogComponent } from '../dossier-eleve-form-dialog/do
 export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewInit {
   private dossierService = inject(DossierEleveService);
   private notification = inject(NotificationService);
-  private dialog = inject(NbDialogService);
+  private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
 
@@ -130,11 +125,10 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
 
   openForm(dossier?: DossierEleve): void {
     this.dialog.open(DossierEleveFormDialogComponent, {
-      context: {
-        data: dossier
-      },
-      closeOnBackdropClick: false,
-    }).onClose.subscribe(result => {
+      width: '800px',
+      data: dossier,
+      panelClass: 'professional-dialog'
+    }).afterClosed().subscribe(result => {
       if (result) this.refresh();
     });
   }

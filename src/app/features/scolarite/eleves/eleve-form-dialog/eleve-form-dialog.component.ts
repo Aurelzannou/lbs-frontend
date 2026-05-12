@@ -2,20 +2,19 @@ import { Component, Inject, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbButtonModule, 
-  NbInputModule, 
-  NbIconModule, 
-  NbCardModule,
-  NbFormFieldModule,
-  NbSpinnerModule
-} from '@nebular/theme';
 import { EleveService } from '../../../../core/services/eleve.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Eleve } from '../../../../core/models/eleve.model';
 import { ClasseService } from '../../../../core/services/classe.service';
 import { Classe } from '../../../../core/models/classe.model';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NbIconModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-eleve-form-dialog',
@@ -24,13 +23,13 @@ import { NgSelectModule } from '@ng-select/ng-select';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule,
-    NbInputModule,
-    NbIconModule,
-    NbCardModule,
-    NbFormFieldModule,
-    NbSpinnerModule,
-    NgSelectModule
+    MatButtonModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    NgSelectModule,
+    NbIconModule
   ],
   templateUrl: './eleve-form-dialog.component.html',
   styleUrl: './eleve-form-dialog.component.scss'

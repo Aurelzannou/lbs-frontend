@@ -86,7 +86,7 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Statut</th>
           <td mat-cell *matCellDef="let row">
             <nb-tag [text]="row.statut?.libelle || row.statut?.code || 'INCONNU'" 
-                    [status]="getStatusColor(row.statut?.code)"
+                    
                     size="small">
             </nb-tag>
           </td>

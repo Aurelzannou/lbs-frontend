@@ -2,16 +2,15 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbButtonModule, 
-  NbInputModule, 
-  NbFormFieldModule, 
-  NbIconModule,
-  NbSpinnerModule
-} from '@nebular/theme';
 import { TypeOperationService } from '../../../../core/services/type-operation.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { TypeOperation } from '../../../../core/models/type-operation.model';
+import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-type-operation-form-dialog',
@@ -20,11 +19,11 @@ import { TypeOperation } from '../../../../core/models/type-operation.model';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule,
-    NbInputModule,
-    NbFormFieldModule,
-    NbIconModule,
-    NbSpinnerModule
+    NbButtonModule, NbInputModule, NbSpinnerModule,
+    MatButtonModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './type-operation-form-dialog.component.html',
   styleUrl: './type-operation-form-dialog.component.scss'

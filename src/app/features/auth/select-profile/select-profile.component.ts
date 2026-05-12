@@ -28,7 +28,8 @@ import { AuthService } from '../../../core/services/auth.service';
 
         <div class="roles-container">
           <!-- Carte Parent -->
-          <div class="profile-card parent-theme" *ngIf="hasRole('TUTEUR')" (click)="selectProfile('TUTEUR')">
+          @if (hasRole('TUTEUR')) {
+          <div class="profile-card parent-theme" (click)="selectProfile('TUTEUR')">
             <div class="card-glass"></div>
             <div class="icon-container">
               <mat-icon>family_restroom</mat-icon>
@@ -42,9 +43,11 @@ import { AuthService } from '../../../core/services/auth.service';
               <mat-icon>chevron_right</mat-icon>
             </div>
           </div>
+          }
 
           <!-- Carte Admin -->
-          <div class="profile-card admin-theme" *ngIf="hasRole('ADMIN') || hasRole('SECRETAIRE')" (click)="selectProfile('ADMIN')">
+          @if (hasRole('ADMIN') || hasRole('SECRETAIRE')) {
+          <div class="profile-card admin-theme" (click)="selectProfile('ADMIN')">
             <div class="card-glass"></div>
             <div class="icon-container">
               <mat-icon>admin_panel_settings</mat-icon>
@@ -58,6 +61,7 @@ import { AuthService } from '../../../core/services/auth.service';
               <mat-icon>chevron_right</mat-icon>
             </div>
           </div>
+          }
         </div>
 
         <button mat-button class="logout-action" (click)="logout()">
@@ -281,13 +285,9 @@ export class ProfileSelectionComponent implements OnInit {
     this.authService.setSelectedProfile(profile);
     
     if (profile === 'TUTEUR') {
-      this.router.navigate(['/portail/dashboard']).then(() => {
-        window.location.reload(); // Recharger pour rafraîchir les menus
-      });
+      this.router.navigate(['/portail/dashboard']);
     } else {
-      this.router.navigate(['/dashboard']).then(() => {
-        window.location.reload(); // Recharger pour rafraîchir les menus
-      });
+      this.router.navigate(['/dashboard']);
     }
   }
 

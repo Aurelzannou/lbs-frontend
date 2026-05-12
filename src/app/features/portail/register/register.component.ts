@@ -2,17 +2,15 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
+import { TuteurAuthService } from '../../../core/services/tuteur-auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { 
-  NbButtonModule, 
-  NbCardModule, 
-  NbInputModule, 
-  NbIconModule, 
-  NbSpinnerModule, 
-  NbAlertModule 
-} from '@nebular/theme';
-
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NbIconModule } from '@nebular/theme';
 @Component({
   selector: 'app-portal-register',
   standalone: true,
@@ -20,19 +18,19 @@ import {
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
-    NbButtonModule,
-    NbCardModule,
-    NbInputModule,
-    NbIconModule,
-    NbSpinnerModule,
-    NbAlertModule
-  ],
+    MatButtonModule,
+    MatCardModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    NbIconModule
+    ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
 export class PortalRegisterComponent {
   private fb = inject(FormBuilder);
-  private authService: AuthService = inject(AuthService);
+  private tuteurAuthService = inject(TuteurAuthService);
   private router: Router = inject(Router);
   private notification = inject(NotificationService);
 
@@ -53,14 +51,17 @@ export class PortalRegisterComponent {
       this.loading = true;
       this.error = null;
 
-      // On prépare les données pour le backend en suivant les noms attendus
-      const userData = {
-        ...this.registerForm.value,
-        username: this.registerForm.value.email, // L'email sert d'identifiant
-        role: 'TUTEUR'
+      // Mapper les noms de champs du formulaire vers le TuteurRequest du backend
+      const formData = this.registerForm.value;
+      const tuteurData = {
+        nom: formData.lastName,
+        prenom: formData.firstName,
+        email: formData.email,
+        telephone1: formData.telephone1,
+        motDePasse: formData.password
       };
 
-      this.authService.register(userData).subscribe({
+      this.tuteurAuthService.register(tuteurData).subscribe({
         next: () => {
           this.notification.success('Compte créé', 'Vous pouvez maintenant vous connecter');
           this.router.navigate(['/portail/login']);
@@ -68,7 +69,6 @@ export class PortalRegisterComponent {
         error: (err) => {
           console.error(err);
           this.loading = false;
-          // Si err est un objet avec un message, on l'affiche
           if (err.error && err.error.message) {
             this.error = err.error.message;
           } else {

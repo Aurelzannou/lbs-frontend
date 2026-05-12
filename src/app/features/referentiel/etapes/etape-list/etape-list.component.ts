@@ -4,15 +4,6 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbCardModule, 
-  NbButtonModule, 
-  NbIconModule, 
-  NbInputModule, 
-  NbTooltipModule,
-  NbFormFieldModule,
-  NbSpinnerModule
-} from '@nebular/theme';
 import { EtapeService } from '../../../../core/services/etape.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Etape } from '../../../../core/models/etape.model';
@@ -20,6 +11,13 @@ import { EtapeFormDialogComponent } from '../etape-form-dialog/etape-form-dialog
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-etape-list',
@@ -30,24 +28,23 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
     MatPaginatorModule,
     MatSortModule,
     MatDialogModule,
-    NbCardModule,
-    NbButtonModule,
-    NbIconModule,
-    NbInputModule,
-    NbTooltipModule,
-    NbFormFieldModule,
-    NbSpinnerModule
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatInputModule, MatFormFieldModule,
+    MatTooltipModule,
+    MatProgressSpinnerModule
   ],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
       state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
     ]),
     trigger('rowsAnimation', [
       transition('void => *', [
         style({ height: '*', opacity: '0', transform: 'translateX(-20px)', 'box-shadow': 'none' }),
-        animate('0.3s ease-out', style({ height: '*', opacity: '1', transform: 'translateX(0)' })),
+        animate('0.3s ease-out', style({ height: '*', opacity: '1', transform: 'translateX(0)' }))
       ])
     ])
   ],

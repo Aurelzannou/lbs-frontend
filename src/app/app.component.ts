@@ -1,27 +1,37 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { NbMenuModule, NbMenuItem, NbLayoutModule } from '@nebular/theme';
-import { OneColumnLayoutComponent } from './@theme/layouts/one-column-layout.component';
+import { Component, OnInit } from '@angular/core';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { OneColumnLayoutComponent } from './@theme/layouts/one-column-layout.component';
 import { AuthService } from './core/services/auth.service';
 import { MenuService } from './core/services/menu.service';
 import { filter } from 'rxjs/operators';
-import { OnInit } from '@angular/core';
 
-// Les menus sont maintenant chargés dynamiquement depuis le backend via MenuService
+export interface MenuItem {
+  title: string;
+  icon?: string;
+  link?: string;
+  children?: MenuItem[];
+  expanded?: boolean;
+}
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, OneColumnLayoutComponent, NbMenuModule, CommonModule],
+  imports: [RouterOutlet, OneColumnLayoutComponent, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   title = 'lbs-frontend';
-  menu: NbMenuItem[] = [];
+  menu: MenuItem[] = [];
   showLayout = true;
+
+  private noLayoutPaths = ['/login', '/register', '/auth', '/home', '/portail'];
+  private lastLoadedProfile: string | null = null;
 
   constructor(
     private router: Router, 
@@ -31,15 +41,15 @@ export class AppComponent implements OnInit {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
-      this.showLayout = !event.urlAfterRedirects.includes('/login') && 
-                        !event.urlAfterRedirects.includes('/register') &&
-                        !event.urlAfterRedirects.includes('/auth') &&
-                        !event.urlAfterRedirects.includes('/home') &&
-                        !event.urlAfterRedirects.includes('/portail');
+      const url = event.urlAfterRedirects;
+      this.showLayout = !this.noLayoutPaths.some(path => url.includes(path));
 
-      // Si l'utilisateur est connecté et que le menu n'est pas encore chargé
-      if (this.showLayout && this.authService.isLoggedIn && this.menu.length === 0) {
-        this.loadMenu();
+      if (this.showLayout && this.authService.isLoggedIn) {
+        const currentProfile = this.authService.getSelectedProfile();
+        if (this.menu.length === 0 || currentProfile !== this.lastLoadedProfile) {
+          this.loadMenu();
+          this.lastLoadedProfile = currentProfile;
+        }
       }
     });
   }
@@ -47,6 +57,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     if (this.authService.isLoggedIn) {
       this.loadMenu();
+      this.lastLoadedProfile = this.authService.getSelectedProfile();
     }
   }
 

@@ -1,13 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbCardModule, 
-  NbButtonModule, 
-  NbIconModule,
-  NbUserModule
-} from '@nebular/theme';
 import { Eleve } from '../../../../core/models/eleve.model';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { NbUserModule, NbCardModule, NbIconModule, NbButtonModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-eleve-detail-dialog',
@@ -15,10 +13,10 @@ import { Eleve } from '../../../../core/models/eleve.model';
   imports: [
     CommonModule,
     MatDialogModule,
-    NbCardModule,
-    NbButtonModule,
-    NbIconModule,
-    NbUserModule
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    NbUserModule, NbCardModule, NbIconModule, NbButtonModule
   ],
   template: `
     <nb-card class="detail-card">

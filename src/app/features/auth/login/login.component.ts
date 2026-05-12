@@ -2,16 +2,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { 
-  NbButtonModule, 
-  NbCardModule, 
-  NbInputModule, 
-  NbLayoutModule, 
-  NbIconModule,
-  NbAlertModule,
-  NbSpinnerModule
-} from '@nebular/theme';
 import { AuthService } from '../../../core/services/auth.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-login',
@@ -20,13 +17,11 @@ import { AuthService } from '../../../core/services/auth.service';
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
-    NbButtonModule,
-    NbCardModule,
-    NbInputModule,
-    NbLayoutModule,
-    NbIconModule,
-    NbAlertModule,
-    NbSpinnerModule
+    MatButtonModule,
+    MatCardModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']

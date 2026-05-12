@@ -2,13 +2,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbButtonModule, 
-  NbInputModule, 
-  NbFormFieldModule, 
-  NbIconModule,
-  NbSpinnerModule
-} from '@nebular/theme';
 import { FraisScolaireService } from '../../../../core/services/frais-scolaire.service';
 import { ClasseService } from '../../../../core/services/classe.service';
 import { AnneeScolaireService } from '../../../../core/services/annee-scolaire.service';
@@ -19,6 +12,12 @@ import { Classe } from '../../../../core/models/classe.model';
 import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
 import { TypeFrais } from '../../../../core/models/type-frais.model';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-frais-scolaire-form-dialog',
@@ -27,11 +26,11 @@ import { NgSelectModule } from '@ng-select/ng-select';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule,
-    NbInputModule,
-    NbFormFieldModule,
-    NbIconModule,
-    NbSpinnerModule,
+    NbButtonModule, NbInputModule, NbSpinnerModule,
+    MatButtonModule,
+    MatInputModule, MatFormFieldModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
     NgSelectModule
   ],
   templateUrl: './frais-scolaire-form-dialog.component.html',

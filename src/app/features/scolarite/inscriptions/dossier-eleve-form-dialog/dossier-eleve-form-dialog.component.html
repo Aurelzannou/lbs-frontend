@@ -1,47 +1,47 @@
-<nb-card class="dialog-card">
-  <nb-card-header>
+<mat-card class="dialog-card">
+  <mat-card-header>
     <div class="header-content">
       <h3>{{ isEdit ? 'Modifier le Dossier' : 'Nouvelle Inscription' }}</h3>
-      <button nbButton ghost status="basic" (click)="dialogRef.close()">
-        <nb-icon icon="close-outline"></nb-icon>
+      <button mat-icon-button (click)="dialogRef.close()">
+        <mat-icon></mat-icon>
       </button>
     </div>
-  </nb-card-header>
+  </mat-card-header>
 
-  <nb-card-body>
+  <mat-card-content>
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-content">
       <div class="form-grid">
         <!-- Élève -->
         <div class="form-field full-width">
           <label>Élève</label>
-          <nb-select fullWidth placeholder="Sélectionner l'élève" formControlName="eleveId">
-            <nb-option *ngFor="let e of eleves" [value]="e.id">{{ e.nom }} {{ e.prenom }}</nb-option>
-          </nb-select>
+          <mat-select placeholder="Sélectionner l'élève" formControlName="eleveId">
+            <mat-option *ngFor="let e of eleves" [value]="e.id">{{ e.nom }} {{ e.prenom }}</mat-option>
+          </mat-select>
         </div>
 
         <!-- Classe -->
         <div class="form-field">
           <label>Classe</label>
-          <nb-select fullWidth placeholder="Classe" formControlName="classeId">
-            <nb-option *ngFor="let c of classes" [value]="c.id">{{ c.libelle }} ({{ c.code }})</nb-option>
-          </nb-select>
+          <mat-select placeholder="Classe" formControlName="classeId">
+            <mat-option *ngFor="let c of classes" [value]="c.id">{{ c.libelle }} ({{ c.code }})</mat-option>
+          </mat-select>
         </div>
 
         <!-- Année Scolaire -->
         <div class="form-field">
           <label>Année Scolaire</label>
-          <nb-select fullWidth placeholder="Année" formControlName="anneeScolaireId">
-            <nb-option *ngFor="let a of annees" [value]="a.id">{{ a.code }}</nb-option>
-          </nb-select>
+          <mat-select placeholder="Année" formControlName="anneeScolaireId">
+            <mat-option *ngFor="let a of annees" [value]="a.id">{{ a.code }}</mat-option>
+          </mat-select>
         </div>
       </div>
 
       <div class="dialog-footer">
-        <button nbButton status="basic" type="button" (click)="dialogRef.close()">Annuler</button>
-        <button nbButton status="primary" type="submit" [disabled]="form.invalid || loading" [nbSpinner]="loading">
+        <button mat-button status="basic" type="button" (click)="dialogRef.close()">Annuler</button>
+        <button mat-button status="primary" type="submit" [disabled]="form.invalid || loading">
           {{ isEdit ? 'Enregistrer' : 'Créer le Dossier' }}
         </button>
       </div>
     </form>
-  </nb-card-body>
-</nb-card>
+  </mat-card-content>
+</mat-card>

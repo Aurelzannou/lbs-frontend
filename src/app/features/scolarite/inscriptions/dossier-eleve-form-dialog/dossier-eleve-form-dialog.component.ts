@@ -2,17 +2,6 @@ import { Component, Inject, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { 
-  NbButtonModule, 
-  NbInputModule, 
-  NbSelectModule, 
-  NbFormFieldModule, 
-  NbIconModule,
-  NbSpinnerModule,
-  NbToggleModule,
-  NbDialogRef,
-  NbCardModule
-} from '@nebular/theme';
 import { DossierEleveService } from '../../../../core/services/dossier-eleve.service';
 import { EleveService } from '../../../../core/services/eleve.service';
 import { ClasseService } from '../../../../core/services/classe.service';
@@ -22,6 +11,13 @@ import { DossierEleve } from '../../../../core/models/dossier-eleve.model';
 import { Eleve } from '../../../../core/models/eleve.model';
 import { Classe } from '../../../../core/models/classe.model';
 import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-dossier-eleve-form-dialog',
@@ -30,14 +26,12 @@ import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule,
-    NbInputModule,
-    NbSelectModule,
-    NbFormFieldModule,
-    NbIconModule,
-    NbSpinnerModule,
-    NbToggleModule,
-    NbCardModule
+    MatButtonModule,
+    MatInputModule, MatFormFieldModule,
+    MatSelectModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatCardModule
   ],
   templateUrl: './dossier-eleve-form-dialog.component.html',
   styleUrl: './dossier-eleve-form-dialog.component.scss'
@@ -58,10 +52,9 @@ export class DossierEleveFormDialogComponent implements OnInit {
   classes: Classe[] = [];
   annees: AnneeScolaire[] = [];
 
-  data: DossierEleve = null as any;
-
   constructor(
-    public dialogRef: NbDialogRef<DossierEleveFormDialogComponent>
+    public dialogRef: MatDialogRef<DossierEleveFormDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DossierEleve
   ) {}
 
   ngOnInit(): void {

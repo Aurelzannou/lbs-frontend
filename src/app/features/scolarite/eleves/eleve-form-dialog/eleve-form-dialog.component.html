@@ -1,50 +1,46 @@
-<nb-card class="form-card large-card">
-    <nb-card-header class="form-header">
+<mat-card class="form-card large-card">
+    <mat-card-header class="form-header">
       <div class="header-content">
         <div class="title-with-icon">
           <div class="icon-box" [ngClass]="isEdit ? 'edit-mode' : 'create-mode'">
-            <nb-icon [icon]="isEdit ? 'edit-2-outline' : 'person-add-outline'"></nb-icon>
+            <mat-icon></mat-icon>
           </div>
           <div class="title-text">
             <h3>{{ isEdit ? 'Modifier' : 'Nouvel' }} Élève</h3>
             <p class="subtitle">{{ isEdit ? 'Mise à jour du dossier scolaire' : 'Saisie d\'un nouvel élève dans la base' }}</p>
           </div>
         </div>
-        <button nbButton ghost status="basic" (click)="onCancel()" class="close-btn">
-          <nb-icon icon="close-outline"></nb-icon>
+        <button mat-icon-button (click)="onCancel()" class="close-btn">
+          <mat-icon></mat-icon>
         </button>
       </div>
-    </nb-card-header>
+    </mat-card-header>
 
-    <nb-card-body class="form-body">
+    <mat-card-content class="form-body">
       <form [formGroup]="form" class="professional-form">
         
         <!-- Identité -->
         <div class="form-row">
           <div class="form-field col-6">
             <label class="field-label">Nom de famille</label>
-            <nb-form-field>
-              <nb-icon nbPrefix icon="text-outline" pack="eva"></nb-icon>
-              <input nbInput 
-                     fullWidth 
-                     shape="semi-round" 
+            <mat-form-field appearance="outline" class="full-width">
+              <nb-icon matPrefix icon="text-outline" pack="eva"></nb-icon>
+              <input matInput 
                      formControlName="nom" 
                      placeholder="Ex: KOFFI"
                      style="text-transform: uppercase"
-                     [status]="form.get('nom')?.invalid && form.get('nom')?.touched ? 'danger' : 'basic'">
-            </nb-form-field>
+                     >
+            </mat-form-field>
           </div>
           <div class="form-field col-6">
             <label class="field-label">Prénom(s)</label>
-            <nb-form-field>
-              <nb-icon nbPrefix icon="person-outline" pack="eva"></nb-icon>
-              <input nbInput 
-                     fullWidth 
-                     shape="semi-round" 
+            <mat-form-field appearance="outline" class="full-width">
+              <nb-icon matPrefix icon="person-outline" pack="eva"></nb-icon>
+              <input matInput 
                      formControlName="prenom" 
                      placeholder="Ex: Jean-Eudes"
-                     [status]="form.get('prenom')?.invalid && form.get('prenom')?.touched ? 'danger' : 'basic'">
-            </nb-form-field>
+                     >
+            </mat-form-field>
           </div>
         </div>
 
@@ -67,15 +63,13 @@
                 ({{ calculatedAge }} ans)
               </span>
             </label>
-            <nb-form-field>
-              <nb-icon nbPrefix icon="calendar-outline" pack="eva"></nb-icon>
-              <input nbInput 
-                     fullWidth 
-                     type="date"
-                     shape="semi-round" 
+            <mat-form-field appearance="outline" class="full-width">
+              <nb-icon matPrefix icon="calendar-outline" pack="eva"></nb-icon>
+              <input matInput 
+                     type="date" 
                      formControlName="dateNaissance" 
-                     [status]="'basic'">
-            </nb-form-field>
+                     >
+            </mat-form-field>
           </div>
         </div>
 
@@ -97,15 +91,13 @@
         <div class="form-row">
           <div class="form-field col-12">
             <label class="field-label">Provenance / École d'origine</label>
-            <nb-form-field>
-              <nb-icon nbPrefix icon="home-outline" pack="eva"></nb-icon>
-              <input nbInput 
-                     fullWidth 
-                     shape="semi-round" 
+            <mat-form-field appearance="outline" class="full-width">
+              <nb-icon matPrefix icon="home-outline" pack="eva"></nb-icon>
+              <input matInput 
                      formControlName="provenance" 
                      placeholder="Ex: École Primaire Publique de ..."
-                     [status]="'basic'">
-            </nb-form-field>
+                     >
+            </mat-form-field>
           </div>
         </div>
 
@@ -120,29 +112,24 @@
         </div>
 
       </form>
-    </nb-card-body>
+    </mat-card-content>
 
-    <nb-card-footer class="form-footer">
+    <mat-card-actions class="form-footer">
       <div class="footer-actions">
-        <button nbButton 
-                status="basic" 
-                appearance="ghost"
+        <button mat-button
                 (click)="onCancel()" 
                 [disabled]="loading"
                 class="cancel-btn">
           Annuler
         </button>
-        <button nbButton 
-                status="primary" 
-                shape="semi-round"
+        <button mat-button 
+                status="primary"
                 (click)="onSubmit()" 
-                [disabled]="form.invalid || loading" 
-                [nbSpinner]="loading" 
-                nbSpinnerStatus="control"
+                [disabled]="form.invalid || loading"
                 class="submit-btn shadow-btn">
           <nb-icon icon="save-outline" *ngIf="!loading"></nb-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>
-    </nb-card-footer>
-  </nb-card>
+    </mat-card-actions>
+  </mat-card>

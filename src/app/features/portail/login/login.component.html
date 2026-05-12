@@ -14,15 +14,15 @@
       </div>
       <div class="features-list">
         <div class="feature-item">
-          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+          <mat-icon></mat-icon>
           <span>Inscription en ligne simplifiée</span>
         </div>
         <div class="feature-item">
-          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+          <mat-icon></mat-icon>
           <span>Paiement sécurisé par Mobile Money</span>
         </div>
         <div class="feature-item">
-          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+          <mat-icon></mat-icon>
           <span>Suivi des dossiers en temps réel</span>
         </div>
       </div>
@@ -32,62 +32,58 @@
   <!-- Section Formulaire (Droite) -->
   <div class="form-section">
     <div class="login-container">
-      <nb-card [nbSpinner]="loading" nbSpinnerStatus="primary">
-        <nb-card-header>
+      <mat-card>
+        <mat-card-header>
           <h3>Connexion Parent</h3>
           <p class="subtitle">Accédez à votre compte pour continuer</p>
-        </nb-card-header>
-        <nb-card-body>
-          <nb-alert *ngIf="error" status="danger" closable (close)="error = null">
+        </mat-card-header>
+        <mat-card-content>
+          @if (error) {<div class="alert alert-danger"><button class="alert-close" (click)="error = null">&times;</button>
             {{ error }}
-          </nb-alert>
+          </div>}
 
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <div class="form-control-group">
               <label class="label" for="email">Adresse Email</label>
-              <input 
-                nbInput 
-                fullWidth 
+              <input matInput 
                 id="email" 
                 formControlName="email" 
                 placeholder="Ex: parent@exemple.com"
-                [status]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid ? 'danger' : 'basic'">
+                >
             </div>
 
             <div class="form-control-group">
               <label class="label" for="password">Mot de passe</label>
               <div class="password-input-wrapper">
-                <input 
-                  nbInput 
-                  fullWidth 
+                <input matInput 
                   id="password" 
                   [type]="showPassword ? 'text' : 'password'" 
                   formControlName="password" 
                   placeholder="********"
-                  [status]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid ? 'danger' : 'basic'">
-                <button type="button" nbButton ghost (click)="showPassword = !showPassword" class="toggle-password">
-                  <nb-icon [icon]="showPassword ? 'eye-outline' : 'eye-off-outline'"></nb-icon>
+                  >
+                <button type="button" mat-icon-button (click)="showPassword = !showPassword" class="toggle-password">
+                  <mat-icon></mat-icon>
                 </button>
               </div>
             </div>
 
-            <button nbButton fullWidth status="primary" size="large" [disabled]="loading || loginForm.invalid">
+            <button mat-button status="primary" size="large" [disabled]="loading || loginForm.invalid">
               Se connecter
             </button>
           </form>
-        </nb-card-body>
-        <nb-card-footer>
+        </mat-card-content>
+        <mat-card-actions>
           <div class="footer-register">
             <span>Nouvel utilisateur ?</span>
             <a routerLink="/portail/register">Créer un compte</a>
           </div>
           <p class="copyright">© 2026 LBS Education. Tous droits réservés.</p>
-        </nb-card-footer>
-      </nb-card>
+        </mat-card-actions>
+      </mat-card>
       
       <div class="back-home">
         <a routerLink="/home">
-          <nb-icon icon="arrow-back-outline"></nb-icon>
+          <mat-icon></mat-icon>
           Retour à l'accueil
         </a>
       </div>
