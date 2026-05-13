@@ -104,9 +104,9 @@ export interface MenuItem {
 
     .app-sidebar {
       width: 260px;
-      background: #0f172a;
+      background: #0f2744;
       border-right: none;
-      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.18);
     }
 
     .sidebar-header {
@@ -114,7 +114,7 @@ export interface MenuItem {
       align-items: center;
       gap: 0.75rem;
       padding: 1.5rem 1.25rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(147, 197, 253, 0.08);
 
       .brand-logo {
         width: 40px;
@@ -146,25 +146,26 @@ export interface MenuItem {
     .menu-item {
       margin: 2px 8px;
       border-radius: 10px !important;
-      color: #94a3b8 !important;
+      color: #e2e8f0 !important;
       height: 44px !important;
       transition: all 0.2s ease;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.05) !important;
+        background: rgba(255, 255, 255, 0.08) !important;
         color: white !important;
+        .menu-icon { color: white; }
       }
 
       &.active-link {
-        background: rgba(251, 191, 36, 0.1) !important;
+        background: rgba(251, 191, 36, 0.15) !important;
         color: #fbbf24 !important;
-        
+
         .menu-icon { color: #fbbf24; }
       }
     }
 
     .menu-icon {
-      color: #64748b;
+      color: #cbd5e1;
       margin-right: 12px;
       font-size: 20px;
       width: 20px;
@@ -174,6 +175,7 @@ export interface MenuItem {
     .menu-label {
       font-size: 0.875rem;
       font-weight: 500;
+      color: #e2e8f0 !important;
     }
 
     /* Expansion panel (parent with children) */
@@ -185,50 +187,65 @@ export interface MenuItem {
 
       .mat-expansion-panel-header {
         padding: 0 16px;
-        height: 44px;
-        color: #94a3b8;
+        height: 44px !important;
+        color: #e2e8f0 !important;
         border-radius: 10px !important;
+        background: transparent !important;
 
         &:hover {
-          background: rgba(255, 255, 255, 0.05) !important;
+          background: rgba(255, 255, 255, 0.08) !important;
         }
 
         .mat-panel-title {
-          color: #94a3b8;
+          color: #e2e8f0 !important;
           display: flex;
           align-items: center;
           font-size: 0.875rem;
           font-weight: 500;
         }
+
+        .mat-expansion-indicator::after {
+          color: #e2e8f0 !important;
+        }
       }
 
       .mat-expansion-panel-body {
         padding: 0 0 4px 0;
+        background: transparent !important;
       }
+    }
+
+    /* Force Material list-item inner text color */
+    ::ng-deep .app-sidebar {
+      .mdc-list-item__primary-text { color: #e2e8f0 !important; }
+      .active-link .mdc-list-item__primary-text { color: #fbbf24 !important; }
     }
 
     .sub-item {
       height: 38px !important;
       margin: 1px 4px 1px 20px;
       border-radius: 8px !important;
-      color: #64748b !important;
+      color: #cbd5e1 !important;
       font-size: 0.825rem;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.04) !important;
-        color: #cbd5e1 !important;
+        background: rgba(255, 255, 255, 0.07) !important;
+        color: white !important;
+        .sub-icon { color: white; }
+        .sub-label { color: white !important; }
       }
 
       &.active-link {
-        background: rgba(251, 191, 36, 0.08) !important;
+        background: rgba(251, 191, 36, 0.12) !important;
         color: #fbbf24 !important;
-        
+
         .sub-icon { color: #fbbf24; }
+        .sub-label { color: #fbbf24 !important; }
       }
     }
 
     .sub-icon {
-      color: #475569;
+      color: #94a3b8;
       margin-right: 10px;
       font-size: 18px;
       width: 18px;
@@ -238,6 +255,7 @@ export interface MenuItem {
     .sub-label {
       font-size: 0.825rem;
       font-weight: 500;
+      color: #cbd5e1 !important;
     }
 
     /* Main content area */
