@@ -166,7 +166,7 @@ export class MenuListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   addMenu(): void {
     this.dialog.open(MenuFormDialogComponent, {
-      width: '550px',
+      width: '480px',
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {
       if (result) this.refresh();
@@ -175,7 +175,7 @@ export class MenuListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   editMenu(menu: MenuResponse): void {
     this.dialog.open(MenuFormDialogComponent, {
-      width: '550px',
+      width: '480px',
       data: menu,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

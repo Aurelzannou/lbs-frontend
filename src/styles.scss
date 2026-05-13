@@ -138,6 +138,45 @@ h1, h2, h3, h4, .brand {
   font-size: 0.85rem;
 }
 
+/* ── ng-select global dropdown (appendTo="body") ─────────────────────────── */
+.ng-dropdown-panel.ng-field {
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.14);
+  background: #f8fafc;
+  overflow: hidden;
+  z-index: 9999;
+
+  .ng-dropdown-panel-items,
+  .scroll-host {
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    padding: 4px;
+
+    &::-webkit-scrollbar       { width: 5px; }
+    &::-webkit-scrollbar-track { background: #f1f5f9; }
+    &::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+  }
+
+  .ng-option {
+    border-radius: 6px;
+    padding: 7px 10px;
+    margin: 2px 0;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+    font-size: 0.83rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &.ng-option-marked  { background: #1e293b !important; color: #f1f5f9 !important; border-color: #1e293b !important; }
+    &.ng-option-selected { background: #0f172a !important; color: #fbbf24 !important; border-color: #0f172a !important; font-weight: 700; }
+  }
+
+  .ng-option-label { font-size: 0.83rem; }
+}
+
 /* Professional SweetAlert2 customization */
 .swal2-container {
   z-index: 11000 !important;
