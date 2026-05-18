@@ -1,268 +1,41 @@
-.form-card {
-  margin: 0;
-  border: none;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  width: 100%;
+// Base structure from global styles.scss (rfm-*)
+
+.age-hint {
+  font-size: 0.7rem;
+  color: #3b82f6;
+  text-transform: none;
+  font-weight: 600;
+  margin-left: 0.4rem;
+  background: #eff6ff;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #dbeafe;
 }
 
-
-
-.form-header {
-  background: #374151;
-  border-bottom: 3px solid #fbbf24;
-  width: 100%;
-}
-
-::ng-deep nb-card-header.form-header {
-  padding: 0 !important;
-}
-
-.form-header {
-  .header-content {
-    padding: 1.75rem 2.25rem;
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .title-with-icon {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-
-    .icon-box {
-      width: 3.5rem;
-      height: 3.5rem;
-      border-radius: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #451a03;
-      box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.2);
-      background: #fbbf24;
-
-      nb-icon {
-        font-size: 2rem;
-      }
-    }
-
-    h3 {
-      margin: 0;
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: white;
-      letter-spacing: -0.02em;
-    }
-
-    .subtitle {
-      margin: 0.15rem 0 0;
-      font-size: 0.85rem;
-      color: #94a3b8;
-      font-weight: 600;
-      opacity: 0.9;
-    }
-  }
-
-  .close-btn {
-    border-radius: 50%;
-    width: 2.75rem;
-    height: 2.75rem;
-    color: #fde68a;
-    
-    &:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-    }
-  }
-}
-
-.form-body {
-  padding: 2.25rem;
-  background: white;
-}
-
-.professional-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
-}
-
-.form-row {
-  display: flex;
-  gap: 1.5rem;
-  
-  .col-6 { flex: 1; }
-  .col-12 { flex: 0 0 100%; }
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-
-  .field-label {
-    font-size: 0.75rem;
-    font-weight: 800;
-    color: #92400e;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-left: 0.25rem;
-  }
-
-  .age-hint {
-    font-size: 0.7rem;
-    color: #3b82f6;
-    text-transform: none;
-    font-weight: 600;
-    margin-left: 0.5rem;
-    background: #eff6ff;
-    padding: 0.1rem 0.4rem;
-    border-radius: 4px;
-    border: 1px solid #dbeafe;
-  }
-
-  ::ng-deep nb-form-field {
-    .nb-form-field-container {
-      background: #fffdf5;
-      border: 2px solid #fef3c7;
-      border-radius: 0.75rem;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      
-      &:focus-within {
-        border-color: #fbbf24;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1);
-        transform: translateY(-1px);
-      }
-
-      input {
-        background: transparent;
-        border: none;
-        padding: 0.75rem 1rem;
-        font-weight: 600;
-        color: #451a03;
-        
-        &::placeholder {
-          color: #d97706;
-          opacity: 0.4;
-        }
-      }
-
-      nb-icon[nbPrefix] {
-        color: #d97706;
-      }
-    }
-  }
-
-  /* Custom styling for ng-select to match yellow theme */
-  ::ng-deep .custom-ng-select {
-    .ng-select-container {
-      background: #fffdf5;
-      border: 2px solid #fef3c7 !important;
-      border-radius: 0.75rem !important;
-      min-height: 48px;
-      padding: 0 0.5rem;
-      
-      .ng-placeholder { color: #d97706; opacity: 0.5; font-weight: 600; }
-      .ng-value-label { color: #451a03; font-weight: 600; }
-    }
-    
-    &.ng-select-opened .ng-select-container {
-      border-color: #fbbf24 !important;
-      box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1);
-    }
-  }
-}
-
-.checkbox-wrapper {
+.eleve-check {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  background: #fff9db;
-  padding: 1rem 1.25rem;
-  border-radius: 0.85rem;
-  border: 1px solid #fef3c7;
-  transition: all 0.2s ease;
+  gap: 0.75rem;
+  padding: 0.65rem 0.875rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   cursor: pointer;
+  width: 100%;
 
-  &:hover {
-    background: #fff3bf;
-    transform: translateX(4px);
-  }
-
-  .custom-checkbox {
-    width: 1.4rem;
-    height: 1.4rem;
+  input[type="checkbox"] {
+    width: 1.1rem;
+    height: 1.1rem;
     cursor: pointer;
-    accent-color: #d97706;
+    accent-color: #374151;
+    flex-shrink: 0;
   }
 
-  .checkbox-label {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #92400e;
-    margin: 0;
-    cursor: pointer;
-  }
-}
-
-.form-footer {
-  padding: 1.75rem 2.25rem;
-  background: #fffbeb;
-  border-top: 2px solid #fef3c7;
-
-  .footer-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1.25rem;
-    align-items: center;
+  span {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #374151;
   }
 
-  .cancel-btn {
-    font-weight: 700;
-    color: #92400e;
-    &:hover { background: #fef3c7; }
-  }
-
-  .submit-btn {
-    --mdc-filled-button-container-color: #374151;
-    --mdc-filled-button-label-text-color: white;
-    --mdc-filled-button-disabled-container-color: #6b7280;
-    --mdc-filled-button-disabled-label-text-color: #d1d5db;
-    min-width: 180px;
-    height: 3.25rem;
-    font-weight: 800 !important;
-    font-size: 1rem !important;
-    letter-spacing: 0.02em;
-    box-shadow: 0 10px 20px -5px rgba(55, 65, 81, 0.3) !important;
-    transition: all 0.2s ease;
-    display: inline-flex !important;
-    align-items: center;
-    gap: 0.375rem;
-
-    mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
-
-    &:hover:not(:disabled) {
-      --mdc-filled-button-container-color: #1f2937;
-      transform: translateY(-2px);
-      box-shadow: 0 15px 25px -5px rgba(55, 65, 81, 0.4) !important;
-    }
-
-    &:active:not(:disabled) { transform: translateY(0); }
-  }
-
-  .icon-box mat-icon {
-    font-size: 1.75rem;
-    width: 1.75rem;
-    height: 1.75rem;
-    line-height: 1.75rem;
-  }
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  &:hover { background: #f1f5f9; border-color: #cbd5e1; }
 }

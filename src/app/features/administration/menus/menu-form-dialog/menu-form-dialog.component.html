@@ -1,131 +1,132 @@
-<div class="dialog-root">
+<div class="rfm-dialog">
+  <div class="rfm-card">
 
-  <!-- En-tête -->
-  <div class="dlg-header">
-    <div class="dlg-header-left">
-      <span class="dlg-icon" [class.edit]="isEdit">
-        <mat-icon>{{ isEdit ? 'edit' : 'menu' }}</mat-icon>
-      </span>
-      <div>
-        <h2 class="dlg-title">{{ isEdit ? 'Modifier le Menu' : 'Nouveau Menu' }}</h2>
-        <p class="dlg-sub" *ngIf="!isEdit">Configurez une entrée de navigation</p>
-        <p class="dlg-sub" *ngIf="isEdit">Mise à jour des informations</p>
+    <div class="rfm-header">
+      <div class="rfm-header-inner">
+        <div class="rfm-title-group">
+          <div class="rfm-icon-box" [ngClass]="isEdit ? 'edit' : 'create'">
+            <mat-icon>{{ isEdit ? 'edit' : 'menu' }}</mat-icon>
+          </div>
+          <div>
+            <h3 class="rfm-title">{{ isEdit ? 'Modifier le Menu' : 'Nouveau Menu' }}</h3>
+            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour des informations' : 'Configurez une entrée de navigation' }}</p>
+          </div>
+        </div>
+        <button mat-icon-button class="rfm-close" (click)="onCancel()">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
     </div>
-    <button mat-icon-button class="dlg-close" (click)="onCancel()">
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
 
-  <div class="dlg-divider"></div>
+    <div class="rfm-body">
+      <form [formGroup]="form" class="rfm-form">
 
-  <!-- Corps -->
-  <div class="dlg-body">
-    <form [formGroup]="form">
-
-      <!-- Titre -->
-      <div class="f-group">
-        <label class="f-label">Titre du menu <span class="req">*</span></label>
-        <mat-form-field appearance="outline" class="f-field">
-          <input matInput formControlName="titre" placeholder="Ex: Tableau de bord">
-          <mat-error *ngIf="form.get('titre')?.hasError('required')">Obligatoire</mat-error>
-        </mat-form-field>
-      </div>
-
-      <!-- Code + Ordre -->
-      <div class="f-row">
-        <div class="f-group flex-1">
-          <label class="f-label">Code <span class="req">*</span></label>
-          <mat-form-field appearance="outline" class="f-field">
-            <input matInput formControlName="code" placeholder="Ex: DASHBOARD" style="text-transform:uppercase">
-            <mat-error *ngIf="form.get('code')?.hasError('required')">Obligatoire</mat-error>
-          </mat-form-field>
+        <div class="rfm-row">
+          <div class="rfm-field">
+            <span class="rfm-label">Titre du menu <span class="menu-req">*</span></span>
+            <mat-form-field appearance="outline">
+              <input matInput formControlName="titre" placeholder="Ex: Tableau de bord">
+              <mat-error *ngIf="form.get('titre')?.hasError('required')">Obligatoire</mat-error>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="f-group w120">
-          <label class="f-label">Ordre <span class="req">*</span></label>
-          <mat-form-field appearance="outline" class="f-field">
-            <input matInput type="number" formControlName="ordre" min="1">
-            <mat-error *ngIf="form.get('ordre')?.hasError('required')">Requis</mat-error>
-          </mat-form-field>
+
+        <div class="rfm-row two-cols">
+          <div class="rfm-field">
+            <span class="rfm-label">Code <span class="menu-req">*</span></span>
+            <mat-form-field appearance="outline">
+              <input matInput formControlName="code" placeholder="Ex: DASHBOARD" style="text-transform:uppercase">
+              <mat-error *ngIf="form.get('code')?.hasError('required')">Obligatoire</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="rfm-field menu-ordre">
+            <span class="rfm-label">Ordre <span class="menu-req">*</span></span>
+            <mat-form-field appearance="outline">
+              <input matInput type="number" formControlName="ordre" min="1">
+              <mat-error *ngIf="form.get('ordre')?.hasError('required')">Requis</mat-error>
+            </mat-form-field>
+          </div>
         </div>
-      </div>
 
-      <!-- Chemin URL -->
-      <div class="f-group">
-        <label class="f-label">Chemin (URL) <span class="opt-lbl">— optionnel si groupe</span></label>
-        <mat-form-field appearance="outline" class="f-field">
-          <input matInput formControlName="path" placeholder="Ex: /referentiel/niveaux">
-        </mat-form-field>
-      </div>
+        <div class="rfm-row">
+          <div class="rfm-field">
+            <span class="rfm-label">Chemin (URL) <span class="menu-opt">— optionnel si groupe</span></span>
+            <mat-form-field appearance="outline">
+              <input matInput formControlName="path" placeholder="Ex: /referentiel/niveaux">
+            </mat-form-field>
+          </div>
+        </div>
 
-      <!-- Menu parent -->
-      <div class="f-group">
-        <label class="f-label">Menu parent <span class="opt-lbl">— optionnel</span></label>
-        <ng-select [items]="parentMenus"
-                   bindLabel="titre"
-                   bindValue="id"
-                   formControlName="menuEnfantId"
-                   placeholder="Aucun (menu racine)"
-                   [searchable]="true"
-                   appendTo="body"
-                   class="ng-field">
-          <ng-template ng-option-tmp let-item="item">
-            <div class="opt-row">
-              <span class="opt-name">{{ item.titre }}</span>
-              <span class="badge b-blue">{{ item.code }}</span>
-            </div>
-          </ng-template>
-          <ng-template ng-label-tmp let-item="item">
-            <div class="sel-val">
-              <span>{{ item.titre }}</span>
-              <span class="badge b-blue">{{ item.code }}</span>
-            </div>
-          </ng-template>
-        </ng-select>
-      </div>
+        <div class="rfm-row">
+          <div class="rfm-field rfm-select">
+            <span class="rfm-label">Menu parent <span class="menu-opt">— optionnel</span></span>
+            <ng-select [items]="parentMenus"
+                       bindLabel="titre"
+                       bindValue="id"
+                       formControlName="menuEnfantId"
+                       placeholder="Aucun (menu racine)"
+                       [searchable]="true"
+                       appendTo="body"
+                       class="ng-field">
+              <ng-template ng-option-tmp let-item="item">
+                <div class="opt-row">
+                  <span class="opt-name">{{ item.titre }}</span>
+                  <span class="badge b-blue">{{ item.code }}</span>
+                </div>
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item">
+                <div class="sel-val">
+                  <span>{{ item.titre }}</span>
+                  <span class="badge b-blue">{{ item.code }}</span>
+                </div>
+              </ng-template>
+            </ng-select>
+          </div>
+        </div>
 
-      <!-- Profils -->
-      <div class="f-group">
-        <label class="f-label">Profils autorisés</label>
-        <ng-select [items]="allProfils"
-                   bindLabel="libelle"
-                   bindValue="id"
-                   formControlName="profilIds"
-                   [multiple]="true"
-                   [closeOnSelect]="false"
-                   placeholder="Choisir les profils..."
-                   appendTo="body"
-                   class="ng-field">
-          <ng-template ng-option-tmp let-item="item">
-            <div class="opt-row">
-              <span class="opt-name">{{ item.libelle }}</span>
-              <span class="badge b-amber">{{ item.code }}</span>
-            </div>
-          </ng-template>
-          <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
-            <div class="multi-vals">
-              <span class="mtag" *ngFor="let item of items">
-                {{ item.libelle }}
-                <button class="mtag-x" (click)="clear(item)" type="button">×</button>
-              </span>
-            </div>
-          </ng-template>
-        </ng-select>
-      </div>
+        <div class="rfm-row">
+          <div class="rfm-field rfm-select">
+            <span class="rfm-label">Profils autorisés</span>
+            <ng-select [items]="allProfils"
+                       bindLabel="libelle"
+                       bindValue="id"
+                       formControlName="profilIds"
+                       [multiple]="true"
+                       [closeOnSelect]="false"
+                       placeholder="Choisir les profils..."
+                       appendTo="body"
+                       class="ng-field">
+              <ng-template ng-option-tmp let-item="item">
+                <div class="opt-row">
+                  <span class="opt-name">{{ item.libelle }}</span>
+                  <span class="badge b-amber">{{ item.code }}</span>
+                </div>
+              </ng-template>
+              <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+                <div class="multi-vals">
+                  <span class="mtag" *ngFor="let item of items">
+                    {{ item.libelle }}
+                    <button class="mtag-x" (click)="clear(item)" type="button">×</button>
+                  </span>
+                </div>
+              </ng-template>
+            </ng-select>
+          </div>
+        </div>
 
-    </form>
+      </form>
+    </div>
+
+    <div class="rfm-footer">
+      <div class="rfm-actions">
+        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="loading">Annuler</button>
+        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || loading">
+          <mat-spinner *ngIf="loading" diameter="14"></mat-spinner>
+          <mat-icon *ngIf="!loading">{{ isEdit ? 'save' : 'check' }}</mat-icon>
+          {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+
   </div>
-
-  <div class="dlg-divider"></div>
-
-  <!-- Pied -->
-  <div class="dlg-footer">
-    <button mat-button class="btn-cancel" (click)="onCancel()" [disabled]="loading">Annuler</button>
-    <button mat-flat-button class="btn-submit" (click)="onSubmit()" [disabled]="form.invalid || loading">
-      <mat-spinner *ngIf="loading" diameter="14" class="btn-spinner"></mat-spinner>
-      <mat-icon *ngIf="!loading">{{ isEdit ? 'save' : 'check' }}</mat-icon>
-      {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
-    </button>
-  </div>
-
 </div>

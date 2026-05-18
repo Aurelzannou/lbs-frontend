@@ -1,134 +1,103 @@
-<mat-card class="form-card large-card">
-    <mat-card-header class="form-header">
-      <div class="header-content">
-        <div class="title-with-icon">
-          <div class="icon-box" [ngClass]="isEdit ? 'edit-mode' : 'create-mode'">
+<div class="rfm-dialog">
+  <div class="rfm-card">
+
+    <div class="rfm-header">
+      <div class="rfm-header-inner">
+        <div class="rfm-title-group">
+          <div class="rfm-icon-box" [ngClass]="isEdit ? 'edit' : 'create'">
             <mat-icon>school</mat-icon>
           </div>
-          <div class="title-text">
-            <h3>{{ isEdit ? 'Modifier' : 'Nouvel' }} Élève</h3>
-            <p class="subtitle">{{ isEdit ? 'Mise à jour du dossier scolaire' : 'Saisie d\'un nouvel élève dans la base' }}</p>
+          <div>
+            <h3 class="rfm-title">{{ isEdit ? 'Modifier l\'Élève' : 'Nouvel Élève' }}</h3>
+            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour du dossier scolaire' : 'Saisie d\'un nouvel élève dans la base' }}</p>
           </div>
         </div>
-        <button mat-icon-button (click)="onCancel()" class="close-btn">
+        <button mat-icon-button class="rfm-close" (click)="onCancel()">
           <mat-icon>close</mat-icon>
         </button>
       </div>
-    </mat-card-header>
+    </div>
 
-    <mat-card-content class="form-body">
-      <form [formGroup]="form" class="professional-form">
-        
-        <!-- Identité -->
-        <div class="form-row">
-          <div class="form-field col-6">
-            <label class="field-label">Nom de famille</label>
-            <mat-form-field appearance="outline" class="full-width">
+    <div class="rfm-body">
+      <form [formGroup]="form" class="rfm-form">
+
+        <div class="rfm-row two-cols">
+          <div class="rfm-field">
+            <span class="rfm-label">Nom de famille</span>
+            <mat-form-field appearance="outline">
               <mat-icon matPrefix>notes</mat-icon>
-              <input matInput 
-                     formControlName="nom" 
-                     placeholder="Ex: KOFFI"
-                     style="text-transform: uppercase"
-                     >
+              <input matInput formControlName="nom" placeholder="Ex: KOFFI" style="text-transform: uppercase">
             </mat-form-field>
           </div>
-          <div class="form-field col-6">
-            <label class="field-label">Prénom(s)</label>
-            <mat-form-field appearance="outline" class="full-width">
+          <div class="rfm-field">
+            <span class="rfm-label">Prénom(s)</span>
+            <mat-form-field appearance="outline">
               <mat-icon matPrefix>person</mat-icon>
-              <input matInput 
-                     formControlName="prenom" 
-                     placeholder="Ex: Jean-Eudes"
-                     >
+              <input matInput formControlName="prenom" placeholder="Ex: Jean-Eudes">
             </mat-form-field>
           </div>
         </div>
 
-        <!-- Sexe & Naissance -->
-        <div class="form-row">
-          <div class="form-field col-6">
-            <label class="field-label">Sexe</label>
+        <div class="rfm-row two-cols">
+          <div class="rfm-field rfm-select">
+            <span class="rfm-label">Sexe</span>
             <ng-select [items]="sexes"
                        bindLabel="label"
                        bindValue="value"
                        formControlName="sexe"
-                       placeholder="Genre de l'élève"
-                       class="custom-ng-select">
+                       placeholder="Genre de l'élève">
             </ng-select>
           </div>
-          <div class="form-field col-6">
-            <label class="field-label">
-              Date de Naissance 
-              <span class="age-hint" *ngIf="calculatedAge !== null">
-                ({{ calculatedAge }} ans)
-              </span>
-            </label>
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-icon matPrefix>calendar_today</mat-icon>
-              <input matInput 
-                     type="date" 
-                     formControlName="dateNaissance" 
-                     >
-            </mat-form-field>
+          <div class="rfm-field rfm-date">
+            <span class="rfm-label">
+              Date de Naissance
+              <span class="age-hint" *ngIf="calculatedAge !== null">({{ calculatedAge }} ans)</span>
+            </span>
+            <input type="date" formControlName="dateNaissance">
           </div>
         </div>
 
-        <!-- Classe & Scolarité -->
-        <div class="form-row">
-          <div class="form-field col-12">
-            <label class="field-label">Classe d'affectation</label>
+        <div class="rfm-row">
+          <div class="rfm-field rfm-select">
+            <span class="rfm-label">Classe d'affectation</span>
             <ng-select [items]="classes"
                        bindLabel="code"
                        bindValue="id"
                        formControlName="classeId"
-                       placeholder="Sélectionnez la classe..."
-                       class="custom-ng-select">
+                       placeholder="Sélectionnez la classe...">
             </ng-select>
           </div>
         </div>
 
-        <!-- Provenance -->
-        <div class="form-row">
-          <div class="form-field col-12">
-            <label class="field-label">Provenance / École d'origine</label>
-            <mat-form-field appearance="outline" class="full-width">
+        <div class="rfm-row">
+          <div class="rfm-field">
+            <span class="rfm-label">Provenance / École d'origine</span>
+            <mat-form-field appearance="outline">
               <mat-icon matPrefix>home</mat-icon>
-              <input matInput 
-                     formControlName="provenance" 
-                     placeholder="Ex: École Primaire Publique de ..."
-                     >
+              <input matInput formControlName="provenance" placeholder="Ex: École Primaire Publique de ...">
             </mat-form-field>
           </div>
         </div>
 
-        <!-- État de santé -->
-        <div class="form-row" style="margin-top: 0.5rem;">
-          <div class="form-field col-12">
-            <div class="checkbox-wrapper">
-              <input type="checkbox" id="souffrant" formControlName="souffrant" class="custom-checkbox">
-              <label for="souffrant" class="checkbox-label">L'élève présente-t-il des problèmes de santé ?</label>
-            </div>
-          </div>
+        <div class="rfm-row">
+          <label class="eleve-check">
+            <input type="checkbox" formControlName="souffrant">
+            <span>L'élève présente-t-il des problèmes de santé ?</span>
+          </label>
         </div>
 
       </form>
-    </mat-card-content>
+    </div>
 
-    <mat-card-actions class="form-footer">
-      <div class="footer-actions">
-        <button mat-button
-                (click)="onCancel()" 
-                [disabled]="loading"
-                class="cancel-btn">
-          Annuler
-        </button>
-        <button mat-flat-button
-                (click)="onSubmit()"
-                [disabled]="form.invalid || loading"
-                class="submit-btn shadow-btn">
+    <div class="rfm-footer">
+      <div class="rfm-actions">
+        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="loading">Annuler</button>
+        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || loading">
           <mat-icon *ngIf="!loading">save</mat-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>
-    </mat-card-actions>
-  </mat-card>
+    </div>
+
+  </div>
+</div>
