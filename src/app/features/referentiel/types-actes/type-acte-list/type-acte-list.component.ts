@@ -144,7 +144,8 @@ export class TypeActeListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openForm(typeActe?: TypeActe): void {
     this.dialog.open(TypeActeFormDialogComponent, {
-      width: '400px',
+      width: '480px',
+      maxWidth: '95vw',
       data: typeActe,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

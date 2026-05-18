@@ -14,7 +14,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NbIconModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-eleve-form-dialog',
@@ -29,7 +28,6 @@ import { NbIconModule } from '@nebular/theme';
     MatCardModule,
     MatProgressSpinnerModule,
     NgSelectModule,
-    NbIconModule
   ],
   templateUrl: './eleve-form-dialog.component.html',
   styleUrl: './eleve-form-dialog.component.scss'

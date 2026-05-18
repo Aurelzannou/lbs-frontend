@@ -148,6 +148,7 @@ export class AnneeScolaireListComponent implements OnInit, AfterViewInit, OnDest
   openForm(anneeScolaire?: AnneeScolaire): void {
     const dialogRef = this.dialog.open(AnneeScolaireFormDialogComponent, {
       width: '500px',
+      maxWidth: '95vw',
       data: anneeScolaire,
       panelClass: 'professional-dialog'
     });

@@ -145,6 +145,7 @@ export class PeriodeAcademiqueListComponent implements OnInit, OnDestroy, AfterV
   openForm(periode?: PeriodeAcademique): void {
     this.dialog.open(PeriodeAcademiqueFormDialogComponent, {
       width: '500px',
+      maxWidth: '95vw',
       data: periode,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

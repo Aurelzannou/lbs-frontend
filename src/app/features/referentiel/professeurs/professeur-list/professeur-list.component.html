@@ -37,10 +37,13 @@
         <ng-container matColumnDef="identite">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Identité</th>
           <td mat-cell *matCellDef="let row">
-            <nb-user [name]="row.nom + ' ' + row.prenom" 
-                     [title]="row.code || 'Pas de matricule'"
-                     size="medium">
-            </nb-user>
+            <div class="user-info-cell">
+              <div class="user-avatar">{{ (row.nom || '?')[0] }}{{ (row.prenom || '?')[0] }}</div>
+              <div class="user-details">
+                <span class="user-name">{{ row.nom }} {{ row.prenom }}</span>
+                <span class="user-sub">{{ row.code || 'Pas de matricule' }}</span>
+              </div>
+            </div>
           </td>
         </ng-container>
 

@@ -228,26 +228,37 @@
   }
 
   .submit-btn {
+    --mdc-filled-button-container-color: #374151;
+    --mdc-filled-button-label-text-color: white;
+    --mdc-filled-button-disabled-container-color: #6b7280;
+    --mdc-filled-button-disabled-label-text-color: #d1d5db;
     min-width: 180px;
     height: 3.25rem;
-    font-weight: 800;
-    font-size: 1rem;
+    font-weight: 800 !important;
+    font-size: 1rem !important;
     letter-spacing: 0.02em;
-    background: #374151;
-    color: white;
-    border: none;
-    box-shadow: 0 10px 20px -5px rgba(55, 65, 81, 0.3);
+    box-shadow: 0 10px 20px -5px rgba(55, 65, 81, 0.3) !important;
     transition: all 0.2s ease;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.375rem;
+
+    mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
 
     &:hover:not(:disabled) {
-      background: #1f2937;
+      --mdc-filled-button-container-color: #1f2937;
       transform: translateY(-2px);
-      box-shadow: 0 15px 25px -5px rgba(55, 65, 81, 0.4);
+      box-shadow: 0 15px 25px -5px rgba(55, 65, 81, 0.4) !important;
     }
 
-    &:active:not(:disabled) {
-      transform: translateY(0);
-    }
+    &:active:not(:disabled) { transform: translateY(0); }
+  }
+
+  .icon-box mat-icon {
+    font-size: 1.75rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    line-height: 1.75rem;
   }
 }
 

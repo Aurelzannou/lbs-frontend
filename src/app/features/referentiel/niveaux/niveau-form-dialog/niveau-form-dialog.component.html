@@ -6,7 +6,7 @@
       <div class="header-content">
         <div class="title-with-icon">
           <div class="icon-box" [ngClass]="isEdit ? 'edit-mode' : 'create-mode'">
-            <mat-icon></mat-icon>
+            <mat-icon>layers</mat-icon>
           </div>
           <div class="title-text">
             <h3>{{ isEdit ? 'Modifier le' : 'Nouveau' }} Niveau</h3>
@@ -14,38 +14,34 @@
           </div>
         </div>
         <button mat-icon-button (click)="onCancel()" class="close-btn">
-          <mat-icon></mat-icon>
+          <mat-icon>close</mat-icon>
         </button>
       </div>
     </mat-card-header>
 
     <mat-card-content class="form-body">
       <form [formGroup]="form" class="professional-form">
-        <div class="form-row">
-          <div class="form-field full-width">
+        <div class="form-row two-cols">
+          <div class="form-field">
             <label class="field-label">Code du Niveau</label>
-            <mat-form-field appearance="outline" class="full-width">
-              <nb-icon matPrefix icon="hash-outline" pack="eva"></nb-icon>
-              <input matInput 
-                     formControlName="code" 
-                     placeholder="Ex: CP, CE1, BAC..."
-                     >
+            <mat-form-field appearance="outline" class="field-input">
+              <mat-icon matPrefix>tag</mat-icon>
+              <input matInput
+                     formControlName="code"
+                     placeholder="Ex: CP, CE1, BAC...">
             </mat-form-field>
             <div class="field-error" *ngIf="form.get('code')?.invalid && form.get('code')?.touched">
               <span *ngIf="form.get('code')?.errors?.['required']">Ce champ est obligatoire</span>
             </div>
           </div>
-        </div>
 
-        <div class="form-row">
-          <div class="form-field full-width">
+          <div class="form-field">
             <label class="field-label">Libellé Complet</label>
-            <mat-form-field appearance="outline" class="full-width">
-              <nb-icon matPrefix icon="text-outline" pack="eva"></nb-icon>
-              <input matInput 
-                     formControlName="libelle" 
-                     placeholder="Ex: Cours Préparatoire"
-                     >
+            <mat-form-field appearance="outline" class="field-input">
+              <mat-icon matPrefix>notes</mat-icon>
+              <input matInput
+                     formControlName="libelle"
+                     placeholder="Ex: Cours Préparatoire">
             </mat-form-field>
             <div class="field-error" *ngIf="form.get('libelle')?.invalid && form.get('libelle')?.touched">
               <span *ngIf="form.get('libelle')?.errors?.['required']">Ce champ est obligatoire</span>
@@ -63,12 +59,11 @@
                 class="cancel-btn">
           Annuler
         </button>
-        <button mat-button 
-                status="primary"
-                (click)="onSubmit()" 
+        <button mat-flat-button
+                (click)="onSubmit()"
                 [disabled]="form.invalid || loading"
                 class="submit-btn shadow-btn">
-          <nb-icon icon="save-outline" *ngIf="!loading"></nb-icon>
+          <mat-icon *ngIf="!loading">save</mat-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>

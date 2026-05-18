@@ -1,47 +1,82 @@
-<mat-card class="dialog-card">
-  <mat-card-header>
-    <div class="header-content">
-      <h3>{{ isEdit ? 'Modifier le Dossier' : 'Nouvelle Inscription' }}</h3>
-      <button mat-icon-button (click)="dialogRef.close()">
-        <mat-icon></mat-icon>
-      </button>
-    </div>
-  </mat-card-header>
+<div class="rfm-dialog">
+  <div class="rfm-card">
 
-  <mat-card-content>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-content">
-      <div class="form-grid">
-        <!-- Élève -->
-        <div class="form-field full-width">
-          <label>Élève</label>
-          <mat-select placeholder="Sélectionner l'élève" formControlName="eleveId">
-            <mat-option *ngFor="let e of eleves" [value]="e.id">{{ e.nom }} {{ e.prenom }}</mat-option>
-          </mat-select>
+    <div class="rfm-header">
+      <div class="rfm-header-inner">
+        <div class="rfm-title-group">
+          <div class="rfm-icon-box" [ngClass]="isEdit ? 'edit' : 'create'">
+            <mat-icon>folder_open</mat-icon>
+          </div>
+          <div>
+            <h3 class="rfm-title">{{ isEdit ? 'Modifier le Dossier' : 'Nouvelle Inscription' }}</h3>
+            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour du dossier scolaire' : 'Création d\'un dossier d\'inscription' }}</p>
+          </div>
         </div>
-
-        <!-- Classe -->
-        <div class="form-field">
-          <label>Classe</label>
-          <mat-select placeholder="Classe" formControlName="classeId">
-            <mat-option *ngFor="let c of classes" [value]="c.id">{{ c.libelle }} ({{ c.code }})</mat-option>
-          </mat-select>
-        </div>
-
-        <!-- Année Scolaire -->
-        <div class="form-field">
-          <label>Année Scolaire</label>
-          <mat-select placeholder="Année" formControlName="anneeScolaireId">
-            <mat-option *ngFor="let a of annees" [value]="a.id">{{ a.code }}</mat-option>
-          </mat-select>
-        </div>
-      </div>
-
-      <div class="dialog-footer">
-        <button mat-button status="basic" type="button" (click)="dialogRef.close()">Annuler</button>
-        <button mat-button status="primary" type="submit" [disabled]="form.invalid || loading">
-          {{ isEdit ? 'Enregistrer' : 'Créer le Dossier' }}
+        <button mat-icon-button class="rfm-close" (click)="dialogRef.close()">
+          <mat-icon>close</mat-icon>
         </button>
       </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+    </div>
+
+    <div class="rfm-body">
+      <form [formGroup]="form" class="rfm-form">
+
+        <div class="rfm-row">
+          <div class="rfm-field">
+            <span class="rfm-label">Élève</span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>school</mat-icon>
+              <mat-select placeholder="Sélectionner l'élève" formControlName="eleveId">
+                <mat-option *ngFor="let e of eleves" [value]="e.id">{{ e.nom }} {{ e.prenom }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="rfm-error" *ngIf="form.get('eleveId')?.invalid && form.get('eleveId')?.touched">
+              Ce champ est obligatoire
+            </div>
+          </div>
+        </div>
+
+        <div class="rfm-row two-cols">
+          <div class="rfm-field">
+            <span class="rfm-label">Classe</span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>groups</mat-icon>
+              <mat-select placeholder="Classe" formControlName="classeId">
+                <mat-option *ngFor="let c of classes" [value]="c.id">{{ c.libelle }} ({{ c.code }})</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="rfm-error" *ngIf="form.get('classeId')?.invalid && form.get('classeId')?.touched">
+              Obligatoire
+            </div>
+          </div>
+          <div class="rfm-field">
+            <span class="rfm-label">Année Scolaire</span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>calendar_today</mat-icon>
+              <mat-select placeholder="Année" formControlName="anneeScolaireId">
+                <mat-option *ngFor="let a of annees" [value]="a.id">{{ a.code }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="rfm-error" *ngIf="form.get('anneeScolaireId')?.invalid && form.get('anneeScolaireId')?.touched">
+              Obligatoire
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="rfm-footer">
+      <div class="rfm-actions">
+        <button mat-button class="rfm-cancel" (click)="dialogRef.close()" [disabled]="loading">
+          Annuler
+        </button>
+        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || loading">
+          <mat-icon *ngIf="!loading">save</mat-icon>
+          {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

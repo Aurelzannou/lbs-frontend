@@ -1,63 +1,96 @@
-<div class="dialog-container">
-  <div class="dialog-header">
-    <h3>{{ isEdit ? 'Modifier la Période' : 'Nouvelle Période' }}</h3>
-    <button class="close-btn" (click)="onCancel()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path d="M18 6L6 18M6 6l12 12"/>
-      </svg>
-    </button>
-  </div>
+<div class="rfm-dialog">
+  <div class="rfm-card">
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-content">
-    <div class="form-grid">
-      <!-- Année Scolaire -->
-      <div class="form-field">
-        <label>Année Scolaire</label>
-        <ng-select
-          [items]="anneesScolaires"
-          bindLabel="code"
-          bindValue="id"
-          formControlName="anneeScolaireId"
-          placeholder="Sélectionner l'année"
-          class="custom-ng-select"
-          [loading]="loading">
-        </ng-select>
-      </div>
-
-      <!-- Code -->
-      <div class="form-field">
-        <label>Code</label>
-        <input matInput placeholder="Ex: TRIM1" formControlName="code" 
-               >
-      </div>
-
-      <!-- Libellé -->
-      <div class="form-field">
-        <label>Libellé</label>
-        <input matInput placeholder="Ex: Premier Trimestre" formControlName="libelle"
-               >
-      </div>
-
-      <!-- Dates -->
-      <div class="form-row">
-        <div class="form-field">
-          <label>Date Début</label>
-          <input matInput [nbDatepicker]="pickerDebut" formControlName="dateDebut" placeholder="jj/mm/aaaa">
-          <nb-datepicker #pickerDebut></nb-datepicker>
+    <div class="rfm-header">
+      <div class="rfm-header-inner">
+        <div class="rfm-title-group">
+          <div class="rfm-icon-box" [ngClass]="isEdit ? 'edit' : 'create'">
+            <mat-icon>date_range</mat-icon>
+          </div>
+          <div>
+            <h3 class="rfm-title">{{ isEdit ? 'Modifier la Période' : 'Nouvelle Période Académique' }}</h3>
+            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour des informations' : 'Nouvelle période académique (trimestre, semestre...)' }}</p>
+          </div>
         </div>
-        <div class="form-field">
-          <label>Date Fin</label>
-          <input matInput [nbDatepicker]="pickerFin" formControlName="dateFin" placeholder="jj/mm/aaaa">
-          <nb-datepicker #pickerFin></nb-datepicker>
-        </div>
+        <button mat-icon-button class="rfm-close" (click)="onCancel()">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
     </div>
-  </form>
 
-  <div class="dialog-footer">
-    <button mat-icon-button (click)="onCancel()" [disabled]="saving">Annuler</button>
-    <button mat-button status="primary" (click)="onSubmit()" [disabled]="form.invalid || saving">
-      {{ isEdit ? 'Enregistrer' : 'Créer la période' }}
-    </button>
+    <div class="rfm-body">
+      <form [formGroup]="form" class="rfm-form">
+
+        <div class="rfm-row">
+          <div class="rfm-select">
+            <span class="rfm-label">Année Scolaire</span>
+            <ng-select
+              [items]="anneesScolaires"
+              bindLabel="code"
+              bindValue="id"
+              formControlName="anneeScolaireId"
+              placeholder="Sélectionner l'année"
+              [loading]="loading"
+              appendTo="body"
+              class="ng-field">
+            </ng-select>
+            <div class="rfm-error" *ngIf="form.get('anneeScolaireId')?.invalid && form.get('anneeScolaireId')?.touched">
+              Ce champ est obligatoire
+            </div>
+          </div>
+        </div>
+
+        <div class="rfm-row two-cols">
+          <div class="rfm-field">
+            <span class="rfm-label">Code</span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>tag</mat-icon>
+              <input matInput formControlName="code" placeholder="Ex: TRIM1">
+            </mat-form-field>
+            <div class="rfm-error" *ngIf="form.get('code')?.invalid && form.get('code')?.touched">
+              Obligatoire
+            </div>
+          </div>
+          <div class="rfm-field">
+            <span class="rfm-label">Libellé</span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>notes</mat-icon>
+              <input matInput formControlName="libelle" placeholder="Ex: Premier Trimestre">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="rfm-row two-cols">
+          <div class="rfm-date">
+            <span class="rfm-label">Date Début</span>
+            <input type="date" formControlName="dateDebut">
+            <div class="rfm-error" *ngIf="form.get('dateDebut')?.invalid && form.get('dateDebut')?.touched">
+              Obligatoire
+            </div>
+          </div>
+          <div class="rfm-date">
+            <span class="rfm-label">Date Fin</span>
+            <input type="date" formControlName="dateFin">
+            <div class="rfm-error" *ngIf="form.get('dateFin')?.invalid && form.get('dateFin')?.touched">
+              Obligatoire
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="rfm-footer">
+      <div class="rfm-actions">
+        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="saving">
+          Annuler
+        </button>
+        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || saving || loading">
+          <mat-icon *ngIf="!saving">save</mat-icon>
+          {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+
   </div>
 </div>

@@ -145,6 +145,7 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
   openForm(frais?: FraisScolaire): void {
     this.dialog.open(FraisScolaireFormDialogComponent, {
       width: '500px',
+      maxWidth: '95vw',
       data: frais,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

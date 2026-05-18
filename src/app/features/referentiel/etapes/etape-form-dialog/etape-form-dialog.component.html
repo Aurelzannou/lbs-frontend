@@ -6,7 +6,7 @@
       <div class="header-content">
         <div class="title-with-icon">
           <div class="icon-box" [ngClass]="isEdit ? 'edit-mode' : 'create-mode'">
-            <mat-icon></mat-icon>
+            <mat-icon>account_tree</mat-icon>
           </div>
           <div class="title-text">
             <h3>{{ isEdit ? 'Modifier l\'' : 'Nouvelle' }} Étape</h3>
@@ -14,7 +14,7 @@
           </div>
         </div>
         <button mat-icon-button (click)="onCancel()" class="close-btn">
-          <mat-icon></mat-icon>
+          <mat-icon>close</mat-icon>
         </button>
       </div>
     </mat-card-header>
@@ -25,7 +25,7 @@
           <div class="form-field full-width">
             <label class="field-label">Code de l'étape</label>
             <mat-form-field appearance="outline" class="full-width">
-              <nb-icon matPrefix icon="hash-outline" pack="eva"></nb-icon>
+              <mat-icon matPrefix>tag</mat-icon>
               <input matInput 
                      formControlName="code" 
                      placeholder="Ex: INSCRIPTION, VALIDATION..."
@@ -42,7 +42,7 @@
           <div class="form-field full-width">
             <label class="field-label">Libellé</label>
             <mat-form-field appearance="outline" class="full-width">
-              <nb-icon matPrefix icon="text-outline" pack="eva"></nb-icon>
+              <mat-icon matPrefix>notes</mat-icon>
               <input matInput 
                      formControlName="libelle" 
                      placeholder="Ex: Inscription des élèves"
@@ -57,12 +57,14 @@
         <div class="form-row">
           <div class="form-field full-width">
             <label class="field-label">Description (optionnel)</label>
-            <textarea matInput 
-                      formControlName="description" 
-                      placeholder="Détails sur cette étape..."
-                      rows="3"
-                      >
-            </textarea>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-icon matPrefix>subject</mat-icon>
+              <textarea matInput
+                        formControlName="description"
+                        placeholder="Détails sur cette étape..."
+                        rows="3">
+              </textarea>
+            </mat-form-field>
           </div>
         </div>
       </form>
@@ -76,12 +78,11 @@
                 class="cancel-btn">
           Annuler
         </button>
-        <button mat-button 
-                status="primary"
-                (click)="onSubmit()" 
+        <button mat-flat-button
+                (click)="onSubmit()"
                 [disabled]="form.invalid || loading"
                 class="submit-btn shadow-btn">
-          <nb-icon icon="save-outline" *ngIf="!loading"></nb-icon>
+          <mat-icon *ngIf="!loading">save</mat-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>

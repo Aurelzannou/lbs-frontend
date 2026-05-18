@@ -51,10 +51,10 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Identité</th>
           <td mat-cell *matCellDef="let row">
             <div class="user-info-cell">
-              <nb-user [name]="row.nom + ' ' + row.prenom" 
-                       size="medium"
-                       [onlyPicture]="false">
-              </nb-user>
+              <div class="user-avatar">{{ (row.nom || '?')[0] }}{{ (row.prenom || '?')[0] }}</div>
+              <div class="user-details">
+                <span class="user-name">{{ row.nom }} {{ row.prenom }}</span>
+              </div>
             </div>
           </td>
         </ng-container>

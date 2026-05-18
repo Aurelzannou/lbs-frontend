@@ -11,7 +11,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NbIconModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-niveau-form-dialog',
@@ -25,7 +24,6 @@ import { NbIconModule } from '@nebular/theme';
     MatIconModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    NbIconModule
   ],
   templateUrl: './niveau-form-dialog.component.html',
   styleUrl: './niveau-form-dialog.component.scss'

@@ -191,7 +191,8 @@ export class NiveauListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openForm(niveau?: Niveau): void {
     const dialogRef = this.dialog.open(NiveauFormDialogComponent, {
-      width: '400px',
+      width: '480px',
+      maxWidth: '95vw',
       data: niveau,
       panelClass: 'professional-dialog'
     });

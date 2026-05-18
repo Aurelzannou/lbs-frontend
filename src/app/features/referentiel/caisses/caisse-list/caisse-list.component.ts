@@ -144,7 +144,8 @@ export class CaisseListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openForm(caisse?: Caisse): void {
     this.dialog.open(CaisseFormDialogComponent, {
-      width: '400px',
+      width: '480px',
+      maxWidth: '95vw',
       data: caisse,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

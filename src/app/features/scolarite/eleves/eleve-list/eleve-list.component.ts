@@ -20,7 +20,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { NbUserModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-eleve-list',
@@ -36,7 +35,6 @@ import { NbUserModule } from '@nebular/theme';
     MatTooltipModule,
     MatInputModule, MatFormFieldModule,
     MatProgressSpinnerModule,
-    NbUserModule,
     MatDialogModule,
     EleveDetailDialogComponent
   ],

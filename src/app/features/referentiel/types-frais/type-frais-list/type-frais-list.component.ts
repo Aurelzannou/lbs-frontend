@@ -144,7 +144,8 @@ export class TypeFraisListComponent implements OnInit, OnDestroy, AfterViewInit 
 
   openForm(typeFrais?: TypeFrais): void {
     this.dialog.open(TypeFraisFormDialogComponent, {
-      width: '400px',
+      width: '480px',
+      maxWidth: '95vw',
       data: typeFrais,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

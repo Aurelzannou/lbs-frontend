@@ -5,8 +5,6 @@ import { Eleve } from '../../../../core/models/eleve.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { NbUserModule, NbCardModule, NbIconModule, NbButtonModule } from '@nebular/theme';
-
 @Component({
   selector: 'app-eleve-detail-dialog',
   standalone: true,
@@ -16,33 +14,33 @@ import { NbUserModule, NbCardModule, NbIconModule, NbButtonModule } from '@nebul
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    NbUserModule, NbCardModule, NbIconModule, NbButtonModule
   ],
   template: `
-    <nb-card class="detail-card">
-        <nb-card-header class="header">
+    <mat-card class="detail-card">
+        <div class="header">
           <div class="header-content">
             <div class="title-with-icon">
               <div class="icon-box">
-                <nb-icon icon="person-outline"></nb-icon>
+                <mat-icon>person</mat-icon>
               </div>
               <div class="title-text">
                 <h3>Détails de l'élève</h3>
                 <p class="subtitle">Informations complètes du dossier</p>
               </div>
             </div>
-            <button nbButton ghost status="basic" (click)="close()" class="close-btn">
-              <nb-icon icon="close-outline"></nb-icon>
+            <button mat-icon-button (click)="close()" class="close-btn">
+              <mat-icon>close</mat-icon>
             </button>
           </div>
-        </nb-card-header>
+        </div>
 
-        <nb-card-body class="body">
+        <mat-card-content class="body">
           <div class="profile-section">
-            <nb-user [name]="data.nom + ' ' + data.prenom" 
-                     [title]="'Élève'"
-                     size="large">
-            </nb-user>
+            <div class="avatar-circle">
+              {{ data.nom[0] }}{{ data.prenom[0] }}
+            </div>
+            <div class="user-name">{{ data.nom }} {{ data.prenom }}</div>
+            <div class="user-title">Élève</div>
           </div>
 
           <div class="details-grid">
@@ -86,12 +84,12 @@ import { NbUserModule, NbCardModule, NbIconModule, NbButtonModule } from '@nebul
               </span>
             </div>
           </div>
-        </nb-card-body>
+        </mat-card-content>
 
-        <nb-card-footer class="footer">
-          <button nbButton status="primary" fullWidth (click)="close()">Fermer</button>
-        </nb-card-footer>
-      </nb-card>
+        <mat-card-actions class="footer">
+          <button mat-flat-button class="full-width" (click)="close()">Fermer</button>
+        </mat-card-actions>
+      </mat-card>
   `,
   styles: [`
     .detail-card {
@@ -138,15 +136,28 @@ import { NbUserModule, NbCardModule, NbIconModule, NbButtonModule } from '@nebul
     .body { padding: 2rem; }
     .profile-section {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       margin-bottom: 2.25rem;
       padding-bottom: 1.5rem;
       border-bottom: 1.5px solid #fef3c7;
-      ::ng-deep nb-user {
-        .user-name { font-size: 1.3rem; font-weight: 800; color: #451a03; }
-        .user-title { color: #b45309; font-weight: 600; }
-      }
+      gap: 0.5rem;
     }
+    .avatar-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: #451a03;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .user-name { font-size: 1.3rem; font-weight: 800; color: #451a03; }
+    .user-title { color: #b45309; font-weight: 600; font-size: 0.9rem; }
     .details-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;

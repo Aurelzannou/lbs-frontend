@@ -18,7 +18,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { NbUserModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-professeur-list',
@@ -34,7 +33,6 @@ import { NbUserModule } from '@nebular/theme';
     MatTooltipModule,
     MatInputModule, MatFormFieldModule,
     MatProgressSpinnerModule,
-    NbUserModule,
     MatDialogModule
   ],
   animations: [
@@ -147,6 +145,7 @@ export class ProfesseurListComponent implements OnInit, OnDestroy, AfterViewInit
   openForm(professeur?: Professeur): void {
     this.dialog.open(ProfesseurFormDialogComponent, {
       width: '600px',
+      maxWidth: '95vw',
       data: professeur,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

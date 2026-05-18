@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep -l -i \"menu\\\\|referentiel\\\\|profil\")",
+      "Bash(xargs -I{} bash -c 'echo \"=== {} ===\"; head -40 \"{}\"')"
+    ]
+  }
+}

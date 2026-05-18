@@ -145,6 +145,7 @@ export class ClasseListComponent implements OnInit, OnDestroy, AfterViewInit {
   openForm(classe?: Classe): void {
     this.dialog.open(ClasseFormDialogComponent, {
       width: '500px',
+      maxWidth: '95vw',
       data: classe,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

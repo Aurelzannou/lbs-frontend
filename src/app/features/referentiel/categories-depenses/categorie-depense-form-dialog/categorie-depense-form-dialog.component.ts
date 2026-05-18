@@ -10,7 +10,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-categorie-depense-form-dialog',
@@ -23,7 +22,6 @@ import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
     MatInputModule, MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    NbButtonModule, NbInputModule, NbSpinnerModule
   ],
   templateUrl: './categorie-depense-form-dialog.component.html',
   styleUrl: './categorie-depense-form-dialog.component.scss'

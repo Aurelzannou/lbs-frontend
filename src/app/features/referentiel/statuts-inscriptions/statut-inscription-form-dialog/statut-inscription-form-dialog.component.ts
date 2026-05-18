@@ -5,7 +5,6 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
 import { StatutInscriptionService } from '../../../../core/services/statut-inscription.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { StatutInscription } from '../../../../core/models/statut-inscription.model';
-import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,7 +18,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule, NbInputModule, NbSpinnerModule,
     MatButtonModule,
     MatInputModule, MatFormFieldModule,
     MatIconModule,

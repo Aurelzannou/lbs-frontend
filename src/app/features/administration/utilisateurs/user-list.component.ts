@@ -17,7 +17,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { NbUserModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-user-list',
@@ -31,7 +30,6 @@ import { NbUserModule } from '@nebular/theme';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    NbUserModule,
     MatInputModule, MatFormFieldModule,
     MatProgressSpinnerModule,
     MatDialogModule

@@ -10,7 +10,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NbIconModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-user-profil-dialog',
@@ -22,7 +21,6 @@ import { NbIconModule } from '@nebular/theme';
     MatIconModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    NbIconModule,
     NgSelectModule,
     FormsModule
   ],

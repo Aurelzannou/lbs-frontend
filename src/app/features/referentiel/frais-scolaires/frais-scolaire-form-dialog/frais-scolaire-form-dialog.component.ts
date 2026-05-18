@@ -12,7 +12,6 @@ import { Classe } from '../../../../core/models/classe.model';
 import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
 import { TypeFrais } from '../../../../core/models/type-frais.model';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,7 +25,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule, NbInputModule, NbSpinnerModule,
     MatButtonModule,
     MatInputModule, MatFormFieldModule,
     MatIconModule,

@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NbToggleModule, NbIconModule } from '@nebular/theme';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-annee-scolaire-form-dialog',
@@ -25,7 +25,7 @@ import { NbToggleModule, NbIconModule } from '@nebular/theme';
     MatIconModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    NbToggleModule, NbIconModule
+    MatSlideToggleModule,
   ],
   templateUrl: './annee-scolaire-form-dialog.component.html',
   styleUrl: './annee-scolaire-form-dialog.component.scss'

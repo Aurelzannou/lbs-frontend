@@ -46,11 +46,11 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Utilisateur</th>
           <td mat-cell *matCellDef="let row">
             <div class="user-info-cell">
-              <nb-user [name]="row.prenom + ' ' + row.nom" 
-                       [title]="row.email"
-                       size="medium"
-                       [onlyPicture]="false">
-              </nb-user>
+              <div class="user-avatar">{{ (row.prenom || '?')[0] }}{{ (row.nom || '?')[0] }}</div>
+              <div class="user-details">
+                <span class="user-name">{{ row.prenom }} {{ row.nom }}</span>
+                <span class="user-sub">{{ row.email }}</span>
+              </div>
             </div>
           </td>
         </ng-container>

@@ -144,7 +144,8 @@ export class ModePaiementListComponent implements OnInit, OnDestroy, AfterViewIn
 
   openForm(mode?: ModePaiement): void {
     this.dialog.open(ModePaiementFormDialogComponent, {
-      width: '400px',
+      width: '480px',
+      maxWidth: '95vw',
       data: mode,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

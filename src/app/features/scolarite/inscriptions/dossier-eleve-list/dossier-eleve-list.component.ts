@@ -19,7 +19,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { NbTagModule, NbUserModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-dossier-eleve-list',
@@ -35,8 +34,6 @@ import { NbTagModule, NbUserModule } from '@nebular/theme';
     MatTooltipModule,
     MatInputModule, MatFormFieldModule,
     MatProgressSpinnerModule,
-    NbTagModule,
-    NbUserModule,
     MatDialogModule
   ],
   animations: [

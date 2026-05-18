@@ -61,17 +61,15 @@ export class MenuFormDialogComponent implements OnInit {
 
     this.loadProfils();
     this.loadParentMenus();
-
-    if (this.isEdit && this.data.profils) {
-      const ids = this.data.profils.map((p: any) => p.id || p);
-      this.form.patchValue({ profilIds: ids });
-    }
   }
 
   loadProfils(): void {
     this.profilService.getAll(1, 100).subscribe({
       next: (response: any) => {
         this.allProfils = response.data || [];
+        if (this.isEdit && this.data?.profilIds?.length) {
+          this.form.patchValue({ profilIds: this.data.profilIds });
+        }
       }
     });
   }

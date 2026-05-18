@@ -144,7 +144,8 @@ export class MatiereListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openForm(matiere?: Matiere): void {
     this.dialog.open(MatiereFormDialogComponent, {
-      width: '400px',
+      width: '480px',
+      maxWidth: '95vw',
       data: matiere,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

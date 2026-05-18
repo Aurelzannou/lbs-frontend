@@ -4,94 +4,73 @@ import { AuthService } from '../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { NbUserModule, NbTagModule, NbListModule, NbCardModule, NbIconModule, NbButtonModule } from '@nebular/theme';
-
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
     CommonModule,
     MatCardModule,
-    NbUserModule,
-    NbCardModule,
-    NbIconModule,
-    NbButtonModule,
-    NbTagModule,
-    NbListModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   template: `
     <div class="profile-container">
       <div class="header-banner"></div>
-      
-      <nb-card class="profile-card">
-        <nb-card-body>
+
+      <mat-card class="profile-card">
+        <mat-card-content>
           <div class="user-info-section">
-            <nb-user 
-              [name]="user?.prenom + ' ' + user?.nom" 
-              [title]="user?.login" 
-              size="giant"
-              class="profile-user">
-            </nb-user>
-            
+            <div class="avatar-circle">
+              {{ (user?.prenom || '?')[0] }}{{ (user?.nom || '?')[0] }}
+            </div>
             <div class="details">
               <h2>{{ user?.prenom }} {{ user?.nom }}</h2>
-              <p class="email"><nb-icon icon="email-outline"></nb-icon> {{ user?.email }}</p>
+              <p class="email"><mat-icon>email</mat-icon> {{ user?.email }}</p>
               <div class="profiles-list">
-                <nb-tag-list>
-                  <nb-tag *ngFor="let p of user?.profils" [text]="p" status="primary" size="small"></nb-tag>
-                </nb-tag-list>
+                <span class="badge" *ngFor="let p of user?.profils">{{ p }}</span>
               </div>
             </div>
-            
             <div class="actions">
-              <button nbButton status="primary" outline size="small">
-                <nb-icon icon="edit-2-outline"></nb-icon> Éditer le profil
+              <button mat-stroked-button color="primary">
+                <mat-icon>edit</mat-icon> Éditer le profil
               </button>
             </div>
           </div>
-        </nb-card-body>
-      </nb-card>
+        </mat-card-content>
+      </mat-card>
 
       <div class="row">
         <div class="col-md-6">
-          <nb-card>
-            <nb-card-header>Informations Personnelles</nb-card-header>
-            <nb-list>
-              <nb-list-item>
-                <strong>Identifiant:</strong> {{ user?.login }}
-              </nb-list-item>
-              <nb-list-item>
-                <strong>Prénom:</strong> {{ user?.prenom }}
-              </nb-list-item>
-              <nb-list-item>
-                <strong>Nom:</strong> {{ user?.nom }}
-              </nb-list-item>
-              <nb-list-item>
-                <strong>Email:</strong> {{ user?.email || 'N/A' }}
-              </nb-list-item>
-            </nb-list>
-          </nb-card>
+          <mat-card>
+            <mat-card-header><mat-card-title>Informations Personnelles</mat-card-title></mat-card-header>
+            <mat-card-content>
+              <div class="info-list">
+                <div class="info-item"><strong>Identifiant:</strong> {{ user?.login }}</div>
+                <div class="info-item"><strong>Prénom:</strong> {{ user?.prenom }}</div>
+                <div class="info-item"><strong>Nom:</strong> {{ user?.nom }}</div>
+                <div class="info-item"><strong>Email:</strong> {{ user?.email || 'N/A' }}</div>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
         <div class="col-md-6">
-          <nb-card>
-            <nb-card-header>Sécurité & Rôles</nb-card-header>
-            <nb-list>
-              <nb-list-item>
-                <strong>Rôles Actifs:</strong>
-                <div class="badge-container">
+          <mat-card>
+            <mat-card-header><mat-card-title>Sécurité & Rôles</mat-card-title></mat-card-header>
+            <mat-card-content>
+              <div class="info-list">
+                <div class="info-item">
+                  <strong>Rôles Actifs:</strong>
+                  <div class="badge-container">
                     <span class="badge" *ngFor="let role of user?.profils">{{ role }}</span>
+                  </div>
                 </div>
-              </nb-list-item>
-              <nb-list-item>
-                <strong>Dernière Connexion:</strong> Aujourd'hui
-              </nb-list-item>
-              <nb-list-item>
-                <button nbButton ghost status="info">Changer le mot de passe</button>
-              </nb-list-item>
-            </nb-list>
-          </nb-card>
+                <div class="info-item"><strong>Dernière Connexion:</strong> Aujourd'hui</div>
+                <div class="info-item">
+                  <button mat-button color="primary">Changer le mot de passe</button>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
       </div>
     </div>
@@ -119,10 +98,32 @@ import { NbUserModule, NbTagModule, NbListModule, NbCardModule, NbIconModule, Nb
       padding: 1rem;
       gap: 2rem;
     }
-    .profile-user {
-      border: 5px solid white;
+    .avatar-circle {
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
-      background: white;
+      background: linear-gradient(135deg, #3366ff, #8a3ffc);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      border: 4px solid white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+    }
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
     }
     .details h2 {
       margin: 0;

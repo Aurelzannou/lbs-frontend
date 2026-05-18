@@ -144,7 +144,8 @@ export class TypeOperationListComponent implements OnInit, OnDestroy, AfterViewI
 
   openForm(typeOperation?: TypeOperation): void {
     this.dialog.open(TypeOperationFormDialogComponent, {
-      width: '400px',
+      width: '480px',
+      maxWidth: '95vw',
       data: typeOperation,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

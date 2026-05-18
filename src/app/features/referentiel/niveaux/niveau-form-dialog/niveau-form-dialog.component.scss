@@ -82,14 +82,27 @@
 }
 
 .form-body {
-  padding: 2rem;
+  padding: 1.5rem 2rem;
   background: white;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .professional-form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.form-row.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.field-input {
+  width: 100%;
 }
 
 .form-field {

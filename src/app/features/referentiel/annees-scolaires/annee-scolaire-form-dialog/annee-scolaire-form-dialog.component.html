@@ -1,58 +1,88 @@
-<mat-card>
-  <mat-card-header class="dialog-header">
-    <div class="header-content">
-      <mat-icon></mat-icon>
-      <span>{{ isEdit ? 'Modifier' : 'Nouvelle' }} Année Scolaire</span>
+<div class="rfm-dialog">
+  <div class="rfm-card">
+
+    <div class="rfm-header">
+      <div class="rfm-header-inner">
+        <div class="rfm-title-group">
+          <div class="rfm-icon-box" [ngClass]="isEdit ? 'edit' : 'create'">
+            <mat-icon>calendar_today</mat-icon>
+          </div>
+          <div>
+            <h3 class="rfm-title">{{ isEdit ? 'Modifier l\'Année Scolaire' : 'Nouvelle Année Scolaire' }}</h3>
+            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour des informations' : 'Configuration de la nouvelle année scolaire' }}</p>
+          </div>
+        </div>
+        <button mat-icon-button class="rfm-close" (click)="onCancel()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
     </div>
-    <button class="close-btn" (click)="onCancel()">
-      <mat-icon></mat-icon>
-    </button>
-  </mat-card-header>
 
-  <mat-card-content>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
-      <div class="form-row">
-        <div class="form-field full">
-          <label>Code <span class="required">*</span></label>
-          <mat-form-field appearance="outline" class="full-width">
-            <nb-icon matPrefix icon="hash-outline"></nb-icon>
-            <input matInput formControlName="code" placeholder="Ex: 2023-2024">
-          </mat-form-field>
+    <div class="rfm-body">
+      <form [formGroup]="form" class="rfm-form">
+
+        <div class="rfm-row">
+          <div class="rfm-field">
+            <span class="rfm-label">Code</span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>tag</mat-icon>
+              <input matInput formControlName="code" placeholder="Ex: 2024-2025">
+            </mat-form-field>
+            <div class="rfm-error" *ngIf="form.get('code')?.invalid && form.get('code')?.touched">
+              Ce champ est obligatoire
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="form-row">
-        <div class="form-field full">
-          <label>Libellé <span class="required">*</span></label>
-          <mat-form-field appearance="outline" class="full-width">
-            <nb-icon matPrefix icon="text-outline"></nb-icon>
-            <input matInput formControlName="libelle" placeholder="Ex: Année Scolaire 2023-2024">
-          </mat-form-field>
+        <div class="rfm-row">
+          <div class="rfm-field">
+            <span class="rfm-label">Libellé</span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>notes</mat-icon>
+              <input matInput formControlName="libelle" placeholder="Ex: Année Scolaire 2024-2025">
+            </mat-form-field>
+            <div class="rfm-error" *ngIf="form.get('libelle')?.invalid && form.get('libelle')?.touched">
+              Ce champ est obligatoire
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="form-row two-cols">
-        <div class="form-field">
-          <label>Date Début <span class="required">*</span></label>
-          <input matInput type="date" formControlName="dateDebut">
+        <div class="rfm-row two-cols">
+          <div class="rfm-date">
+            <span class="rfm-label">Date Début</span>
+            <input type="date" formControlName="dateDebut">
+            <div class="rfm-error" *ngIf="form.get('dateDebut')?.invalid && form.get('dateDebut')?.touched">
+              Obligatoire
+            </div>
+          </div>
+          <div class="rfm-date">
+            <span class="rfm-label">Date Fin</span>
+            <input type="date" formControlName="dateFin">
+            <div class="rfm-error" *ngIf="form.get('dateFin')?.invalid && form.get('dateFin')?.touched">
+              Obligatoire
+            </div>
+          </div>
         </div>
-        <div class="form-field">
-          <label>Date Fin <span class="required">*</span></label>
-          <input matInput type="date" formControlName="dateFin">
+
+        <div class="rfm-toggle">
+          <span class="rfm-label" style="margin:0">Année active</span>
+          <mat-slide-toggle formControlName="actif" color="primary"></mat-slide-toggle>
         </div>
-      </div>
 
-      <div class="form-row toggle-row">
-        <label>Statut Actif</label>
-        <nb-toggle formControlName="actif" status="success"></nb-toggle>
-      </div>
-    </form>
-  </mat-card-content>
+      </form>
+    </div>
 
-  <mat-card-actions class="dialog-footer">
-    <button mat-button status="basic" (click)="onCancel()" [disabled]="loading">Annuler</button>
-    <button mat-button status="primary" (click)="onSubmit()" [disabled]="form.invalid || loading">
-      {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
-    </button>
-  </mat-card-actions>
-</mat-card>
+    <div class="rfm-footer">
+      <div class="rfm-actions">
+        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="loading">
+          Annuler
+        </button>
+        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || loading">
+          <mat-icon *ngIf="!loading">save</mat-icon>
+          {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

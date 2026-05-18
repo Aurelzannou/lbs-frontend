@@ -3,7 +3,7 @@
       <div class="header-content">
         <div class="title-with-icon">
           <div class="icon-box" [ngClass]="isEdit ? 'edit-mode' : 'create-mode'">
-            <mat-icon></mat-icon>
+            <mat-icon>school</mat-icon>
           </div>
           <div class="title-text">
             <h3>{{ isEdit ? 'Modifier' : 'Nouvel' }} Élève</h3>
@@ -11,7 +11,7 @@
           </div>
         </div>
         <button mat-icon-button (click)="onCancel()" class="close-btn">
-          <mat-icon></mat-icon>
+          <mat-icon>close</mat-icon>
         </button>
       </div>
     </mat-card-header>
@@ -24,7 +24,7 @@
           <div class="form-field col-6">
             <label class="field-label">Nom de famille</label>
             <mat-form-field appearance="outline" class="full-width">
-              <nb-icon matPrefix icon="text-outline" pack="eva"></nb-icon>
+              <mat-icon matPrefix>notes</mat-icon>
               <input matInput 
                      formControlName="nom" 
                      placeholder="Ex: KOFFI"
@@ -35,7 +35,7 @@
           <div class="form-field col-6">
             <label class="field-label">Prénom(s)</label>
             <mat-form-field appearance="outline" class="full-width">
-              <nb-icon matPrefix icon="person-outline" pack="eva"></nb-icon>
+              <mat-icon matPrefix>person</mat-icon>
               <input matInput 
                      formControlName="prenom" 
                      placeholder="Ex: Jean-Eudes"
@@ -64,7 +64,7 @@
               </span>
             </label>
             <mat-form-field appearance="outline" class="full-width">
-              <nb-icon matPrefix icon="calendar-outline" pack="eva"></nb-icon>
+              <mat-icon matPrefix>calendar_today</mat-icon>
               <input matInput 
                      type="date" 
                      formControlName="dateNaissance" 
@@ -92,7 +92,7 @@
           <div class="form-field col-12">
             <label class="field-label">Provenance / École d'origine</label>
             <mat-form-field appearance="outline" class="full-width">
-              <nb-icon matPrefix icon="home-outline" pack="eva"></nb-icon>
+              <mat-icon matPrefix>home</mat-icon>
               <input matInput 
                      formControlName="provenance" 
                      placeholder="Ex: École Primaire Publique de ..."
@@ -122,12 +122,11 @@
                 class="cancel-btn">
           Annuler
         </button>
-        <button mat-button 
-                status="primary"
-                (click)="onSubmit()" 
+        <button mat-flat-button
+                (click)="onSubmit()"
                 [disabled]="form.invalid || loading"
                 class="submit-btn shadow-btn">
-          <nb-icon icon="save-outline" *ngIf="!loading"></nb-icon>
+          <mat-icon *ngIf="!loading">save</mat-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>

@@ -7,7 +7,9 @@
       "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\di\\\\Desktop\\\\lbs-frontend\\\\src\\\\app\\\\core\\\\guards\" -ErrorAction SilentlyContinue)",
       "Bash(Select-Object Name)",
       "Read(//c/Users/di/Desktop/**)",
-      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\di\\\\Desktop\\\\\" | Where-Object { $_.PSIsContainer } | Select-Object Name)"
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\di\\\\Desktop\\\\\" | Where-Object { $_.PSIsContainer } | Select-Object Name)",
+      "Bash(xargs grep -l \"OneColumnLayoutComponent\\\\|menu.*referentiel\")",
+      "Bash(Select-Object FullName)"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"

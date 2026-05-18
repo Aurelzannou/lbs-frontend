@@ -15,7 +15,7 @@ export interface MenuResponse {
   titre: string;
   menuEnfantId: number | null;
   listeMenuEnfant: MenuResponse[];
-  profils?: any[];
+  profilIds?: number[];
 }
 
 export interface MenuItem {

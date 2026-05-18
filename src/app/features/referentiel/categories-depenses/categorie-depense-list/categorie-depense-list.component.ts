@@ -144,7 +144,8 @@ export class CategorieDepenseListComponent implements OnInit, OnDestroy, AfterVi
 
   openForm(categorie?: CategorieDepense): void {
     this.dialog.open(CategorieDepenseFormDialogComponent, {
-      width: '400px',
+      width: '480px',
+      maxWidth: '95vw',
       data: categorie,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

@@ -5,7 +5,6 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
 import { TypeOperationService } from '../../../../core/services/type-operation.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { TypeOperation } from '../../../../core/models/type-operation.model';
-import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,7 +18,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule, NbInputModule, NbSpinnerModule,
     MatButtonModule,
     MatInputModule, MatFormFieldModule,
     MatIconModule,

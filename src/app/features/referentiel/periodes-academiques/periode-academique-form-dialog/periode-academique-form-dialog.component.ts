@@ -8,7 +8,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { PeriodeAcademique } from '../../../../core/models/periode-academique.model';
 import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { NbDatepickerModule } from '@nebular/theme';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,7 +26,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatInputModule, MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    NbDatepickerModule,
     NgSelectModule
   ],
   templateUrl: './periode-academique-form-dialog.component.html',

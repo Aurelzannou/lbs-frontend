@@ -144,7 +144,8 @@ export class StatutInscriptionListComponent implements OnInit, OnDestroy, AfterV
 
   openForm(statut?: StatutInscription): void {
     this.dialog.open(StatutInscriptionFormDialogComponent, {
-      width: '400px',
+      width: '480px',
+      maxWidth: '95vw',
       data: statut,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

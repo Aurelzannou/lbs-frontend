@@ -145,6 +145,7 @@ export class CoefficientListComponent implements OnInit, OnDestroy, AfterViewIni
   openForm(coefficient?: Coefficient): void {
     this.dialog.open(CoefficientFormDialogComponent, {
       width: '500px',
+      maxWidth: '95vw',
       data: coefficient,
       panelClass: 'professional-dialog'
     }).afterClosed().subscribe(result => {

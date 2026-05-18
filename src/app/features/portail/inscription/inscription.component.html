@@ -10,10 +10,10 @@
     </mat-card-header>
     
     <mat-card-content>
-      <nb-stepper orientation="horizontal" #stepper>
+      <mat-stepper orientation="horizontal" #stepper>
         
         <!-- Étape 1 : Informations de l'Élève -->
-        <nb-step [stepControl]="firstForm" label="Élève">
+        <mat-step [stepControl]="firstForm" label="Élève">
           <form [formGroup]="firstForm" class="step-container">
             <div class="info-banner" *ngIf="mesEnfants.length > 0">
               <mat-icon></mat-icon>
@@ -52,15 +52,15 @@
             </div>
 
             <div class="step-footer">
-              <button mat-button nbStepperNext status="primary" [disabled]="firstForm.invalid">
+              <button mat-button matStepperNext [disabled]="firstForm.invalid">
                 Suivant
               </button>
             </div>
           </form>
-        </nb-step>
+        </mat-step>
 
         <!-- Étape 2 : Choix de la Classe -->
-        <nb-step [stepControl]="secondForm" label="Classe">
+        <mat-step [stepControl]="secondForm" label="Classe">
           <form [formGroup]="secondForm" class="step-container">
             <div class="form-grid">
               <div class="form-group">
@@ -88,23 +88,23 @@
             <div class="form-group">
               <label>Numéro de téléphone pour le paiement</label>
               <mat-form-field appearance="outline" class="full-width">
-                <nb-icon matPrefix icon="phone-outline" pack="eva"></nb-icon>
+                <mat-icon matPrefix>phone</mat-icon>
                 <input matInput type="tel" placeholder="Ex: 51223344" formControlName="telephonePaiement">
               </mat-form-field>
             </div>
 
             <div class="step-footer">
-              <button mat-button nbStepperPrevious ghost>Retour</button>
+              <button mat-button matStepperPrevious>Retour</button>
               <button mat-button status="success" (click)="processPaiement()" 
                       [disabled]="secondForm.invalid || loading">
                 Payer {{ montantTotal }} FCFA
               </button>
             </div>
           </form>
-        </nb-step>
+        </mat-step>
 
-        <!-- Étape 3 : Simulation de Paiement (Invisible par défaut) -->
-        <nb-step label="Validation" [hidden]="!showSimulation">
+        <!-- Étape 3 : Simulation de Paiement -->
+        <mat-step label="Validation">
           <div class="simulation-container">
             <div class="phone-mockup">
               <div class="phone-screen">
@@ -120,9 +120,9 @@
             </div>
             <p class="simulation-hint">Ceci est une simulation du message que vous recevrez sur votre téléphone.</p>
           </div>
-        </nb-step>
+        </mat-step>
 
-      </nb-stepper>
+      </mat-stepper>
     </mat-card-content>
   </mat-card>
 </div>

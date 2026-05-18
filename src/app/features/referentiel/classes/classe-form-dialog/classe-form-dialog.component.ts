@@ -8,7 +8,6 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { Classe } from '../../../../core/models/classe.model';
 import { Niveau } from '../../../../core/models/niveau.model';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,7 +22,6 @@ import { MatSelectModule } from '@angular/material/select';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule, NbInputModule, NbSpinnerModule,
     MatButtonModule,
     MatInputModule, MatFormFieldModule,
     MatIconModule,

@@ -192,6 +192,7 @@ export class EtapeListComponent implements OnInit, AfterViewInit {
   openForm(etape?: Etape): void {
     const dialogRef = this.dialog.open(EtapeFormDialogComponent, {
       width: '450px',
+      maxWidth: '95vw',
       data: etape,
       panelClass: 'professional-dialog'
     });

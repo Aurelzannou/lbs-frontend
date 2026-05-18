@@ -10,7 +10,6 @@ import { Coefficient } from '../../../../core/models/coefficient.model';
 import { Niveau } from '../../../../core/models/niveau.model';
 import { Matiere } from '../../../../core/models/matiere.model';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { NbButtonModule, NbInputModule, NbSpinnerModule } from '@nebular/theme';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,7 +23,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NbButtonModule, NbInputModule, NbSpinnerModule,
     MatButtonModule,
     MatInputModule, MatFormFieldModule,
     MatIconModule,

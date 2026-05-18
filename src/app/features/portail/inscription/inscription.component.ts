@@ -24,7 +24,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { NbStepperModule, NbIconModule } from '@nebular/theme';
+import { MatStepperModule } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-portal-inscription',
@@ -36,10 +36,10 @@ import { NbStepperModule, NbIconModule } from '@nebular/theme';
     MatCardModule, 
     MatInputModule, MatFormFieldModule, 
     MatSelectModule, 
-    MatIconModule, 
+    MatIconModule,
     MatProgressSpinnerModule,
-    NbStepperModule, NbIconModule
-    ],
+    MatStepperModule,
+  ],
   templateUrl: './inscription.component.html',
   styleUrl: './inscription.component.scss'
 })
