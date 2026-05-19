@@ -116,6 +116,46 @@
       }
     }
 
+    // ── Sélecteur type de compte ──
+    .type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+
+      .type-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #64748b;
+        background: #f8fafc;
+        transition: all 0.2s ease;
+        user-select: none;
+
+        mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
+
+        &:hover {
+          border-color: #f59e0b;
+          color: #d97706;
+          background: #fffbeb;
+        }
+
+        &.active {
+          border-color: #f59e0b;
+          background: linear-gradient(135deg, #fef3c7, #fffbeb);
+          color: #b45309;
+          box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+        }
+      }
+    }
+
     // ── Grille prénom/nom ──
     .row-fields {
       display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem;

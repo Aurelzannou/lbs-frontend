@@ -127,15 +127,9 @@ export const routes: Routes = [
   {
     path: 'portail',
     children: [
-      { path: '', redirectTo: 'login', pathMatch: 'full' },
-      { 
-        path: 'login', 
-        loadComponent: () => import('./features/portail/login/login.component').then(m => m.PortalLoginComponent) 
-      },
-      { 
-        path: 'register', 
-        loadComponent: () => import('./features/portail/register/register.component').then(m => m.PortalRegisterComponent) 
-      },
+      { path: '', redirectTo: '/login', pathMatch: 'full' },
+      { path: 'login', redirectTo: '/login', pathMatch: 'full' },
+      { path: 'register', redirectTo: '/register', pathMatch: 'full' },
       {
         path: 'dashboard',
         loadComponent: () => import('./features/portail/dashboard/dashboard.component').then(m => m.PortalDashboardComponent),

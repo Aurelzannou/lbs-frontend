@@ -5,7 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import { TuteurAuthService } from '../../core/services/tuteur-auth.service';
 
 @Component({
   selector: 'app-home',
@@ -27,37 +26,19 @@ import { TuteurAuthService } from '../../core/services/tuteur-auth.service';
       </header>
 
       <main class="portal-selection">
-        <!-- Section Parent -->
-        <div class="portal-card parent-card" (click)="navigateToParent()">
+        <div class="portal-card single-card" (click)="navigate()">
           <div class="card-icon">
-            <mat-icon>family_restroom</mat-icon>
-          </div>
-          <div class="card-content">
-            <h2>Espace Parents</h2>
-            <p>Inscrivez vos enfants, payez les frais de scolarité et suivez leur dossier en ligne.</p>
-            <button mat-raised-button color="accent" class="action-btn">
-              {{ isTuteurLoggedIn ? 'Accéder à mon espace' : 'Inscrire mon enfant' }}
-            </button>
-          </div>
-          <div class="card-bg-icon">
-            <mat-icon>child_care</mat-icon>
-          </div>
-        </div>
-
-        <!-- Section Admin -->
-        <div class="portal-card admin-card" (click)="navigateToAdmin()">
-          <div class="card-icon">
-            <mat-icon>admin_panel_settings</mat-icon>
-          </div>
-          <div class="card-content">
-            <h2>Espace Administration</h2>
-            <p>Gérez les inscriptions, le personnel, les finances et le référentiel de l'école.</p>
-            <button mat-stroked-button class="action-btn outline-btn">
-              {{ isAdminLoggedIn ? 'Tableau de bord' : 'Connexion Staff' }}
-            </button>
-          </div>
-          <div class="card-bg-icon">
             <mat-icon>school</mat-icon>
+          </div>
+          <div class="card-content">
+            <h2>Accéder à la plateforme</h2>
+            <p>Connectez-vous pour gérer les inscriptions, suivre les dossiers scolaires et accéder à tous les outils.</p>
+            <button mat-raised-button class="action-btn main-btn">
+              {{ isLoggedIn ? 'Mon tableau de bord' : 'Se connecter' }}
+            </button>
+          </div>
+          <div class="card-bg-icon">
+            <mat-icon>auto_stories</mat-icon>
           </div>
         </div>
       </main>
@@ -146,11 +127,10 @@ import { TuteurAuthService } from '../../core/services/tuteur-auth.service';
     }
 
     .portal-selection {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-      gap: 2.5rem;
+      display: flex;
+      justify-content: center;
       width: 100%;
-      max-width: 1000px;
+      max-width: 520px;
       position: relative;
       z-index: 1;
     }
@@ -168,19 +148,15 @@ import { TuteurAuthService } from '../../core/services/tuteur-auth.service';
       overflow: hidden;
       border: 1px solid #f1f5f9;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      width: 100%;
 
       &:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
-        
-        .card-icon {
-          transform: scale(1.1);
-        }
-        
-        .card-bg-icon {
-          transform: rotate(-10deg) scale(1.2);
-          opacity: 0.15;
-        }
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px -15px rgba(30, 58, 138, 0.15);
+        border-color: #3b82f6;
+
+        .card-icon { transform: scale(1.1); }
+        .card-bg-icon { transform: rotate(-10deg) scale(1.2); opacity: 0.1; }
       }
 
       .card-icon {
@@ -191,12 +167,10 @@ import { TuteurAuthService } from '../../core/services/tuteur-auth.service';
         align-items: center;
         justify-content: center;
         transition: transform 0.4s ease;
+        background: #dbeafe;
+        color: #2563eb;
 
-        mat-icon {
-          font-size: 32px;
-          width: 32px;
-          height: 32px;
-        }
+        mat-icon { font-size: 32px; width: 32px; height: 32px; }
       }
 
       .card-content {
@@ -227,44 +201,21 @@ import { TuteurAuthService } from '../../core/services/tuteur-auth.service';
         text-transform: none;
       }
 
+      .main-btn {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
+        color: white !important;
+        box-shadow: 0 8px 20px -5px rgba(37, 99, 235, 0.4);
+      }
+
       .card-bg-icon {
         position: absolute;
         right: -2rem;
         bottom: -2rem;
-        font-size: 180px;
         opacity: 0.05;
         transition: all 0.4s ease;
         pointer-events: none;
-        
-        mat-icon {
-          width: 180px;
-          height: 180px;
-          font-size: 180px;
-        }
-      }
-    }
 
-    .parent-card {
-      .card-icon {
-        background: #fef3c7;
-        color: #d97706;
-      }
-      &:hover {
-        border-color: #fbbf24;
-      }
-    }
-
-    .admin-card {
-      .card-icon {
-        background: #dbeafe;
-        color: #2563eb;
-      }
-      &:hover {
-        border-color: #3b82f6;
-      }
-      .outline-btn {
-        border: 2px solid #3b82f6;
-        color: #2563eb;
+        mat-icon { width: 180px; height: 180px; font-size: 180px; }
       }
     }
 
@@ -285,30 +236,16 @@ import { TuteurAuthService } from '../../core/services/tuteur-auth.service';
 })
 export class HomeComponent {
   private authService: AuthService = inject(AuthService);
-  private tuteurAuthService: TuteurAuthService = inject(TuteurAuthService);
   private router: Router = inject(Router);
 
-  get isAdminLoggedIn() {
+  get isLoggedIn() {
     return this.authService.isLoggedIn;
   }
 
-  get isTuteurLoggedIn() {
-    // Vérifier soit le service tuteur spécifique, soit le rôle dans Keycloak
-    const businessRoles = this.authService.getBusinessRoles();
-    return !!this.tuteurAuthService.currentTuteurValue || businessRoles.includes('TUTEUR');
-  }
-
-  navigateToParent() {
-    if (this.isTuteurLoggedIn) {
-      this.router.navigate(['/portail/dashboard']);
-    } else {
-      this.router.navigate(['/portail/login']);
-    }
-  }
-
-  navigateToAdmin() {
-    if (this.isAdminLoggedIn) {
-      this.router.navigate(['/dashboard']);
+  navigate() {
+    if (this.authService.isLoggedIn) {
+      const roles = this.authService.getBusinessRoles();
+      this.authService.redirectAfterLogin(roles);
     } else {
       this.router.navigate(['/login']);
     }

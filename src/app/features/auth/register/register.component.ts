@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -18,7 +19,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     RouterModule,
     MatButtonModule,
     MatCardModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule
   ],
@@ -31,6 +33,7 @@ export class RegisterComponent implements OnInit {
   error: string | null = null;
   success = false;
   showPassword = false;
+  userType: 'ADMIN' | 'PARENT' = 'ADMIN';
 
   constructor(
     private fb: FormBuilder,
@@ -40,18 +43,36 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.required, Validators.email]],
-      firstName: ['', [Validators.required]],
-      lastName: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      firstName:       ['', [Validators.required]],
+      lastName:        ['', [Validators.required]],
+      email:           ['', [Validators.required, Validators.email]],
+      username:        ['', [Validators.required, Validators.minLength(3)]],
+      telephone:       [''],
+      password:        ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
-    }, { validator: this.passwordMatchValidator });
+    }, { validators: [this.passwordMatchValidator] } as AbstractControlOptions);
+  }
+
+  setUserType(type: 'ADMIN' | 'PARENT'): void {
+    this.userType = type;
+    const usernameCtrl  = this.registerForm.get('username');
+    const telephoneCtrl = this.registerForm.get('telephone');
+
+    if (type === 'ADMIN') {
+      usernameCtrl?.setValidators([Validators.required, Validators.minLength(3)]);
+      telephoneCtrl?.clearValidators();
+    } else {
+      usernameCtrl?.clearValidators();
+      telephoneCtrl?.setValidators([Validators.required]);
+    }
+
+    usernameCtrl?.updateValueAndValidity();
+    telephoneCtrl?.updateValueAndValidity();
   }
 
   passwordMatchValidator(g: FormGroup) {
     return g.get('password')?.value === g.get('confirmPassword')?.value
-      ? null : { 'mismatch': true };
+      ? null : { mismatch: true };
   }
 
   togglePassword(): void {
@@ -59,21 +80,18 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.registerForm.invalid) {
-      return;
-    }
+    if (this.registerForm.invalid) return;
 
     this.loading = true;
     this.error = null;
 
-    const { confirmPassword, ...userData } = this.registerForm.value;
+    const { confirmPassword, ...formData } = this.registerForm.value;
+    const payload = { ...formData, userType: this.userType };
 
-    this.authService.register(userData).subscribe({
+    this.authService.register(payload).subscribe({
       next: () => {
         this.loading = false;
         this.success = true;
-        this.error = null;
-        // Déclencher une redirection automatique vers la connexion
         setTimeout(() => {
           this.router.navigate(['/login'], { queryParams: { registered: true } });
         }, 4000);
@@ -81,8 +99,6 @@ export class RegisterComponent implements OnInit {
       error: (err) => {
         this.loading = false;
         this.success = false;
-        
-        // Extraction précise du message d'erreur depuis l'ApiResponse du backend
         if (err.error && typeof err.error === 'object' && err.error.message) {
           this.error = err.error.message;
         } else if (typeof err.error === 'string') {
@@ -95,8 +111,7 @@ export class RegisterComponent implements OnInit {
         } else {
           this.error = "Impossible de contacter le serveur. Veuillez réessayer plus tard.";
         }
-        
-        console.error('Register error details:', err);
+        console.error('Register error:', err);
       }
     });
   }

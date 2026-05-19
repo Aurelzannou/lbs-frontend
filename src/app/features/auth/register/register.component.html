@@ -11,11 +11,12 @@
       </div>
 
       <div class="welcome-text">
-        <h2>Rejoignez notre équipe</h2>
-        <p>Créez votre compte professionnel et accédez à l'ensemble des outils de gestion.</p>
+        <h2>{{ userType === 'PARENT' ? 'Espace Parents' : 'Rejoignez notre équipe' }}</h2>
+        <p *ngIf="userType === 'ADMIN'">Créez votre compte professionnel et accédez à l'ensemble des outils de gestion.</p>
+        <p *ngIf="userType === 'PARENT'">Créez votre compte et suivez en temps réel le parcours scolaire de votre enfant.</p>
       </div>
 
-      <div class="features-list">
+      <div class="features-list" *ngIf="userType === 'ADMIN'">
         <div class="feature-item">
           <mat-icon>verified_user</mat-icon>
           <span>Accès sécurisé aux données</span>
@@ -30,6 +31,21 @@
         </div>
       </div>
 
+      <div class="features-list" *ngIf="userType === 'PARENT'">
+        <div class="feature-item">
+          <mat-icon>school</mat-icon>
+          <span>Suivi du dossier scolaire</span>
+        </div>
+        <div class="feature-item">
+          <mat-icon>notifications</mat-icon>
+          <span>Notifications en temps réel</span>
+        </div>
+        <div class="feature-item">
+          <mat-icon>payments</mat-icon>
+          <span>Paiement Mobile Money sécurisé</span>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -39,13 +55,12 @@
 
       <mat-card class="register-card">
 
-        <!-- ── En-tête ── -->
         <mat-card-header>
           <div class="card-logo">
-            <mat-icon>person_add</mat-icon>
+            <mat-icon>{{ userType === 'PARENT' ? 'family_restroom' : 'person_add' }}</mat-icon>
           </div>
           <h3>Créer un compte</h3>
-          <p class="subtitle">Complétez vos informations pour commencer</p>
+          <p class="subtitle">{{ userType === 'PARENT' ? 'Compte parent d\'élève' : 'Compte professionnel' }}</p>
         </mat-card-header>
 
         <mat-card-content>
@@ -60,7 +75,6 @@
             <div class="progress-bar"><div class="progress-fill"></div></div>
           </div>
 
-          <!-- Formulaire -->
           <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" *ngIf="!success">
 
             <!-- Erreur -->
@@ -73,6 +87,18 @@
                 </button>
               </div>
             }
+
+            <!-- Sélecteur de type de compte -->
+            <div class="type-selector">
+              <div class="type-option" [class.active]="userType === 'ADMIN'" (click)="setUserType('ADMIN')">
+                <mat-icon>admin_panel_settings</mat-icon>
+                <span>Administrateur</span>
+              </div>
+              <div class="type-option" [class.active]="userType === 'PARENT'" (click)="setUserType('PARENT')">
+                <mat-icon>family_restroom</mat-icon>
+                <span>Parent d'élève</span>
+              </div>
+            </div>
 
             <!-- Prénom / Nom -->
             <div class="row-fields">
@@ -91,8 +117,8 @@
               </mat-form-field>
             </div>
 
-            <!-- Identifiant -->
-            <mat-form-field appearance="outline" class="full-width">
+            <!-- Identifiant (ADMIN uniquement) -->
+            <mat-form-field appearance="outline" class="full-width" *ngIf="userType === 'ADMIN'">
               <mat-label>Nom d'utilisateur</mat-label>
               <mat-icon matPrefix>alternate_email</mat-icon>
               <input matInput formControlName="username" placeholder="Choisissez un identifiant">
@@ -102,11 +128,19 @@
 
             <!-- Email -->
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Email professionnel</mat-label>
+              <mat-label>{{ userType === 'PARENT' ? 'Email' : 'Email professionnel' }}</mat-label>
               <mat-icon matPrefix>mail_outline</mat-icon>
               <input matInput type="email" formControlName="email" placeholder="votre@email.com">
               <mat-error *ngIf="registerForm.get('email')?.hasError('required')">Requis</mat-error>
               <mat-error *ngIf="registerForm.get('email')?.hasError('email')">Email invalide</mat-error>
+            </mat-form-field>
+
+            <!-- Téléphone (PARENT uniquement) -->
+            <mat-form-field appearance="outline" class="full-width" *ngIf="userType === 'PARENT'">
+              <mat-label>Téléphone</mat-label>
+              <mat-icon matPrefix>phone</mat-icon>
+              <input matInput formControlName="telephone" placeholder="Ex: +229 97 00 00 00">
+              <mat-error *ngIf="registerForm.get('telephone')?.hasError('required')">Requis</mat-error>
             </mat-form-field>
 
             <!-- Mot de passe -->

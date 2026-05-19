@@ -63,14 +63,14 @@
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Nom d'utilisateur</mat-label>
+              <mat-label>Email ou identifiant</mat-label>
               <mat-icon matPrefix>person_outline</mat-icon>
               <input matInput
                      formControlName="username"
-                     placeholder="Ex: john.doe"
+                     placeholder="Ex: john.doe ou votre@email.com"
                      autocomplete="username">
               <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
-                Le nom d'utilisateur est requis
+                Ce champ est requis
               </mat-error>
             </mat-form-field>
 
