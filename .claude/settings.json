@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(xargs grep -l -i \"menu\\\\|referentiel\\\\|profil\")",
-      "Bash(xargs -I{} bash -c 'echo \"=== {} ===\"; head -40 \"{}\"')"
+      "Bash(xargs -I{} bash -c 'echo \"=== {} ===\"; head -40 \"{}\"')",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\di\\\\Desktop\\\\lbs-frontend\\\\lbs_Backend\\\\\" -Force | Select-Object Name, FullName)"
     ]
   }
 }

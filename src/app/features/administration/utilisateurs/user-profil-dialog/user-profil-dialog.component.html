@@ -1,37 +1,36 @@
-<div class="dialog-wrapper">
-  <div class="glass-overlay"></div>
-  
-  <mat-card class="form-card">
-    <mat-card-header class="form-header">
-      <div class="header-content">
-        <div class="title-with-icon">
-          <div class="icon-box edit-mode">
-            <mat-icon></mat-icon>
+<div class="rfm-dialog">
+  <div class="rfm-card">
+
+    <div class="rfm-header">
+      <div class="rfm-header-inner">
+        <div class="rfm-title-group">
+          <div class="rfm-icon-box edit">
+            <mat-icon>manage_accounts</mat-icon>
           </div>
-          <div class="title-text">
-            <h3>Assigner des Profils</h3>
-            <p class="subtitle">Utilisateur: {{ data.prenom }} {{ data.nom }}</p>
+          <div>
+            <h3 class="rfm-title">Assigner des Profils</h3>
+            <p class="rfm-subtitle">Utilisateur : {{ data.prenom }} {{ data.nom }}</p>
           </div>
         </div>
-        <button mat-icon-button (click)="onCancel()" class="close-btn">
-          <mat-icon></mat-icon>
+        <button mat-icon-button class="rfm-close" (click)="onCancel()">
+          <mat-icon>close</mat-icon>
         </button>
       </div>
-    </mat-card-header>
+    </div>
 
-    <mat-card-content class="form-body">
-      <div class="professional-form">
-        <div class="form-row">
-          <div class="form-field full-width">
-            <label class="field-label">Sélection des Profils</label>
+    <div class="rfm-body">
+      <div class="rfm-form">
+
+        <div class="rfm-row">
+          <div class="rfm-field rfm-select">
+            <span class="rfm-label">Sélection des Profils</span>
             <ng-select [items]="allProfils"
                        [(ngModel)]="selectedProfilCodes"
                        [multiple]="true"
                        bindLabel="libelle"
                        bindValue="code"
                        placeholder="Rechercher des profils..."
-                       [searchable]="true"
-                       class="custom-ng-select">
+                       [searchable]="true">
               <ng-template ng-option-tmp let-item="item">
                 <div class="profil-option">
                   <span class="profil-label">{{ item.libelle }}</span>
@@ -42,26 +41,21 @@
             <p class="field-hint">Tous les droits associés à ces profils seront octroyés à l'utilisateur.</p>
           </div>
         </div>
-      </div>
-    </mat-card-content>
 
-    <mat-card-actions class="form-footer">
-      <div class="footer-actions">
-        <button mat-button
-                (click)="onCancel()"
-                [disabled]="loading"
-                class="cancel-btn">
+      </div>
+    </div>
+
+    <div class="rfm-footer">
+      <div class="rfm-actions">
+        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="loading">
           Annuler
         </button>
-        <button mat-button
-                status="primary"
-                (click)="onSubmit()"
-                [disabled]="loading"
-                class="submit-btn shadow-btn">
+        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="loading">
           <mat-icon *ngIf="!loading">save</mat-icon>
           Enregistrer les modifications
         </button>
       </div>
-    </mat-card-actions>
-  </mat-card>
+    </div>
+
+  </div>
 </div>
