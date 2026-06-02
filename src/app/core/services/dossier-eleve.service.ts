@@ -38,4 +38,12 @@ export class DossierEleveService {
   delete(uuid: string): Observable<void> {
     return this.api.delete<void>(`${this.endpoint}/${uuid}`);
   }
+
+  changerStatut(uuid: string, statut: string): Observable<any> {
+    return this.api.put<any>(`${this.endpoint}/${uuid}/statut`, { statut });
+  }
+
+  getByTuteur(tuteurId: number): Observable<any[]> {
+    return this.api.get<any[]>(`${this.endpoint}/tuteur/${tuteurId}`);
+  }
 }

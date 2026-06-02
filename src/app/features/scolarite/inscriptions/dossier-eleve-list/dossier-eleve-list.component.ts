@@ -24,17 +24,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   selector: 'app-dossier-eleve-list',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatTableModule, 
-    MatSortModule, 
-    MatPaginatorModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatInputModule, MatFormFieldModule,
-    MatProgressSpinnerModule,
-    MatDialogModule
+    CommonModule,
+    MatTableModule, MatSortModule, MatPaginatorModule,
+    MatCardModule, MatButtonModule, MatIconModule,
+    MatTooltipModule, MatInputModule, MatFormFieldModule,
+    MatProgressSpinnerModule, MatDialogModule
   ],
   animations: [
     trigger('rowsAnimation', [
@@ -56,7 +50,9 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
 
   displayedColumns: string[] = ['numero', 'eleve', 'classe', 'annee', 'statut', 'actions'];
   dataSource = new MatTableDataSource<DossierEleve>([]);
+  allDossiers: DossierEleve[] = [];
   loading = false;
+  activeStatut = 'ALL';
 
   totalElements = 0;
   pageIndex = 0;
@@ -80,11 +76,8 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
     });
     this.refresh();
 
-    // Ouvrir le formulaire automatiquement si demandé (depuis le dashboard)
     this.route.queryParams.subscribe(params => {
-      if (params['openForm'] === 'true') {
-        this.openForm();
-      }
+      if (params['openForm'] === 'true') this.openForm();
     });
   }
 
@@ -99,8 +92,7 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   onSearchChange(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchSubject.next(value);
+    this.searchSubject.next((event.target as HTMLInputElement).value);
   }
 
   refresh(): void {
@@ -108,7 +100,8 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
     this.dossierService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
       next: (response: any) => {
         const items = response.data || response;
-        this.dataSource.data = items;
+        this.allDossiers = items;
+        this.applyFilter();
         this.totalElements = response.meta?.totalElements || items.length;
         this.loading = false;
         this.cdr.detectChanges();
@@ -117,6 +110,74 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
         this.notification.error('Impossible de charger les dossiers');
         this.loading = false;
       }
+    });
+  }
+
+  filterByStatut(statut: string): void {
+    this.activeStatut = statut;
+    this.applyFilter();
+  }
+
+  private applyFilter(): void {
+    if (this.activeStatut === 'ALL') {
+      this.dataSource.data = this.allDossiers;
+    } else {
+      this.dataSource.data = this.allDossiers.filter(d => {
+        const code = d.statut?.code || (d as any).statutLibelle || '';
+        return code === this.activeStatut;
+      });
+    }
+  }
+
+  countByStatut(statut: string): number {
+    return this.allDossiers.filter(d => {
+      const code = d.statut?.code || (d as any).statutLibelle || '';
+      return code === statut;
+    }).length;
+  }
+
+  getStatutClass(code: string): string {
+    const map: Record<string, string> = {
+      'DEPOSE': 'st-depose',
+      'EN_ATTENTE': 'st-attente',
+      'ACCEPTE': 'st-accepte',
+      'REFUSE': 'st-refuse',
+      'INSCRIT': 'st-inscrit',
+      'ANNULE': 'st-annule'
+    };
+    return map[code] || 'st-default';
+  }
+
+  canAccept(row: any): boolean {
+    const code = row.statut?.code || row.statutLibelle || '';
+    return ['DEPOSE', 'EN_ATTENTE'].includes(code);
+  }
+
+  canRefuse(row: any): boolean {
+    const code = row.statut?.code || row.statutLibelle || '';
+    return ['DEPOSE', 'EN_ATTENTE', 'ACCEPTE'].includes(code);
+  }
+
+  canInscrire(row: any): boolean {
+    const code = row.statut?.code || row.statutLibelle || '';
+    return code === 'ACCEPTE';
+  }
+
+  async changerStatut(dossier: DossierEleve, statut: string): Promise<void> {
+    const labels: Record<string, string> = {
+      ACCEPTE: 'accepter', REFUSE: 'refuser', INSCRIT: 'marquer comme inscrit'
+    };
+    const confirmed = await this.notification.confirm(
+      `Voulez-vous vraiment ${labels[statut] || statut} ce dossier ?`
+    );
+    if (!confirmed) return;
+
+    this.dossierService.changerStatut(dossier.uuid!, statut).subscribe({
+      next: () => {
+        this.notification.success('Statut mis à jour avec succès');
+        this.refresh();
+      },
+      error: () => this.notification.error('Erreur lors du changement de statut')
     });
   }
 
@@ -130,30 +191,23 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
     });
   }
 
-  getStatusColor(status?: string): string {
-    switch (status) {
-      case 'VALIDÉ': return 'success';
-      case 'PAYÉ': return 'info';
-      case 'DÉPOSÉ': return 'warning';
-      case 'ANNULÉ': return 'danger';
-      default: return 'basic';
-    }
-  }
-
   async deleteDossier(dossier: DossierEleve): Promise<void> {
-    const confirmed = await this.notification.confirm(`Souhaitez-vous vraiment supprimer le dossier ${dossier.numero} ?`);
+    const confirmed = await this.notification.confirm(
+      `Souhaitez-vous vraiment supprimer le dossier ${dossier.numero} ?`
+    );
     if (confirmed) {
       this.loading = true;
       this.dossierService.delete(dossier.uuid!).subscribe({
-        next: () => {
-          this.notification.success('Dossier supprimé');
-          this.refresh();
-        },
-        error: () => {
-          this.notification.error('Erreur lors de la suppression');
-          this.loading = false;
-        }
+        next: () => { this.notification.success('Dossier supprimé'); this.refresh(); },
+        error: () => { this.notification.error('Erreur lors de la suppression'); this.loading = false; }
       });
     }
   }
+
+  get totalPages(): number { return Math.ceil(this.totalElements / this.pageSize) || 1; }
+  isFirstPage(): boolean { return this.pageIndex === 0; }
+  isLastPage(): boolean { return this.pageIndex >= this.totalPages - 1; }
+  getEndIndex(): number { return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements); }
+  nextPage(): void { if (!this.isLastPage()) { this.pageIndex++; this.refresh(); } }
+  prevPage(): void { if (!this.isFirstPage()) { this.pageIndex--; this.refresh(); } }
 }

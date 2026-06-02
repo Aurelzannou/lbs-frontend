@@ -144,6 +144,92 @@
   font-size: 0.75rem;
 }
 
+// ── Filtres statut ──────────────────────────────────────────────────────────
+.statut-filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.18s;
+
+  .filter-count {
+    background: #f1f5f9;
+    border-radius: 10px;
+    padding: 0 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  &:hover { background: #f8fafc; }
+  &.active { background: #1e293b; color: white; border-color: #1e293b; .filter-count { background: rgba(255,255,255,0.2); } }
+  &.depose.active     { background: #f59e0b; border-color: #f59e0b; }
+  &.en-attente.active { background: #3b82f6; border-color: #3b82f6; }
+  &.accepte.active    { background: #10b981; border-color: #10b981; }
+  &.refuse.active     { background: #ef4444; border-color: #ef4444; }
+  &.inscrit.active    { background: #059669; border-color: #059669; }
+}
+
+// ── Badges statut ────────────────────────────────────────────────────────────
+.badge-statut {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+
+  &.st-depose     { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  &.st-attente    { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+  &.st-accepte    { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+  &.st-refuse     { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+  &.st-inscrit    { background: #d1fae5; color: #064e3b; border: 1px solid #6ee7b7; font-weight: 800; }
+  &.st-annule     { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+  &.st-default    { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+}
+
+// ── User cell ────────────────────────────────────────────────────────────────
+.user-info-cell {
+  display: flex; align-items: center; gap: 0.6rem;
+  .user-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #1e293b; color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; flex-shrink: 0; text-transform: uppercase;
+  }
+  .user-name { font-weight: 600; font-size: 0.875rem; color: #1e293b; }
+}
+
+// ── Pagination ───────────────────────────────────────────────────────────────
+.table-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.75rem 1rem; border-top: 1px solid #f1f5f9;
+  .pagination-info { font-size: 0.8rem; color: #64748b; }
+  .pagination-nav { display: flex; gap: 0.25rem; }
+  .nav-arrow {
+    width: 28px; height: 28px; border-radius: 6px; border: 1px solid #e2e8f0;
+    background: white; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #374151;
+    &:hover:not(:disabled) { background: #f8fafc; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+}
+
+.no-data-cell { text-align: center; padding: 3rem !important; color: #94a3b8; }
+
 .action-group {
   display: inline-flex;
   gap: 0.35rem;
@@ -157,7 +243,10 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  &.edit { background: #fef9c3; color: #92400e; }
-  &.delete { background: #fee2e2; color: #b91c1c; }
+  &.edit    { background: #fef9c3; color: #92400e; }
+  &.accept  { background: #d1fae5; color: #065f46; }
+  &.inscrit { background: #a7f3d0; color: #064e3b; }
+  &.refuse  { background: #fee2e2; color: #b91c1c; }
+  &.delete  { background: #fee2e2; color: #b91c1c; }
   &:hover { transform: scale(1.1); }
 }

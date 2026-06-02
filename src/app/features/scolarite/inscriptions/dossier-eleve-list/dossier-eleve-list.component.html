@@ -23,7 +23,6 @@
         </svg>
         Actualiser
       </button>
-
       <button class="btn-add" (click)="openForm()">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
           <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -31,6 +30,28 @@
         Nouvelle Inscription
       </button>
     </div>
+  </div>
+
+  <!-- ===== FILTRES STATUT ===== -->
+  <div class="statut-filters">
+    <button class="filter-tab" [class.active]="activeStatut === 'ALL'" (click)="filterByStatut('ALL')">
+      Tous <span class="filter-count">{{ allDossiers.length }}</span>
+    </button>
+    <button class="filter-tab depose" [class.active]="activeStatut === 'DEPOSE'" (click)="filterByStatut('DEPOSE')">
+      Déposés <span class="filter-count">{{ countByStatut('DEPOSE') }}</span>
+    </button>
+    <button class="filter-tab en-attente" [class.active]="activeStatut === 'EN_ATTENTE'" (click)="filterByStatut('EN_ATTENTE')">
+      En attente <span class="filter-count">{{ countByStatut('EN_ATTENTE') }}</span>
+    </button>
+    <button class="filter-tab accepte" [class.active]="activeStatut === 'ACCEPTE'" (click)="filterByStatut('ACCEPTE')">
+      Acceptés <span class="filter-count">{{ countByStatut('ACCEPTE') }}</span>
+    </button>
+    <button class="filter-tab refuse" [class.active]="activeStatut === 'REFUSE'" (click)="filterByStatut('REFUSE')">
+      Refusés <span class="filter-count">{{ countByStatut('REFUSE') }}</span>
+    </button>
+    <button class="filter-tab inscrit" [class.active]="activeStatut === 'INSCRIT'" (click)="filterByStatut('INSCRIT')">
+      Inscrits <span class="filter-count">{{ countByStatut('INSCRIT') }}</span>
+    </button>
   </div>
 
   <!-- ===== TABLE CARD ===== -->
@@ -46,7 +67,7 @@
         <ng-container matColumnDef="numero">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Dossier</th>
           <td mat-cell *matCellDef="let row">
-            <span class="dossier-code">{{ row.numero }}</span>
+            <span class="dossier-code">{{ row.numero || '—' }}</span>
           </td>
         </ng-container>
 
@@ -55,9 +76,9 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Élève</th>
           <td mat-cell *matCellDef="let row">
             <div class="user-info-cell">
-              <div class="user-avatar">{{ (row.eleve?.nom || '?')[0] }}{{ (row.eleve?.prenom || '?')[0] }}</div>
+              <div class="user-avatar">{{ (row.eleve?.nom || row.eleveNom || '?')[0] }}{{ (row.eleve?.prenom || row.elevePrenom || '?')[0] }}</div>
               <div class="user-details">
-                <span class="user-name">{{ row.eleve?.nom }} {{ row.eleve?.prenom }}</span>
+                <span class="user-name">{{ row.eleve?.nom || row.eleveNom }} {{ row.eleve?.prenom || row.elevePrenom }}</span>
               </div>
             </div>
           </td>
@@ -67,9 +88,7 @@
         <ng-container matColumnDef="classe">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Classe</th>
           <td mat-cell *matCellDef="let row">
-            <span class="badge-classe" *ngIf="row.classe">
-              {{ row.classe.code }}
-            </span>
+            <span class="badge-classe">{{ row.classe?.code || row.classeLibelle || '—' }}</span>
           </td>
         </ng-container>
 
@@ -77,15 +96,17 @@
         <ng-container matColumnDef="annee">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Année Scolaire</th>
           <td mat-cell *matCellDef="let row">
-            {{ row.anneeScolaire?.code }}
+            {{ row.anneeScolaire?.code || row.anneeScolaireLibelle || '—' }}
           </td>
         </ng-container>
 
         <!-- Statut Column -->
         <ng-container matColumnDef="statut">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Statut</th>
+          <th mat-header-cell *matHeaderCellDef>Statut</th>
           <td mat-cell *matCellDef="let row">
-            <span class="badge-statut">{{ row.statut?.libelle || row.statut?.code || 'INCONNU' }}</span>
+            <span class="badge-statut" [ngClass]="getStatutClass(row.statut?.code || row.statutLibelle)">
+              {{ row.statut?.libelle || row.statutLibelle || '—' }}
+            </span>
           </td>
         </ng-container>
 
@@ -100,6 +121,34 @@
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                 </svg>
               </button>
+
+              <button class="icon-btn accept"
+                      *ngIf="canAccept(row)"
+                      (click)="changerStatut(row, 'ACCEPTE')"
+                      title="Accepter le dossier">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </button>
+
+              <button class="icon-btn inscrit"
+                      *ngIf="canInscrire(row)"
+                      (click)="changerStatut(row, 'INSCRIT')"
+                      title="Marquer comme inscrit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+              </button>
+
+              <button class="icon-btn refuse"
+                      *ngIf="canRefuse(row)"
+                      (click)="changerStatut(row, 'REFUSE')"
+                      title="Refuser le dossier">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+
               <button class="icon-btn delete" (click)="deleteDossier(row)" title="Supprimer">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
@@ -122,6 +171,27 @@
         </tr>
       </table>
     </div>
+
+    <!-- Footer pagination -->
+    <div class="table-footer">
+      <span class="pagination-info">
+        Affichage de <strong>{{ pageIndex * pageSize + 1 }}</strong> à
+        <strong>{{ getEndIndex() }}</strong> sur <strong>{{ totalElements }}</strong>
+      </span>
+      <div class="pagination-nav">
+        <button class="nav-arrow" (click)="prevPage()" [disabled]="isFirstPage()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+        <button class="nav-arrow" (click)="nextPage()" [disabled]="isLastPage()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
+
   <mat-paginator [pageSize]="pageSize" [length]="totalElements" style="display:none"></mat-paginator>
 </div>
