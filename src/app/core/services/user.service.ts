@@ -9,10 +9,11 @@ export interface User {
   nom: string;
   prenom: string;
   login: string;
+  email?: string;
   photo?: string;
   sexe?: string;
   keycloack: string;
-  profils?: string[]; // On rajoutera le chargement des profils si besoin
+  profils?: string[];
 }
 
 @Injectable({

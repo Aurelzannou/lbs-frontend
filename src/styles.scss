@@ -351,8 +351,8 @@ h1, h2, h3, h4, .brand {
     margin: 2px 0;
     font-size: 0.875rem;
     color: #1e293b;
-    &.ng-option-marked   { background: #f1f5f9 !important; }
-    &.ng-option-selected { background: #1e293b !important; color: white !important; }
+    &.ng-option-marked   { background: #f1f5f9 !important; color: #1e293b !important; }
+    &.ng-option-selected { background: #e0f2fe !important; color: #0369a1 !important; font-weight: 600; }
   }
   .ng-select .ng-value {
     background: #f1f5f9 !important;
