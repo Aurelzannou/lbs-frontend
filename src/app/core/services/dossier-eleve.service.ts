@@ -46,4 +46,8 @@ export class DossierEleveService {
   getByTuteur(tuteurId: number): Observable<any[]> {
     return this.api.get<any[]>(`${this.endpoint}/tuteur/${tuteurId}`);
   }
+
+  getMesDossiers(): Observable<any[]> {
+    return this.api.get<any[]>('/api/portail/mes-dossiers');
+  }
 }
