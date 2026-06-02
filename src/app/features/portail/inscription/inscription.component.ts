@@ -61,6 +61,7 @@ export class PortalInscriptionComponent implements OnInit {
   secondForm!: FormGroup;
   loading = false;
   showSimulation = false;
+  stepIndex = 0;
   
   mesEnfants: Eleve[] = [];
   classes: Classe[] = [];
@@ -173,7 +174,8 @@ export class PortalInscriptionComponent implements OnInit {
       next: () => {
         this.loading = false;
         this.showSimulation = true;
-        this.stepper.next(); // Aller à l'étape de simulation
+        this.stepper.next();
+        this.stepIndex = 2;
       },
       error: (err: any) => {
         console.error(err);
