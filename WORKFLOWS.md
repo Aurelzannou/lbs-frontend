@@ -30,6 +30,21 @@ Paiement des frais d'inscription (étape 1)
 
 ---
 
+## ⚠️ TODO — À implémenter dans Workflow 2
+
+> **Paiement Mobile Money dans le formulaire d'inscription**
+>
+> Dans `inscription.component.ts`, l'étape 3 (simulation MoMo) est **purement visuelle**.
+> L'appel `POST /api/paiements/momo/initiate` a été retiré car l'endpoint backend n'existe pas encore.
+>
+> Quand on implémentera le Workflow 2 (Paiements), il faudra :
+> 1. Créer l'endpoint `POST /api/paiements/momo/initiate` dans `PaiementController`
+> 2. Créer la logique dans `PaiementService` (intégration Feeda/MTN/Moov)
+> 3. Rebrancher l'appel dans `inscription.component.ts` après la création du dossier
+> 4. Gérer le callback de confirmation du paiement (webhook ou polling)
+
+---
+
 ## 2. WORKFLOW PAIEMENTS / FRAIS SCOLAIRES
 
 ```
