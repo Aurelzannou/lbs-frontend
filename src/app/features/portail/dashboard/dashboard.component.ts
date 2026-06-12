@@ -1,8 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { Router, RouterModule } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
 import { TuteurAuthService } from '../../../core/services/tuteur-auth.service';
@@ -12,8 +15,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-portal-dashboard',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule,
-            RouterModule, MatProgressSpinnerModule],
+  imports: [CommonModule, FormsModule, MatCardModule, MatButtonModule, MatIconModule,
+            RouterModule, MatProgressSpinnerModule, MatInputModule, MatFormFieldModule],
   template: `
     <div class="portal-wrapper">
 
@@ -65,7 +68,21 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
             <mat-icon>folder_open</mat-icon>
             Mes dossiers d'inscription
           </h2>
-          <span class="dossier-count" *ngIf="dossiers.length > 0">{{ dossiers.length }} dossier(s)</span>
+          <span class="dossier-count" *ngIf="dossiers.length > 0">{{ dossiersFiltres.length }} / {{ dossiers.length }} dossier(s)</span>
+        </div>
+
+        <!-- Barre de recherche -->
+        <div class="search-bar" *ngIf="dossiers.length > 0">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input
+            class="search-input"
+            type="text"
+            placeholder="Rechercher par nom, classe, année, statut…"
+            [(ngModel)]="recherche"
+            (ngModelChange)="filtrer()">
+          <button class="search-clear" *ngIf="recherche" (click)="recherche=''; filtrer()">
+            <mat-icon>close</mat-icon>
+          </button>
         </div>
 
         <div *ngIf="loadingDossiers" class="loading-center">
@@ -80,25 +97,71 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
           </button>
         </div>
 
-        <div class="dossiers-grid" *ngIf="!loadingDossiers && dossiers.length > 0">
-          <div class="dossier-card" *ngFor="let d of dossiers" [class.new]="d.id === newDossierId">
-            <div class="dossier-avatar">
-              {{ (d.elevePrenom || d.eleve?.prenom || '?')[0] }}{{ (d.eleveNom || d.eleve?.nom || '?')[0] }}
+        <div *ngIf="!loadingDossiers && dossiers.length > 0 && dossiersFiltres.length === 0" class="empty-state">
+          <mat-icon>search_off</mat-icon>
+          <p>Aucun résultat pour « {{ recherche }} »</p>
+        </div>
+
+        <!-- Tableau (desktop) -->
+        <div class="table-wrapper" *ngIf="!loadingDossiers && dossiersFiltres.length > 0">
+          <table class="dossiers-table">
+            <thead>
+              <tr>
+                <th>Élève</th>
+                <th>Classe</th>
+                <th>Année scolaire</th>
+                <th>N° Dossier</th>
+                <th>Date dépôt</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let d of dossiersFiltres" [class.row-new]="d.id === newDossierId">
+                <td>
+                  <div class="cell-eleve">
+                    <div class="avatar-sm">
+                      {{ (d.elevePrenom || '?')[0] }}{{ (d.eleveNom || '?')[0] }}
+                    </div>
+                    <div>
+                      <span class="eleve-name">{{ d.elevePrenom }} {{ d.eleveNom }}</span>
+                      <span class="new-badge" *ngIf="d.id === newDossierId">Nouveau</span>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ d.classeLibelle || '—' }}</td>
+                <td>{{ d.anneeScolaireLibelle || '—' }}</td>
+                <td class="mono">{{ d.numero || '—' }}</td>
+                <td>{{ d.dateDebut ? (d.dateDebut | date:'dd/MM/yyyy') : '—' }}</td>
+                <td>
+                  <span class="statut-badge" [ngClass]="getStatutClass(d.statutLibelle)">
+                    {{ d.statutLibelle || 'Déposé' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Cartes (mobile) -->
+        <div class="cards-mobile" *ngIf="!loadingDossiers && dossiersFiltres.length > 0">
+          <div class="mobile-card" *ngFor="let d of dossiersFiltres" [class.new]="d.id === newDossierId">
+            <div class="mc-header">
+              <div class="cell-eleve">
+                <div class="avatar-sm">{{ (d.elevePrenom || '?')[0] }}{{ (d.eleveNom || '?')[0] }}</div>
+                <div>
+                  <span class="eleve-name">{{ d.elevePrenom }} {{ d.eleveNom }}</span>
+                  <span class="new-badge" *ngIf="d.id === newDossierId">Nouveau</span>
+                </div>
+              </div>
+              <span class="statut-badge" [ngClass]="getStatutClass(d.statutLibelle)">
+                {{ d.statutLibelle || 'Déposé' }}
+              </span>
             </div>
-            <div class="dossier-info">
-              <span class="dossier-name">
-                {{ d.elevePrenom || d.eleve?.prenom }} {{ d.eleveNom || d.eleve?.nom }}
-              </span>
-              <span class="dossier-classe">
-                {{ d.classeLibelle || d.classe?.code || '—' }} · {{ d.anneeScolaireLibelle || d.anneeScolaire?.code || '—' }}
-              </span>
-              <span class="dossier-numero" *ngIf="d.numero">N° {{ d.numero }}</span>
-            </div>
-            <div class="dossier-right">
-              <span class="statut-badge" [ngClass]="getStatutClass(d.statutLibelle || d.statut?.code)">
-                {{ d.statutLibelle || d.statut?.libelle || 'Déposé' }}
-              </span>
-              <span class="new-badge" *ngIf="d.id === newDossierId">Nouveau</span>
+            <div class="mc-body">
+              <div class="mc-row"><span class="mc-label">Classe</span><span>{{ d.classeLibelle || '—' }}</span></div>
+              <div class="mc-row"><span class="mc-label">Année</span><span>{{ d.anneeScolaireLibelle || '—' }}</span></div>
+              <div class="mc-row"><span class="mc-label">N° Dossier</span><span class="mono">{{ d.numero || '—' }}</span></div>
+              <div class="mc-row"><span class="mc-label">Date dépôt</span><span>{{ d.dateDebut ? (d.dateDebut | date:'dd/MM/yyyy') : '—' }}</span></div>
             </div>
           </div>
         </div>
@@ -205,31 +268,71 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
       p { color: #94a3b8; margin: 0.75rem 0 1.25rem; }
     }
 
-    .dossiers-grid { display: flex; flex-direction: column; gap: 0.625rem; }
+    // ── Barre de recherche ────────────────────────────────────────────────────
+    .search-bar {
+      display: flex; align-items: center; gap: 0.75rem;
+      background: white; border: 1px solid #e2e8f0; border-radius: 10px;
+      padding: 0.5rem 1rem; margin-bottom: 1rem;
+      transition: border-color 0.2s;
+      &:focus-within { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
 
-    .dossier-card {
-      display: flex; align-items: center; gap: 1rem;
+      .search-icon { color: #94a3b8; font-size: 1.1rem; width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
+
+      .search-input {
+        flex: 1; border: none; outline: none; font-size: 0.875rem; color: #1e293b;
+        background: transparent;
+        &::placeholder { color: #94a3b8; }
+      }
+
+      .search-clear {
+        background: none; border: none; cursor: pointer; color: #94a3b8;
+        display: flex; align-items: center; padding: 0; border-radius: 4px;
+        &:hover { color: #64748b; }
+        mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
+      }
+    }
+
+    // ── Tableau ───────────────────────────────────────────────────────────────
+    .table-wrapper {
       background: white; border-radius: 12px; border: 1px solid #f1f5f9;
-      padding: 0.875rem 1.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-      transition: box-shadow 0.2s;
-      &:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-      &.new  { border-color: #a7f3d0; background: #f0fdf4; }
+      overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
-    .dossier-avatar {
-      width: 40px; height: 40px; border-radius: 50%; background: #1e293b; color: white;
+    .dossiers-table {
+      width: 100%; border-collapse: collapse;
+
+      thead tr {
+        background: #f8fafc; border-bottom: 1px solid #e2e8f0;
+        th {
+          padding: 0.75rem 1rem; text-align: left;
+          font-size: 0.72rem; font-weight: 700; color: #64748b;
+          text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+        }
+      }
+
+      tbody tr {
+        border-bottom: 1px solid #f1f5f9; transition: background 0.15s;
+        &:last-child { border-bottom: none; }
+        &:hover { background: #f8fafc; }
+        &.row-new { background: #f0fdf4;
+          &:hover { background: #dcfce7; }
+        }
+        td { padding: 0.875rem 1rem; font-size: 0.85rem; color: #334155; vertical-align: middle; }
+      }
+    }
+
+    .cell-eleve {
+      display: flex; align-items: center; gap: 0.75rem;
+      .eleve-name { font-weight: 700; color: #1e293b; display: block; }
+    }
+
+    .avatar-sm {
+      width: 34px; height: 34px; border-radius: 50%; background: #1e293b; color: white;
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.72rem; font-weight: 700; flex-shrink: 0; text-transform: uppercase;
+      font-size: 0.65rem; font-weight: 700; flex-shrink: 0; text-transform: uppercase;
     }
 
-    .dossier-info {
-      flex: 1; display: flex; flex-direction: column; gap: 0.1rem;
-      .dossier-name   { font-weight: 700; font-size: 0.9rem; color: #1e293b; }
-      .dossier-classe { font-size: 0.78rem; color: #64748b; }
-      .dossier-numero { font-size: 0.72rem; color: #94a3b8; font-family: monospace; }
-    }
-
-    .dossier-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; }
+    .mono { font-family: monospace; font-size: 0.78rem; color: #64748b; }
 
     .statut-badge {
       padding: 0.2rem 0.65rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700;
@@ -246,11 +349,37 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
       background: #d1fae5; padding: 0.1rem 0.5rem; border-radius: 10px;
     }
 
+    // ── Cartes mobile ─────────────────────────────────────────────────────────
+    .cards-mobile { display: none; flex-direction: column; gap: 0.75rem; }
+
+    .mobile-card {
+      background: white; border-radius: 12px; border: 1px solid #f1f5f9;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden;
+      &.new { border-color: #a7f3d0; background: #f0fdf4; }
+
+      .mc-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0.875rem 1rem; border-bottom: 1px solid #f1f5f9;
+      }
+
+      .mc-body { padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.4rem; }
+
+      .mc-row {
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 0.82rem;
+        .mc-label { color: #94a3b8; font-weight: 600; font-size: 0.75rem; }
+        span:last-child { color: #1e293b; font-weight: 500; }
+      }
+    }
+
     @keyframes fadeIn   { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
+      .portal-wrapper { padding: 1rem; }
       .portal-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .table-wrapper { display: none; }
+      .cards-mobile  { display: flex; }
     }
   `]
 })
@@ -260,25 +389,30 @@ export class PortalDashboardComponent implements OnInit {
   private validationService = inject(ValidationService);
   private router            = inject(Router);
 
-  userName         = 'Parent';
-  userInitial      = 'P';
-  dossiers: any[]  = [];
-  loadingDossiers  = false;
+  userName           = 'Parent';
+  userInitial        = 'P';
+  dossiers: any[]    = [];
+  dossiersFiltres: any[] = [];
+  recherche          = '';
+  loadingDossiers    = false;
   inscriptionSuccess = false;
   newDossierId: number | null = null;
 
   async ngOnInit() {
-    // Lire l'état de navigation (venant du formulaire d'inscription)
     const navState = window.history.state;
     if (navState?.inscriptionSuccess) {
       this.inscriptionSuccess = true;
       this.newDossierId = navState.dossierId || null;
     }
 
-    if (await this.keycloakService.isLoggedIn()) {
-      const profile = await this.keycloakService.loadUserProfile();
-      this.userName    = profile.firstName || 'Parent';
-      this.userInitial = this.userName.charAt(0).toUpperCase();
+    try {
+      if (await this.keycloakService.isLoggedIn()) {
+        const profile = await this.keycloakService.loadUserProfile();
+        this.userName    = profile.firstName || 'Parent';
+        this.userInitial = this.userName.charAt(0).toUpperCase();
+      }
+    } catch {
+      // Keycloak non initialisé (timeout au démarrage) — on continue quand même
     }
 
     this.loadDossiers();
@@ -289,9 +423,24 @@ export class PortalDashboardComponent implements OnInit {
     this.validationService.getMesDossiers().subscribe({
       next: (data: any) => {
         this.dossiers = Array.isArray(data) ? data : (data?.data || []);
+        this.dossiersFiltres = [...this.dossiers];
         this.loadingDossiers = false;
       },
       error: () => { this.loadingDossiers = false; }
+    });
+  }
+
+  filtrer(): void {
+    const q = this.recherche.toLowerCase().trim();
+    if (!q) { this.dossiersFiltres = [...this.dossiers]; return; }
+    this.dossiersFiltres = this.dossiers.filter(d => {
+      const nom    = `${d.elevePrenom || ''} ${d.eleveNom || ''}`.toLowerCase();
+      const classe = (d.classeLibelle || '').toLowerCase();
+      const annee  = (d.anneeScolaireLibelle || '').toLowerCase();
+      const statut = (d.statutLibelle || '').toLowerCase();
+      const numero = (d.numero || '').toLowerCase();
+      return nom.includes(q) || classe.includes(q) || annee.includes(q)
+          || statut.includes(q) || numero.includes(q);
     });
   }
 

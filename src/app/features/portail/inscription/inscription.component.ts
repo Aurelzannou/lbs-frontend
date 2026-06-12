@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { InscriptionService } from '../../../core/services/inscription.service';
+import { PeriodeInscriptionService } from '../../../core/services/periode-inscription.service';
 import { NotificationService } from '../../../core/services/notification.service';
 
 import { Eleve } from '../../../core/models/eleve.model';
@@ -34,10 +35,11 @@ import { MatStepperModule } from '@angular/material/stepper';
 export class PortalInscriptionComponent implements OnInit {
   @ViewChild('stepper') stepper: any;
 
-  private inscriptionService = inject(InscriptionService);
-  private notification       = inject(NotificationService);
-  private router             = inject(Router);
-  private fb                 = inject(FormBuilder);
+  private inscriptionService  = inject(InscriptionService);
+  private periodeService      = inject(PeriodeInscriptionService);
+  private notification        = inject(NotificationService);
+  private router              = inject(Router);
+  private fb                  = inject(FormBuilder);
 
   firstForm!: FormGroup;
   secondForm!: FormGroup;
@@ -48,6 +50,8 @@ export class PortalInscriptionComponent implements OnInit {
   classes:     Classe[]       = [];
   annees:      AnneeScolaire[]= [];
   montantTotal = 0;
+  periodeMessage: string | null = null;
+  inscriptionOuverte = true;
 
   private currentTuteur: any    = null;
   private currentEleveId: number | null = null;
@@ -98,8 +102,35 @@ export class PortalInscriptionComponent implements OnInit {
   private loadReferentiels(): void {
     this.inscriptionService.getClasses().subscribe((res: any) =>
       this.classes = res?.data || (Array.isArray(res) ? res : []));
-    this.inscriptionService.getAnneesScolaires().subscribe((res: any) =>
-      this.annees = res?.data || (Array.isArray(res) ? res : []));
+
+    this.inscriptionService.getAnneesScolaires().subscribe((res: any) => {
+      this.annees = res?.data?.content || res?.data || (Array.isArray(res) ? res : []);
+    });
+
+    // Vérifier la période chaque fois que l'année scolaire change
+    this.secondForm.get('anneeScolaireId')!.valueChanges.subscribe((anneeId: number) => {
+      if (anneeId) this.verifierPeriode(anneeId);
+    });
+  }
+
+  private verifierPeriode(anneeScolaireId: number): void {
+    this.periodeService.getPeriodeActive(anneeScolaireId).subscribe({
+      next: (periode: any) => {
+        const p = periode?.data || periode;
+        if (!p) {
+          this.inscriptionOuverte = false;
+          this.periodeMessage = "Aucune période d'inscription ouverte pour cette année scolaire.";
+        } else {
+          this.inscriptionOuverte = true;
+          const cloture = new Date(p.dateCloture);
+          this.periodeMessage = `Inscriptions ouvertes jusqu'au ${cloture.toLocaleDateString('fr-FR')}.`;
+        }
+      },
+      error: () => {
+        this.inscriptionOuverte = true;
+        this.periodeMessage = null;
+      }
+    });
   }
 
   private updateMontant(classeId: number, anneeId: number): void {

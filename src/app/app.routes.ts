@@ -81,9 +81,13 @@ export const routes: Routes = [
         path: 'types-operations', 
         loadComponent: () => import('./features/referentiel/types-operations/type-operation-list/type-operation-list.component').then(m => m.TypeOperationListComponent) 
       },
-      { 
-        path: 'statuts-inscriptions', 
-        loadComponent: () => import('./features/referentiel/statuts-inscriptions/statut-inscription-list/statut-inscription-list.component').then(m => m.StatutInscriptionListComponent) 
+      {
+        path: 'statuts-inscriptions',
+        loadComponent: () => import('./features/referentiel/statuts-inscriptions/statut-inscription-list/statut-inscription-list.component').then(m => m.StatutInscriptionListComponent)
+      },
+      {
+        path: 'periodes-inscription',
+        loadComponent: () => import('./features/referentiel/periodes-inscription/periode-inscription-list/periode-inscription-list.component').then(m => m.PeriodeInscriptionListComponent)
       }
     ]
   },

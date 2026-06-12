@@ -36,4 +36,8 @@ export class AnneeScolaireService {
   delete(uuid: string): Observable<void> {
     return this.api.delete<void>(`${this.endpoint}/${uuid}`);
   }
+
+  getAnneeCourante(): Observable<AnneeScolaire | null> {
+    return this.api.get<AnneeScolaire | null>(`${this.endpoint}/courante`);
+  }
 }

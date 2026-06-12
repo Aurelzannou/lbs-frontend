@@ -1,0 +1,79 @@
+<div class="rfm-dialog">
+  <div class="rfm-card">
+
+    <div class="rfm-header">
+      <div class="rfm-header-inner">
+        <div class="rfm-title-group">
+          <div class="rfm-icon-box" [ngClass]="isEdit ? 'edit' : 'create'">
+            <mat-icon>event_available</mat-icon>
+          </div>
+          <div>
+            <h3 class="rfm-title">{{ isEdit ? 'Modifier la période' : 'Nouvelle période d\'inscription' }}</h3>
+            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour des dates' : 'Définir une fenêtre d\'inscription' }}</p>
+          </div>
+        </div>
+        <button mat-icon-button class="rfm-close" (click)="onCancel()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="rfm-body">
+      <form [formGroup]="form" class="rfm-form">
+
+        <div class="rfm-row">
+          <div class="rfm-field">
+            <span class="rfm-label">Année scolaire</span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>school</mat-icon>
+              <mat-select formControlName="anneeScolaireId" placeholder="Sélectionner">
+                <mat-option *ngFor="let a of annees" [value]="a.id">{{ a.libelle }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="rfm-error" *ngIf="form.get('anneeScolaireId')?.invalid && form.get('anneeScolaireId')?.touched">Obligatoire</div>
+          </div>
+        </div>
+
+        <div class="rfm-row">
+          <div class="rfm-field">
+            <span class="rfm-label">Libellé <small style="color:#9ca3af">(optionnel)</small></span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>label</mat-icon>
+              <input matInput formControlName="libelle" placeholder="Ex: Inscriptions nouvelles admissions">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="rfm-row two-cols">
+          <div class="rfm-date">
+            <span class="rfm-label">Date d'ouverture</span>
+            <input type="date" formControlName="dateOuverture">
+            <div class="rfm-error" *ngIf="form.get('dateOuverture')?.invalid && form.get('dateOuverture')?.touched">Obligatoire</div>
+          </div>
+          <div class="rfm-date">
+            <span class="rfm-label">Date de clôture</span>
+            <input type="date" formControlName="dateCloture">
+            <div class="rfm-error" *ngIf="form.get('dateCloture')?.invalid && form.get('dateCloture')?.touched">Obligatoire</div>
+          </div>
+        </div>
+
+        <div class="rfm-toggle">
+          <span class="rfm-label" style="margin:0">Période active</span>
+          <mat-slide-toggle formControlName="actif" color="primary"></mat-slide-toggle>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="rfm-footer">
+      <div class="rfm-actions">
+        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="loading">Annuler</button>
+        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || loading">
+          <mat-icon *ngIf="!loading">save</mat-icon>
+          {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

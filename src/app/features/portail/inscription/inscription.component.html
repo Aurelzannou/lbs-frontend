@@ -128,6 +128,12 @@
       <span>Choix de la classe</span>
     </div>
 
+    <!-- Bandeau période d'inscription -->
+    <div class="periode-banner" *ngIf="periodeMessage" [class.closed]="!inscriptionOuverte" [class.open]="inscriptionOuverte">
+      <mat-icon>{{ inscriptionOuverte ? 'event_available' : 'event_busy' }}</mat-icon>
+      <span>{{ periodeMessage }}</span>
+    </div>
+
     <form [formGroup]="secondForm">
       <div class="form-row">
         <mat-form-field appearance="outline">
@@ -173,7 +179,7 @@
           <mat-icon>arrow_back</mat-icon>
           Retour
         </button>
-        <button class="btn-pay" [disabled]="secondForm.invalid || loading" (click)="soumettre()">
+        <button class="btn-pay" [disabled]="secondForm.invalid || loading || !inscriptionOuverte" (click)="soumettre()">
           <mat-spinner *ngIf="loading" diameter="18" class="btn-spinner"></mat-spinner>
           <mat-icon *ngIf="!loading">send_to_mobile</mat-icon>
           <span>{{ loading ? 'Traitement…' : 'Payer ' + (montantTotal | number:'1.0-0') + ' FCFA' }}</span>

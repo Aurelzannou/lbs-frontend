@@ -14,7 +14,13 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs-frontend\" -Directory)",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs-frontend\" -Name)",
       "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\" -Recurse -Name | Where-Object {$_ -match \"Controller\"})",
-      "mcp__Claude_in_Chrome__tabs_context_mcp"
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(npx tsc *)",
+      "Bash(Remove-Item -Force \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\java\\\\com\\\\App\\\\lbs_backend\\\\entity\\\\PeriodeRentree.java\")",
+      "Bash(Remove-Item -Force \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\java\\\\com\\\\App\\\\lbs_backend\\\\dto\\\\request\\\\PeriodeRentreeRequest.java\")",
+      "Bash(Remove-Item -Force \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\java\\\\com\\\\App\\\\lbs_backend\\\\dto\\\\response\\\\PeriodeRentreeResponse.java\")",
+      "Bash(Remove-Item -Force \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\java\\\\com\\\\App\\\\lbs_backend\\\\mapper\\\\PeriodeRentreeMapper.java\")",
+      "Bash(Remove-Item -Force \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\java\\\\com\\\\App\\\\lbs_backend\\\\repository\\\\PeriodeRentreeRepository.java\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"

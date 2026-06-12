@@ -46,12 +46,8 @@ function initializeKeycloak(keycloak: KeycloakService) {
     return Promise.race([initPromise, timeoutPromise])
       .catch(err => {
         console.warn('Échec ou timeout de l\'initialisation Keycloak:', err);
-        // Clean corrupted/expired tokens
-        if (err.message === 'Keycloak init timeout' || (err && typeof err === 'object')) {
-           localStorage.removeItem('access_token');
-           localStorage.removeItem('refresh_token');
-           localStorage.removeItem('id_token');
-        }
+        // Ne pas effacer les tokens : le backend les valide lui-même.
+        // Les supprimer ici casse l'auth sur les pages qui chargent pendant le timeout.
         return Promise.resolve();
       });
   };
