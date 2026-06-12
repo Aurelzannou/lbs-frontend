@@ -173,7 +173,7 @@
           <mat-icon>arrow_back</mat-icon>
           Retour
         </button>
-        <button class="btn-pay" [disabled]="secondForm.invalid || loading" (click)="processPaiement()">
+        <button class="btn-pay" [disabled]="secondForm.invalid || loading" (click)="soumettre()">
           <mat-spinner *ngIf="loading" diameter="18" class="btn-spinner"></mat-spinner>
           <mat-icon *ngIf="!loading">send_to_mobile</mat-icon>
           <span>{{ loading ? 'Traitement…' : 'Payer ' + (montantTotal | number:'1.0-0') + ' FCFA' }}</span>

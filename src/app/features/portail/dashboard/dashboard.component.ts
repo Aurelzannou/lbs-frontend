@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
 import { TuteurAuthService } from '../../../core/services/tuteur-auth.service';
-import { DossierEleveService } from '../../../core/services/dossier-eleve.service';
+import { ValidationService } from '../../../core/services/validation.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
@@ -257,7 +257,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class PortalDashboardComponent implements OnInit {
   private authService       = inject(TuteurAuthService);
   private keycloakService   = inject(KeycloakService);
-  private dossierService    = inject(DossierEleveService);
+  private validationService = inject(ValidationService);
   private router            = inject(Router);
 
   userName         = 'Parent';
@@ -286,7 +286,7 @@ export class PortalDashboardComponent implements OnInit {
 
   loadDossiers(): void {
     this.loadingDossiers = true;
-    this.dossierService.getMesDossiers().subscribe({
+    this.validationService.getMesDossiers().subscribe({
       next: (data: any) => {
         this.dossiers = Array.isArray(data) ? data : (data?.data || []);
         this.loadingDossiers = false;

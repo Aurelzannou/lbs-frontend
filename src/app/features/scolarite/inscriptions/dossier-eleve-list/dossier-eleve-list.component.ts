@@ -6,6 +6,7 @@ import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DossierEleveService } from '../../../../core/services/dossier-eleve.service';
+import { ValidationService } from '../../../../core/services/validation.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { DossierEleve } from '../../../../core/models/dossier-eleve.model';
 import { Subject, Subscription } from 'rxjs';
@@ -42,7 +43,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './dossier-eleve-list.component.scss'
 })
 export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewInit {
-  private dossierService = inject(DossierEleveService);
+  private dossierService    = inject(DossierEleveService);
+  private validationService = inject(ValidationService);
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
@@ -172,7 +174,10 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
     );
     if (!confirmed) return;
 
-    this.dossierService.changerStatut(dossier.uuid!, statut).subscribe({
+    const action$ = statut === 'ACCEPTE' ? this.validationService.accepter(dossier.uuid!)
+                  : statut === 'REFUSE'  ? this.validationService.refuser(dossier.uuid!)
+                  : this.validationService.inscrire(dossier.uuid!);
+    action$.subscribe({
       next: () => {
         this.notification.success('Statut mis à jour avec succès');
         this.refresh();
