@@ -9,7 +9,7 @@
           </div>
           <div>
             <h3 class="rfm-title">{{ isEdit ? 'Modifier le Dossier' : 'Nouvelle Inscription' }}</h3>
-            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour du dossier scolaire' : 'Création d\'un dossier d\'inscription' }}</p>
+            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour du dossier scolaire' : 'Enregistrement d\'un élève et création du dossier' }}</p>
           </div>
         </div>
         <button mat-icon-button class="rfm-close" (click)="dialogRef.close()">
@@ -21,45 +21,74 @@
     <div class="rfm-body">
       <form [formGroup]="form" class="rfm-form">
 
-        <div class="rfm-row">
-          <div class="rfm-field">
-            <span class="rfm-label">Élève</span>
-            <mat-form-field appearance="outline">
-              <mat-icon matPrefix>school</mat-icon>
-              <mat-select placeholder="Sélectionner l'élève" formControlName="eleveId">
-                <mat-option *ngFor="let e of eleves" [value]="e.id">{{ e.nom }} {{ e.prenom }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <div class="rfm-error" *ngIf="form.get('eleveId')?.invalid && form.get('eleveId')?.touched">
-              Ce champ est obligatoire
+        <!-- Champs élève — uniquement en création -->
+        <ng-container *ngIf="!isEdit">
+          <div class="rfm-section-label">Informations de l'élève</div>
+
+          <div class="rfm-row two-cols">
+            <div class="rfm-field">
+              <span class="rfm-label">Nom <span class="req">*</span></span>
+              <mat-form-field appearance="outline">
+                <mat-icon matPrefix>person</mat-icon>
+                <input matInput placeholder="Nom de famille" formControlName="nom" />
+              </mat-form-field>
+              <div class="rfm-error" *ngIf="form.get('nom')?.invalid && form.get('nom')?.touched">Obligatoire</div>
+            </div>
+            <div class="rfm-field">
+              <span class="rfm-label">Prénom <span class="req">*</span></span>
+              <mat-form-field appearance="outline">
+                <mat-icon matPrefix>person_outline</mat-icon>
+                <input matInput placeholder="Prénom" formControlName="prenom" />
+              </mat-form-field>
+              <div class="rfm-error" *ngIf="form.get('prenom')?.invalid && form.get('prenom')?.touched">Obligatoire</div>
             </div>
           </div>
-        </div>
 
+          <div class="rfm-row two-cols">
+            <div class="rfm-field">
+              <span class="rfm-label">Sexe <span class="req">*</span></span>
+              <mat-form-field appearance="outline">
+                <mat-icon matPrefix>wc</mat-icon>
+                <mat-select placeholder="Sexe" formControlName="sexe">
+                  <mat-option value="M">Masculin</mat-option>
+                  <mat-option value="F">Féminin</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="rfm-error" *ngIf="form.get('sexe')?.invalid && form.get('sexe')?.touched">Obligatoire</div>
+            </div>
+            <div class="rfm-field">
+              <span class="rfm-label">Date de naissance</span>
+              <mat-form-field appearance="outline">
+                <mat-icon matPrefix>cake</mat-icon>
+                <input matInput type="date" formControlName="dateNaissance" />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="rfm-section-label" style="margin-top: 8px;">Scolarité</div>
+        </ng-container>
+
+        <!-- Classe & Année -->
         <div class="rfm-row two-cols">
           <div class="rfm-field">
-            <span class="rfm-label">Classe</span>
+            <span class="rfm-label">Classe <span class="req">*</span></span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>groups</mat-icon>
               <mat-select placeholder="Classe" formControlName="classeId">
                 <mat-option *ngFor="let c of classes" [value]="c.id">{{ c.libelle }} ({{ c.code }})</mat-option>
               </mat-select>
             </mat-form-field>
-            <div class="rfm-error" *ngIf="form.get('classeId')?.invalid && form.get('classeId')?.touched">
-              Obligatoire
-            </div>
+            <div class="rfm-error" *ngIf="form.get('classeId')?.invalid && form.get('classeId')?.touched">Obligatoire</div>
           </div>
           <div class="rfm-field">
-            <span class="rfm-label">Année Scolaire</span>
+            <span class="rfm-label">Année Scolaire <span class="req">*</span></span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>calendar_today</mat-icon>
               <mat-select placeholder="Année" formControlName="anneeScolaireId">
                 <mat-option *ngFor="let a of annees" [value]="a.id">{{ a.code }}</mat-option>
               </mat-select>
             </mat-form-field>
-            <div class="rfm-error" *ngIf="form.get('anneeScolaireId')?.invalid && form.get('anneeScolaireId')?.touched">
-              Obligatoire
-            </div>
+            <div class="rfm-error" *ngIf="form.get('anneeScolaireId')?.invalid && form.get('anneeScolaireId')?.touched">Obligatoire</div>
           </div>
         </div>
 

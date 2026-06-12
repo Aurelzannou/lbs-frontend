@@ -18,6 +18,8 @@ export interface DossierEleve {
   dateDebut?: string;
   dateFin?: string;
   statutId?: number;
+  statutCode?: string;
+  statutLibelle?: string;
   statut?: StatutInscription;
   etapeCouranteId?: number;
   etapeCourante?: Etape;

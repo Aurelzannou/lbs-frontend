@@ -104,8 +104,8 @@
         <ng-container matColumnDef="statut">
           <th mat-header-cell *matHeaderCellDef>Statut</th>
           <td mat-cell *matCellDef="let row">
-            <span class="badge-statut" [ngClass]="getStatutClass(row.statut?.code || row.statutLibelle)">
-              {{ row.statut?.libelle || row.statutLibelle || '—' }}
+            <span class="badge-statut" [ngClass]="getStatutClass(row.statutCode || row.statut?.code)">
+              {{ row.statutLibelle || row.statut?.libelle || '—' }}
             </span>
           </td>
         </ng-container>

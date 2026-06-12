@@ -101,10 +101,11 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
     this.loading = true;
     this.dossierService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
       next: (response: any) => {
-        const items = response.data || response;
+        const page = response.data ?? response;
+        const items = page.data ?? (Array.isArray(page) ? page : []);
         this.allDossiers = items;
         this.applyFilter();
-        this.totalElements = response.meta?.totalElements || items.length;
+        this.totalElements = page.meta?.totalElements ?? items.length;
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -125,7 +126,7 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
       this.dataSource.data = this.allDossiers;
     } else {
       this.dataSource.data = this.allDossiers.filter(d => {
-        const code = d.statut?.code || (d as any).statutLibelle || '';
+        const code = d.statutCode || d.statut?.code || '';
         return code === this.activeStatut;
       });
     }
@@ -133,7 +134,7 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
 
   countByStatut(statut: string): number {
     return this.allDossiers.filter(d => {
-      const code = d.statut?.code || (d as any).statutLibelle || '';
+      const code = d.statutCode || d.statut?.code || '';
       return code === statut;
     }).length;
   }
@@ -151,17 +152,17 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   canAccept(row: any): boolean {
-    const code = row.statut?.code || row.statutLibelle || '';
+    const code = row.statutCode || row.statut?.code || '';
     return ['DEPOSE', 'EN_ATTENTE'].includes(code);
   }
 
   canRefuse(row: any): boolean {
-    const code = row.statut?.code || row.statutLibelle || '';
+    const code = row.statutCode || row.statut?.code || '';
     return ['DEPOSE', 'EN_ATTENTE', 'ACCEPTE'].includes(code);
   }
 
   canInscrire(row: any): boolean {
-    const code = row.statut?.code || row.statutLibelle || '';
+    const code = row.statutCode || row.statut?.code || '';
     return code === 'ACCEPTE';
   }
 
