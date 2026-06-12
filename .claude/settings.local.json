@@ -9,7 +9,12 @@
       "Read(//c/Users/di/Desktop/**)",
       "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\di\\\\Desktop\\\\\" | Where-Object { $_.PSIsContainer } | Select-Object Name)",
       "Bash(xargs grep -l \"OneColumnLayoutComponent\\\\|menu.*referentiel\")",
-      "Bash(Select-Object FullName)"
+      "Bash(Select-Object FullName)",
+      "Bash(mvn compile *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs-frontend\" -Directory)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs-frontend\" -Name)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\" -Recurse -Name | Where-Object {$_ -match \"Controller\"})",
+      "mcp__Claude_in_Chrome__tabs_context_mcp"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"

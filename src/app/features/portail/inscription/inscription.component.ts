@@ -135,7 +135,7 @@ export class PortalInscriptionComponent implements OnInit {
 
     this.inscriptionService.soumettre(payload).subscribe({
       next: (res: any) => {
-        this.currentDossierId = res?.data?.id || res?.id;
+        this.currentDossierId = res?.id ?? null;
         this.loading = false;
         this.stepper.next();
         this.stepIndex = 2;
