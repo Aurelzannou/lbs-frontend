@@ -6,7 +6,6 @@ import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DossierEleveService } from '../../../../core/services/dossier-eleve.service';
-import { ValidationService } from '../../../../core/services/validation.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { DossierEleve } from '../../../../core/models/dossier-eleve.model';
 import { Subject, Subscription } from 'rxjs';
@@ -43,9 +42,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './dossier-eleve-list.component.scss'
 })
 export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewInit {
-  private dossierService    = inject(DossierEleveService);
-  private validationService = inject(ValidationService);
-  private notification = inject(NotificationService);
+  private dossierService = inject(DossierEleveService);
+  private notification   = inject(NotificationService);
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
@@ -149,42 +147,6 @@ export class DossierEleveListComponent implements OnInit, OnDestroy, AfterViewIn
       'ANNULE': 'st-annule'
     };
     return map[code] || 'st-default';
-  }
-
-  canAccept(row: any): boolean {
-    const code = row.statutCode || row.statut?.code || '';
-    return ['DEPOSE', 'EN_ATTENTE'].includes(code);
-  }
-
-  canRefuse(row: any): boolean {
-    const code = row.statutCode || row.statut?.code || '';
-    return ['DEPOSE', 'EN_ATTENTE', 'ACCEPTE'].includes(code);
-  }
-
-  canInscrire(row: any): boolean {
-    const code = row.statutCode || row.statut?.code || '';
-    return code === 'ACCEPTE';
-  }
-
-  async changerStatut(dossier: DossierEleve, statut: string): Promise<void> {
-    const labels: Record<string, string> = {
-      ACCEPTE: 'accepter', REFUSE: 'refuser', INSCRIT: 'marquer comme inscrit'
-    };
-    const confirmed = await this.notification.confirm(
-      `Voulez-vous vraiment ${labels[statut] || statut} ce dossier ?`
-    );
-    if (!confirmed) return;
-
-    const action$ = statut === 'ACCEPTE' ? this.validationService.accepter(dossier.uuid!)
-                  : statut === 'REFUSE'  ? this.validationService.refuser(dossier.uuid!)
-                  : this.validationService.inscrire(dossier.uuid!);
-    action$.subscribe({
-      next: () => {
-        this.notification.success('Statut mis à jour avec succès');
-        this.refresh();
-      },
-      error: () => this.notification.error('Erreur lors du changement de statut')
-    });
   }
 
   openForm(dossier?: DossierEleve): void {

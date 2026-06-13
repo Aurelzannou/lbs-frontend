@@ -125,6 +125,10 @@ export const routes: Routes = [
       {
         path: 'inscriptions',
         loadComponent: () => import('./features/scolarite/inscriptions/dossier-eleve-list/dossier-eleve-list.component').then(m => m.DossierEleveListComponent)
+      },
+      {
+        path: 'validations',
+        loadComponent: () => import('./features/scolarite/validations/validation-list/validation-list.component').then(m => m.ValidationListComponent)
       }
     ]
   },
