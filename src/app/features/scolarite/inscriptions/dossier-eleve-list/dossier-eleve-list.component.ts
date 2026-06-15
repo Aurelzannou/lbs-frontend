@@ -1,16 +1,19 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, Subscription, forkJoin, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, catchError } from 'rxjs/operators';
 import { DossierEleveService } from '../../../../core/services/dossier-eleve.service';
+import { AnneeScolaireService } from '../../../../core/services/annee-scolaire.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { DossierEleve } from '../../../../core/models/dossier-eleve.model';
+import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
 import { DossierEleveFormDialogComponent } from '../dossier-eleve-form-dialog/dossier-eleve-form-dialog.component';
 import { HistoriqueDialogComponent } from '../../shared/historique-dialog/historique-dialog.component';
 
@@ -18,7 +21,7 @@ import { HistoriqueDialogComponent } from '../../shared/historique-dialog/histor
   selector: 'app-dossier-eleve-list',
   standalone: true,
   imports: [
-    CommonModule, MatDialogModule,
+    CommonModule, FormsModule, MatDialogModule,
     MatButtonModule, MatIconModule,
     MatTooltipModule, MatProgressSpinnerModule
   ],
@@ -26,23 +29,27 @@ import { HistoriqueDialogComponent } from '../../shared/historique-dialog/histor
   styleUrl: './dossier-eleve-list.component.scss'
 })
 export class DossierEleveListComponent implements OnInit, OnDestroy {
-  private dossierService = inject(DossierEleveService);
-  private notification   = inject(NotificationService);
-  private dialog         = inject(MatDialog);
-  private cdr            = inject(ChangeDetectorRef);
-  private route          = inject(ActivatedRoute);
+  private dossierService      = inject(DossierEleveService);
+  private anneeService        = inject(AnneeScolaireService);
+  private notification        = inject(NotificationService);
+  private dialog              = inject(MatDialog);
+  private cdr                 = inject(ChangeDetectorRef);
+  private route               = inject(ActivatedRoute);
 
   dossiers: DossierEleve[] = [];
-  loading = false;
-  activeTab = 'DEPOSE';
-  searchTerm = '';
+  annees: AnneeScolaire[]  = [];
+  loading     = false;
+  activeTab   = 'DEPOSE';
+  searchTerm  = '';
+  anneeId: number | null = null;
+  selected    = new Set<string>();
 
   totalElements = 0;
   pageIndex = 0;
-  pageSize = 10;
+  pageSize  = 10;
 
   readonly tabs = [
-    { code: 'DEPOSE',    label: 'Déposés'    },
+    { code: 'DEPOSE',     label: 'Déposés'    },
     { code: 'EN_ATTENTE', label: 'En attente' },
   ];
 
@@ -54,11 +61,12 @@ export class DossierEleveListComponent implements OnInit, OnDestroy {
       debounceTime(300), distinctUntilChanged()
     ).subscribe(term => {
       this.searchTerm = term;
-      this.pageIndex = 0;
+      this.pageIndex  = 0;
       this.refresh();
     });
 
-    this.refresh();
+    this.loadAnnees();
+
     this.route.queryParams.subscribe(params => {
       if (params['openForm'] === 'true') this.openForm();
     });
@@ -66,9 +74,24 @@ export class DossierEleveListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
 
+  loadAnnees(): void {
+    this.anneeService.getAll(0, 50).subscribe({
+      next: (res: any) => {
+        const page = res.data ?? res;
+        this.annees = page.data ?? (Array.isArray(page) ? page : []);
+        // Présélectionner l'année active
+        const active = this.annees.find(a => a.actif);
+        if (active?.id) { this.anneeId = active.id; }
+        this.refresh();
+      },
+      error: () => this.refresh()
+    });
+  }
+
   selectTab(code: string): void {
     this.activeTab = code;
     this.pageIndex = 0;
+    this.selected.clear();
     this.refresh();
   }
 
@@ -76,12 +99,19 @@ export class DossierEleveListComponent implements OnInit, OnDestroy {
     this.searchSubject.next((event.target as HTMLInputElement).value);
   }
 
+  onAnneeChange(): void {
+    this.pageIndex = 0;
+    this.selected.clear();
+    this.refresh();
+  }
+
   refresh(): void {
     this.loading = true;
-    this.dossierService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
+    this.selected.clear();
+    this.dossierService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm, this.anneeId).subscribe({
       next: (response: any) => {
-        const page  = response.data ?? response;
-        const all   = page.data ?? (Array.isArray(page) ? page : []);
+        const page = response.data ?? response;
+        const all  = page.data ?? (Array.isArray(page) ? page : []);
         this.dossiers = all.filter((d: any) =>
           (d.statutCode || d.statut?.code) === this.activeTab
         );
@@ -95,6 +125,36 @@ export class DossierEleveListComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  // ── Sélection ──────────────────────────────────────────────────────────────
+
+  toggleAll(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    if (checked) this.dossiers.forEach(d => { if (d.uuid) this.selected.add(d.uuid); });
+    else this.selected.clear();
+  }
+
+  toggleRow(uuid: string): void {
+    if (this.selected.has(uuid)) this.selected.delete(uuid);
+    else this.selected.add(uuid);
+  }
+
+  get allSelected(): boolean {
+    return this.dossiers.length > 0 && this.dossiers.every(d => d.uuid && this.selected.has(d.uuid));
+  }
+
+  get someSelected(): boolean { return this.selected.size > 0; }
+
+  async supprimerSelection(): Promise<void> {
+    const uuids = [...this.selected];
+    const ok = await this.notification.confirm(`Supprimer ${uuids.length} dossier(s) ?`);
+    if (!ok) return;
+    this.loading = true;
+    forkJoin(uuids.map(uuid => this.dossierService.delete(uuid).pipe(catchError(() => of(null)))))
+      .subscribe(() => { this.notification.success(`${uuids.length} dossier(s) supprimé(s)`); this.refresh(); });
+  }
+
+  // ── Actions individuelles ─────────────────────────────────────────────────
 
   getStatutClass(code: string): string {
     const map: Record<string, string> = {
@@ -112,8 +172,7 @@ export class DossierEleveListComponent implements OnInit, OnDestroy {
 
   voirHistorique(dossier: DossierEleve): void {
     this.dialog.open(HistoriqueDialogComponent, {
-      width: '560px',
-      data: { uuid: dossier.uuid, numero: dossier.numero || '—' }
+      width: '560px', data: { uuid: dossier.uuid, numero: dossier.numero || '—' }
     });
   }
 
@@ -130,7 +189,6 @@ export class DossierEleveListComponent implements OnInit, OnDestroy {
   get totalPages(): number { return Math.ceil(this.totalElements / this.pageSize) || 1; }
   isFirstPage(): boolean { return this.pageIndex === 0; }
   isLastPage(): boolean  { return this.pageIndex >= this.totalPages - 1; }
-  getEndIndex(): number  { return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements); }
   nextPage(): void { if (!this.isLastPage()) { this.pageIndex++; this.refresh(); } }
   prevPage(): void { if (!this.isFirstPage()) { this.pageIndex--; this.refresh(); } }
 }

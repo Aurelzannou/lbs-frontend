@@ -11,12 +11,12 @@ import { ApiService } from './api.service';
 export class ConfirmationService {
   private api = inject(ApiService);
 
-  /** Retourne les dossiers filtrés par statut (ACCEPTE ou INSCRIT). */
-  getDossiers(statut?: string, page = 0, size = 20): Observable<any> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
-    if (statut) params = params.set('statut', statut);
+  /** Retourne les dossiers filtrés par statut, année et recherche texte. */
+  getDossiers(statut?: string, anneeId?: number | null, filter?: string): Observable<any> {
+    let params = new HttpParams();
+    if (statut)  params = params.set('statut', statut);
+    if (anneeId) params = params.set('anneeId', anneeId.toString());
+    if (filter?.trim()) params = params.set('filter', filter.trim());
     return this.api.get<any>('/api/validation/dossiers', params);
   }
 

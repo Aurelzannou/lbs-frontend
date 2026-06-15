@@ -11,13 +11,16 @@ export class DossierEleveService {
   private api = inject(ApiService);
   private readonly endpoint = '/api/dossier-eleves';
 
-  getAll(page: number = 1, size: number = 10, filter: string = ''): Observable<any> {
+  getAll(page: number = 1, size: number = 10, filter: string = '', anneeId?: number | null): Observable<any> {
     let params = new HttpParams()
       .set('page', (page - 1).toString())
       .set('size', size.toString());
-    
+
     if (filter && filter.trim().length > 0) {
       params = params.set('filter', filter.trim());
+    }
+    if (anneeId) {
+      params = params.set('anneeId', anneeId.toString());
     }
 
     return this.api.get<any>(this.endpoint, params);
