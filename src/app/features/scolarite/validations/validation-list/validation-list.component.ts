@@ -1,18 +1,20 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { ValidationService } from '../../../../core/services/validation.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { RefusDialogComponent } from '../refus-dialog/refus-dialog.component';
+import { HistoriqueDialogComponent } from '../../shared/historique-dialog/historique-dialog.component';
 
 @Component({
   selector: 'app-validation-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule, MatTooltipModule],
   templateUrl: './validation-list.component.html',
   styleUrl: './validation-list.component.scss'
 })
@@ -24,24 +26,21 @@ export class ValidationListComponent implements OnInit {
 
   dossiers: any[] = [];
   loading = false;
-  activeStatut = 'ALL';
+  activeTab = 'DEPOSE';
+  selected = new Set<string>();
 
-  readonly statuts = [
-    { code: 'ALL',       label: 'Tous' },
-    { code: 'DEPOSE',    label: 'Déposés' },
-    { code: 'ACCEPTE',   label: 'Acceptés' },
-    { code: 'REFUSE',    label: 'Refusés' },
-    { code: 'INSCRIT',   label: 'Inscrits' },
+  readonly tabs = [
+    { code: 'DEPOSE',  label: 'Déposés' },
+    { code: 'ACCEPTE', label: 'Acceptés' },
+    { code: 'REFUSE',  label: 'Refusés'  },
   ];
 
-  ngOnInit(): void {
-    this.refresh();
-  }
+  ngOnInit(): void { this.refresh(); }
 
   refresh(): void {
     this.loading = true;
-    const statut = this.activeStatut === 'ALL' ? undefined : this.activeStatut;
-    this.validationService.getAll(statut).subscribe({
+    this.selected.clear();
+    this.validationService.getAll(this.activeTab).subscribe({
       next: (res: any) => {
         this.dossiers = res.data ?? (Array.isArray(res) ? res : []);
         this.loading = false;
@@ -54,58 +53,98 @@ export class ValidationListComponent implements OnInit {
     });
   }
 
-  filterByStatut(code: string): void {
-    this.activeStatut = code;
+  selectTab(code: string): void {
+    this.activeTab = code;
     this.refresh();
   }
 
-  countByStatut(code: string): number {
-    if (code === 'ALL') return this.dossiers.length;
-    return this.dossiers.filter(d => d.statutCode === code).length;
+  // ── Sélection ──────────────────────────────────────────────────────────────
+
+  toggleAll(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    if (checked) {
+      this.selectableDossiers.forEach(d => this.selected.add(d.uuid));
+    } else {
+      this.selected.clear();
+    }
   }
+
+  toggleRow(uuid: string): void {
+    if (this.selected.has(uuid)) this.selected.delete(uuid);
+    else this.selected.add(uuid);
+  }
+
+  get selectableDossiers(): any[] {
+    return this.dossiers.filter(d => this.canAccepter(d) || this.canRefuser(d));
+  }
+
+  get allSelected(): boolean {
+    return this.selectableDossiers.length > 0 &&
+           this.selectableDossiers.every(d => this.selected.has(d.uuid));
+  }
+
+  get someSelected(): boolean { return this.selected.size > 0; }
+
+  // ── Actions individuelles ─────────────────────────────────────────────────
 
   canAccepter(d: any): boolean { return d.statutCode === 'DEPOSE'; }
   canRefuser(d: any): boolean  { return ['DEPOSE', 'ACCEPTE'].includes(d.statutCode); }
-  canInscrire(d: any): boolean { return d.statutCode === 'ACCEPTE'; }
 
   async accepter(d: any): Promise<void> {
     const ok = await this.notification.confirm(`Accepter le dossier ${d.numero} ?`);
     if (!ok) return;
     this.validationService.accepter(d.uuid).subscribe({
       next: () => { this.notification.success('Dossier accepté'); this.refresh(); },
-      error: () => this.notification.error('Erreur lors de l\'acceptation')
+      error: () => this.notification.error("Erreur lors de l'acceptation")
     });
   }
 
   refuser(d: any): void {
-    this.dialog.open(RefusDialogComponent, {
-      width: '500px',
-      data: { numero: d.numero }
-    }).afterClosed().subscribe(motif => {
-      if (motif === undefined) return;
-      this.validationService.refuser(d.uuid, motif).subscribe({
-        next: () => { this.notification.success('Dossier refusé'); this.refresh(); },
-        error: () => this.notification.error('Erreur lors du refus')
+    this.dialog.open(RefusDialogComponent, { width: '500px', data: { numero: d.numero } })
+      .afterClosed().subscribe(motif => {
+        if (motif === undefined) return;
+        this.validationService.refuser(d.uuid, motif).subscribe({
+          next: () => { this.notification.success('Dossier refusé'); this.refresh(); },
+          error: () => this.notification.error('Erreur lors du refus')
+        });
       });
-    });
   }
 
-  async inscrire(d: any): Promise<void> {
-    const ok = await this.notification.confirm(`Confirmer l'inscription pour le dossier ${d.numero} ?`);
+  // ── Actions en masse ──────────────────────────────────────────────────────
+
+  async accepterSelection(): Promise<void> {
+    const uuids = [...this.selected];
+    const ok = await this.notification.confirm(`Accepter ${uuids.length} dossier(s) ?`);
     if (!ok) return;
-    this.validationService.inscrire(d.uuid).subscribe({
-      next: () => { this.notification.success('Élève inscrit avec succès'); this.refresh(); },
-      error: () => this.notification.error('Erreur lors de l\'inscription')
+    this.loading = true;
+    forkJoin(uuids.map(uuid => this.validationService.accepter(uuid).pipe(catchError(() => of(null)))))
+      .subscribe(() => { this.notification.success(`${uuids.length} dossier(s) accepté(s)`); this.refresh(); });
+  }
+
+  refuserSelection(): void {
+    const uuids = [...this.selected];
+    this.dialog.open(RefusDialogComponent, { width: '500px', data: { numero: `${uuids.length} dossier(s)` } })
+      .afterClosed().subscribe(motif => {
+        if (motif === undefined) return;
+        this.loading = true;
+        forkJoin(uuids.map(uuid => this.validationService.refuser(uuid, motif).pipe(catchError(() => of(null)))))
+          .subscribe(() => { this.notification.success(`${uuids.length} dossier(s) refusé(s)`); this.refresh(); });
+      });
+  }
+
+  // ── Historique ────────────────────────────────────────────────────────────
+
+  voirHistorique(d: any): void {
+    this.dialog.open(HistoriqueDialogComponent, {
+      width: '560px',
+      data: { uuid: d.uuid, numero: d.numero }
     });
   }
 
   getStatutClass(code: string): string {
     const map: Record<string, string> = {
-      'DEPOSE':    'st-depose',
-      'EN_ATTENTE':'st-attente',
-      'ACCEPTE':   'st-accepte',
-      'REFUSE':    'st-refuse',
-      'INSCRIT':   'st-inscrit',
+      DEPOSE: 'st-depose', EN_ATTENTE: 'st-attente',
+      ACCEPTE: 'st-accepte', REFUSE: 'st-refuse', INSCRIT: 'st-inscrit'
     };
     return map[code] || 'st-default';
   }

@@ -11,10 +11,14 @@ export interface DossierEleve {
   numero?: string;
   eleveId?: number;
   eleve?: Eleve;
+  eleveNom?: string;
+  elevePrenom?: string;
   classeId?: number;
   classe?: Classe;
+  classeLibelle?: string;
   anneeScolaireId?: number;
   anneeScolaire?: AnneeScolaire;
+  anneeScolaireLibelle?: string;
   dateDebut?: string;
   dateFin?: string;
   statutId?: number;

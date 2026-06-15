@@ -1,0 +1,94 @@
+<div class="page-wrapper">
+
+  <div class="page-header">
+    <h2 class="page-title">Confirmation des Inscriptions</h2>
+    <button class="btn-refresh" (click)="refresh()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+      </svg>
+      Actualiser
+    </button>
+  </div>
+
+  <!-- ONGLETS -->
+  <div class="tabs-bar">
+    <button *ngFor="let t of tabs"
+            class="tab-btn"
+            [class.active]="activeTab === t.code"
+            (click)="selectTab(t.code)">
+      {{ t.label }}
+      <span class="tab-count" *ngIf="activeTab === t.code">{{ dossiers.length }}</span>
+    </button>
+  </div>
+
+  <!-- NOTICE onglet Acceptés -->
+  <div class="notice" *ngIf="activeTab === 'ACCEPTE'">
+    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    Cliquez sur le bouton <strong>Confirmer</strong> pour finaliser l'inscription d'un élève.
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <div class="spinner-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>N° Dossier</th>
+          <th>Élève</th>
+          <th>Classe</th>
+          <th>Année Scolaire</th>
+          <th>Date dépôt</th>
+          <th>Statut</th>
+          <th class="col-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of dossiers" class="data-row">
+          <td><span class="dossier-code">{{ d.numero || '—' }}</span></td>
+          <td>
+            <div class="user-info-cell">
+              <div class="user-avatar">{{ (d.eleveNom || '?')[0] }}{{ (d.elevePrenom || '?')[0] }}</div>
+              <span class="user-name">{{ d.eleveNom }} {{ d.elevePrenom }}</span>
+            </div>
+          </td>
+          <td><span class="badge-classe">{{ d.classeLibelle || '—' }}</span></td>
+          <td>{{ d.anneeScolaireLibelle || '—' }}</td>
+          <td>{{ d.dateDebut | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <span class="badge-statut" [ngClass]="getStatutClass(d.statutCode)">
+              {{ d.statutLibelle || '—' }}
+            </span>
+          </td>
+          <td class="col-actions">
+            <div class="action-group">
+
+              <!-- Historique -->
+              <button class="icon-btn history" (click)="voirHistorique(d)" matTooltip="Historique">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </button>
+
+              <!-- Confirmer inscription -->
+              <button class="btn-inscrire" *ngIf="canInscrire(d)"
+                      (click)="inscrire(d)" matTooltip="Confirmer l'inscription">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Inscrire
+              </button>
+
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="!loading && dossiers.length === 0">
+          <td colspan="7" class="no-data-cell">Aucun dossier dans cet onglet.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

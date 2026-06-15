@@ -129,6 +129,10 @@ export const routes: Routes = [
       {
         path: 'validations',
         loadComponent: () => import('./features/scolarite/validations/validation-list/validation-list.component').then(m => m.ValidationListComponent)
+      },
+      {
+        path: 'confirmations',
+        loadComponent: () => import('./features/scolarite/confirmations/confirmation-list/confirmation-list.component').then(m => m.ConfirmationListComponent)
       }
     ]
   },

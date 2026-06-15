@@ -1,102 +1,118 @@
-<div class="page-wrapper" [class.loading]="loading">
+<div class="page-wrapper">
 
-  <!-- TOOLBAR -->
-  <div class="toolbar">
+  <div class="page-header">
     <h2 class="page-title">Validation des Inscriptions</h2>
-    <button class="btn-refresh" (click)="refresh()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-      </svg>
-      Actualiser
-    </button>
+    <div class="header-actions">
+
+      <!-- Actions de masse (visibles uniquement si sélection active) -->
+      <ng-container *ngIf="someSelected">
+        <span class="selection-info">{{ selected.size }} sélectionné(s)</span>
+        <button class="btn-bulk accept" (click)="accepterSelection()" *ngIf="activeTab === 'DEPOSE'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Accepter
+        </button>
+        <button class="btn-bulk refuse" (click)="refuserSelection()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+          Refuser
+        </button>
+      </ng-container>
+
+      <button class="btn-refresh" (click)="refresh()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        Actualiser
+      </button>
+    </div>
   </div>
 
-  <!-- FILTRES STATUT -->
-  <div class="statut-filters">
-    <button *ngFor="let s of statuts"
-            class="filter-tab"
-            [class.active]="activeStatut === s.code"
-            [ngClass]="s.code.toLowerCase()"
-            (click)="filterByStatut(s.code)">
-      {{ s.label }}
-      <span class="filter-count">{{ countByStatut(s.code) }}</span>
+  <!-- ONGLETS -->
+  <div class="tabs-bar">
+    <button *ngFor="let t of tabs"
+            class="tab-btn"
+            [class.active]="activeTab === t.code"
+            (click)="selectTab(t.code)">
+      {{ t.label }}
+      <span class="tab-count" *ngIf="activeTab === t.code">{{ dossiers.length }}</span>
     </button>
   </div>
 
   <!-- TABLE -->
   <div class="table-card">
-    <div class="spinner-overlay" *ngIf="loading">
-      <div class="spinner"></div>
-    </div>
+    <div class="spinner-overlay" *ngIf="loading"><div class="spinner"></div></div>
 
-    <div class="table-wrapper">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>N° Dossier</th>
-            <th>Élève</th>
-            <th>Classe</th>
-            <th>Année Scolaire</th>
-            <th>Date dépôt</th>
-            <th>Statut</th>
-            <th class="col-actions">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let d of dossiers" class="data-row">
-            <td><span class="dossier-code">{{ d.numero || '—' }}</span></td>
-            <td>
-              <div class="user-info-cell">
-                <div class="user-avatar">{{ (d.eleveNom || '?')[0] }}{{ (d.elevePrenom || '?')[0] }}</div>
-                <span class="user-name">{{ d.eleveNom }} {{ d.elevePrenom }}</span>
-              </div>
-            </td>
-            <td><span class="badge-classe">{{ d.classeLibelle || '—' }}</span></td>
-            <td>{{ d.anneeScolaireLibelle || '—' }}</td>
-            <td>{{ d.dateDebut | date:'dd/MM/yyyy' }}</td>
-            <td>
-              <span class="badge-statut" [ngClass]="getStatutClass(d.statutCode)">
-                {{ d.statutLibelle || '—' }}
-              </span>
-            </td>
-            <td class="col-actions">
-              <div class="action-group">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="col-check">
+            <input type="checkbox"
+                   [checked]="allSelected"
+                   [indeterminate]="someSelected && !allSelected"
+                   (change)="toggleAll($event)" />
+          </th>
+          <th>N° Dossier</th>
+          <th>Élève</th>
+          <th>Classe</th>
+          <th>Année Scolaire</th>
+          <th>Date dépôt</th>
+          <th>Statut</th>
+          <th class="col-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of dossiers" class="data-row" [class.row-selected]="selected.has(d.uuid)">
+          <td class="col-check">
+            <input type="checkbox"
+                   [checked]="selected.has(d.uuid)"
+                   (change)="toggleRow(d.uuid)"
+                   *ngIf="canAccepter(d) || canRefuser(d)" />
+          </td>
+          <td><span class="dossier-code">{{ d.numero || '—' }}</span></td>
+          <td>
+            <div class="user-info-cell">
+              <div class="user-avatar">{{ (d.eleveNom || '?')[0] }}{{ (d.elevePrenom || '?')[0] }}</div>
+              <span class="user-name">{{ d.eleveNom }} {{ d.elevePrenom }}</span>
+            </div>
+          </td>
+          <td><span class="badge-classe">{{ d.classeLibelle || '—' }}</span></td>
+          <td>{{ d.anneeScolaireLibelle || '—' }}</td>
+          <td>{{ d.dateDebut | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <span class="badge-statut" [ngClass]="getStatutClass(d.statutCode)">
+              {{ d.statutLibelle || '—' }}
+            </span>
+          </td>
+          <td class="col-actions">
+            <div class="action-group">
+              <button class="icon-btn history" (click)="voirHistorique(d)" matTooltip="Historique">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </button>
+              <button class="icon-btn accept" *ngIf="canAccepter(d)"
+                      (click)="accepter(d)" matTooltip="Accepter">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </button>
+              <button class="icon-btn refuse" *ngIf="canRefuser(d)"
+                      (click)="refuser(d)" matTooltip="Refuser">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
 
-                <!-- Étape 1 : Accepter -->
-                <button class="icon-btn accept" *ngIf="canAccepter(d)"
-                        (click)="accepter(d)" matTooltip="Accepter le dossier">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </button>
-
-                <!-- Étape 2 : Inscrire (après acceptation) -->
-                <button class="icon-btn inscrit" *ngIf="canInscrire(d)"
-                        (click)="inscrire(d)" matTooltip="Confirmer l'inscription">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-                  </svg>
-                </button>
-
-                <!-- Refuser -->
-                <button class="icon-btn refuse" *ngIf="canRefuser(d)"
-                        (click)="refuser(d)" matTooltip="Refuser le dossier">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                  </svg>
-                </button>
-
-              </div>
-            </td>
-          </tr>
-
-          <tr *ngIf="!loading && dossiers.length === 0">
-            <td colspan="7" class="no-data-cell">
-              <div class="empty-state">Aucun dossier à valider.</div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+        <tr *ngIf="!loading && dossiers.length === 0">
+          <td colspan="8" class="no-data-cell">Aucun dossier dans cet onglet.</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
