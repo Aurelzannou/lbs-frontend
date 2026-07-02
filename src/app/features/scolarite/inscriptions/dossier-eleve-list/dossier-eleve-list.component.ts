@@ -16,6 +16,7 @@ import { DossierEleve } from '../../../../core/models/dossier-eleve.model';
 import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
 import { DossierEleveFormDialogComponent } from '../dossier-eleve-form-dialog/dossier-eleve-form-dialog.component';
 import { HistoriqueDialogComponent } from '../../shared/historique-dialog/historique-dialog.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-dossier-eleve-list',
@@ -23,7 +24,8 @@ import { HistoriqueDialogComponent } from '../../shared/historique-dialog/histor
   imports: [
     CommonModule, FormsModule, MatDialogModule,
     MatButtonModule, MatIconModule,
-    MatTooltipModule, MatProgressSpinnerModule
+    MatTooltipModule, MatProgressSpinnerModule,
+    NgSelectModule
   ],
   templateUrl: './dossier-eleve-list.component.html',
   styleUrl: './dossier-eleve-list.component.scss'

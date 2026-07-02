@@ -8,12 +8,16 @@
         </svg>
         <input class="search-input" placeholder="Rechercher un dossier, élève..." (input)="onSearchChange($event)" />
       </div>
-      <select class="annee-select" [(ngModel)]="anneeId" (ngModelChange)="onAnneeChange()">
-        <option [ngValue]="null">Toutes les années</option>
-        <option *ngFor="let a of annees" [ngValue]="a.id">
-          {{ a.libelle }} <span *ngIf="a.actif"> ★</span>
-        </option>
-      </select>
+      <ng-select
+        [items]="annees"
+        bindValue="id"
+        bindLabel="libelle"
+        [(ngModel)]="anneeId"
+        (change)="onAnneeChange()"
+        placeholder="Toutes les années"
+        [clearable]="true"
+        style="min-width:200px">
+      </ng-select>
     </div>
     <div class="header-actions">
       <ng-container *ngIf="someSelected">

@@ -13,11 +13,12 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
 import { RefusDialogComponent } from '../refus-dialog/refus-dialog.component';
 import { HistoriqueDialogComponent } from '../../shared/historique-dialog/historique-dialog.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-validation-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, MatIconModule, MatButtonModule, MatTooltipModule, NgSelectModule],
   templateUrl: './validation-list.component.html',
   styleUrl: './validation-list.component.scss'
 })

@@ -5,6 +5,9 @@
 @import 'ngx-toastr/toastr';
 @import 'sweetalert2/dist/sweetalert2.min.css';
 
+// ng-select
+@import '@ng-select/ng-select/themes/default.theme.css';
+
 :root {
   --primary-color: #fbbf24;
   --primary-dark: #d97706;

@@ -11,11 +11,12 @@ import { AnneeScolaireService } from '../../../../core/services/annee-scolaire.s
 import { NotificationService } from '../../../../core/services/notification.service';
 import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
 import { HistoriqueDialogComponent } from '../../shared/historique-dialog/historique-dialog.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-confirmation-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatTooltipModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatTooltipModule, NgSelectModule],
   templateUrl: './confirmation-list.component.html',
   styleUrl: './confirmation-list.component.scss'
 })
