@@ -21,7 +21,8 @@
       "Bash(Remove-Item -Force \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\java\\\\com\\\\App\\\\lbs_backend\\\\dto\\\\response\\\\PeriodeRentreeResponse.java\")",
       "Bash(Remove-Item -Force \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\java\\\\com\\\\App\\\\lbs_backend\\\\mapper\\\\PeriodeRentreeMapper.java\")",
       "Bash(Remove-Item -Force \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\java\\\\com\\\\App\\\\lbs_backend\\\\repository\\\\PeriodeRentreeRepository.java\")",
-      "mcp__Claude_in_Chrome__navigate"
+      "mcp__Claude_in_Chrome__navigate",
+      "Bash(cd \"/c/Users/di/Desktop/frontend-angular\" && find . -iname \"*sanction*\" -o -iname \"*declaration*\" 2>/dev/null | grep -v node_modules)"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"
