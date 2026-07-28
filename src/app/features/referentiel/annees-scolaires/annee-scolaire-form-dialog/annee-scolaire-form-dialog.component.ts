@@ -21,11 +21,12 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatSlideToggleModule,
+    MatSlideToggleModule
   ],
   templateUrl: './annee-scolaire-form-dialog.component.html',
   styleUrl: './annee-scolaire-form-dialog.component.scss'
@@ -34,7 +35,7 @@ export class AnneeScolaireFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private anneeScolaireService = inject(AnneeScolaireService);
   private notification = inject(NotificationService);
-  
+
   form!: FormGroup;
   isEdit = false;
   loading = false;
@@ -50,7 +51,10 @@ export class AnneeScolaireFormDialogComponent implements OnInit {
     this.form = this.fb.group({
       code: [this.data?.code || '', Validators.required],
       libelle: [this.data?.libelle || '', Validators.required],
-      dateDebut: [this.data?.dateDebut ? this.data.dateDebut.substring(0, 10) : '', Validators.required],
+      dateDebut: [
+        this.data?.dateDebut ? this.data.dateDebut.substring(0, 10) : '',
+        Validators.required
+      ],
       dateFin: [this.data?.dateFin ? this.data.dateFin.substring(0, 10) : '', Validators.required],
       actif: [this.data ? this.data.actif : true]
     });
@@ -60,7 +64,9 @@ export class AnneeScolaireFormDialogComponent implements OnInit {
     if (this.form.invalid) return;
 
     const confirmed = await this.notification.confirm(
-      this.isEdit ? 'Voulez-vous modifier cette année scolaire ?' : 'Voulez-vous créer cette année scolaire ?'
+      this.isEdit
+        ? 'Voulez-vous modifier cette année scolaire ?'
+        : 'Voulez-vous créer cette année scolaire ?'
     );
 
     if (!confirmed) return;
@@ -68,17 +74,19 @@ export class AnneeScolaireFormDialogComponent implements OnInit {
     this.loading = true;
     const request = this.form.value;
 
-    const obs$ = this.isEdit 
+    const obs$ = this.isEdit
       ? this.anneeScolaireService.update(this.data.uuid!, request)
       : this.anneeScolaireService.create(request);
 
     obs$.subscribe({
       next: () => {
-        this.notification.success(this.isEdit ? 'Année scolaire mise à jour' : 'Année scolaire créée');
+        this.notification.success(
+          this.isEdit ? 'Année scolaire mise à jour' : 'Année scolaire créée'
+        );
         this.dialogRef.close(true);
       },
       error: () => {
-        this.notification.error('Erreur lors de l\'enregistrement');
+        this.notification.error("Erreur lors de l'enregistrement");
         this.loading = false;
       }
     });

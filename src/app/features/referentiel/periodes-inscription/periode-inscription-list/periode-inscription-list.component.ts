@@ -1,4 +1,12 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, inject, ViewChild, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  inject,
+  ViewChild,
+  ChangeDetectorRef
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
@@ -22,9 +30,17 @@ import { PeriodeInscriptionFormDialogComponent } from '../periode-inscription-fo
   selector: 'app-periode-inscription-list',
   standalone: true,
   imports: [
-    CommonModule, MatTableModule, MatPaginatorModule, MatSortModule,
-    MatDialogModule, MatButtonModule, MatIconModule,
-    MatInputModule, MatFormFieldModule, MatTooltipModule, MatProgressSpinnerModule
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatTooltipModule,
+    MatProgressSpinnerModule
   ],
   animations: [
     trigger('rowsAnimation', [
@@ -38,18 +54,26 @@ import { PeriodeInscriptionFormDialogComponent } from '../periode-inscription-fo
   styleUrl: './periode-inscription-list.component.scss'
 })
 export class PeriodeInscriptionListComponent implements OnInit, AfterViewInit, OnDestroy {
-  private service      = inject(PeriodeInscriptionService);
+  private service = inject(PeriodeInscriptionService);
   private notification = inject(NotificationService);
-  private dialog       = inject(MatDialog);
-  private cdr          = inject(ChangeDetectorRef);
+  private dialog = inject(MatDialog);
+  private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns = ['annee', 'libelle', 'dateOuverture', 'dateCloture', 'statut', 'actif', 'actions'];
-  dataSource    = new MatTableDataSource<PeriodeInscription>([]);
-  loading       = false;
+  displayedColumns = [
+    'annee',
+    'libelle',
+    'dateOuverture',
+    'dateCloture',
+    'statut',
+    'actif',
+    'actions'
+  ];
+  dataSource = new MatTableDataSource<PeriodeInscription>([]);
+  loading = false;
   totalElements = 0;
-  pageIndex     = 0;
-  pageSize      = 25;
-  searchTerm    = '';
+  pageIndex = 0;
+  pageSize = 25;
+  searchTerm = '';
 
   private searchSubject = new Subject<string>();
   private searchSub!: Subscription;
@@ -58,8 +82,13 @@ export class PeriodeInscriptionListComponent implements OnInit, AfterViewInit, O
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
-    this.searchSub = this.searchSubject.pipe(debounceTime(300), distinctUntilChanged())
-      .subscribe(term => { this.searchTerm = term; this.pageIndex = 0; this.refresh(); });
+    this.searchSub = this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.searchTerm = term;
+        this.pageIndex = 0;
+        this.refresh();
+      });
     this.refresh();
   }
 
@@ -69,45 +98,89 @@ export class PeriodeInscriptionListComponent implements OnInit, AfterViewInit, O
     this.cdr.detectChanges();
   }
 
-  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
+  ngOnDestroy(): void {
+    this.searchSub?.unsubscribe();
+  }
 
-  onSearchChange(e: Event): void { this.searchSubject.next((e.target as HTMLInputElement).value); }
-  clearSearch(input: HTMLInputElement): void { input.value = ''; this.searchSubject.next(''); }
+  onSearchChange(e: Event): void {
+    this.searchSubject.next((e.target as HTMLInputElement).value);
+  }
+  clearSearch(input: HTMLInputElement): void {
+    input.value = '';
+    this.searchSubject.next('');
+  }
 
-  get totalPages(): number { return Math.ceil(this.totalElements / this.pageSize) || 1; }
-  getEndIndex(): number { return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements); }
-  isFirstPage(): boolean { return this.pageIndex === 0; }
-  isLastPage(): boolean { return this.pageIndex >= this.totalPages - 1; }
-  prevPage(): void { if (!this.isFirstPage()) { this.pageIndex--; this.refresh(); } }
-  nextPage(): void { if (!this.isLastPage()) { this.pageIndex++; this.refresh(); } }
+  get totalPages(): number {
+    return Math.ceil(this.totalElements / this.pageSize) || 1;
+  }
+  getEndIndex(): number {
+    return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements);
+  }
+  isFirstPage(): boolean {
+    return this.pageIndex === 0;
+  }
+  isLastPage(): boolean {
+    return this.pageIndex >= this.totalPages - 1;
+  }
+  prevPage(): void {
+    if (!this.isFirstPage()) {
+      this.pageIndex--;
+      this.refresh();
+    }
+  }
+  nextPage(): void {
+    if (!this.isLastPage()) {
+      this.pageIndex++;
+      this.refresh();
+    }
+  }
 
   refresh(): void {
     this.loading = true;
     this.service.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
       next: (res: any) => {
         const items = res.data?.content || res.data || (Array.isArray(res) ? res : []);
-        const meta  = res.meta || {};
-        this.totalElements  = meta.totalElements || meta.total || items.length;
+        const meta = res.meta || {};
+        this.totalElements = meta.totalElements || meta.total || items.length;
         this.dataSource.data = items;
-        if (this.paginator) { this.paginator.length = this.totalElements; this.paginator.pageIndex = this.pageIndex; }
+        if (this.paginator) {
+          this.paginator.length = this.totalElements;
+          this.paginator.pageIndex = this.pageIndex;
+        }
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: () => { this.notification.error('Impossible de charger les périodes'); this.loading = false; }
+      error: () => {
+        this.notification.error('Impossible de charger les périodes');
+        this.loading = false;
+      }
     });
   }
 
   openForm(periode?: PeriodeInscription): void {
-    this.dialog.open(PeriodeInscriptionFormDialogComponent, {
-      width: '520px', maxWidth: '95vw', data: periode, panelClass: 'professional-dialog'
-    }).afterClosed().subscribe(r => { if (r) this.refresh(); });
+    this.dialog
+      .open(PeriodeInscriptionFormDialogComponent, {
+        width: '520px',
+        maxWidth: '95vw',
+        data: periode,
+        panelClass: 'professional-dialog'
+      })
+      .afterClosed()
+      .subscribe((r) => {
+        if (r) this.refresh();
+      });
   }
 
   async deletePeriode(p: PeriodeInscription): Promise<void> {
-    const ok = await this.notification.confirm(`Supprimer la période "${p.libelle || p.anneeScolaireLibelle}" ?`);
+    const ok = await this.notification.confirm(
+      `Supprimer la période "${p.libelle || p.anneeScolaireLibelle}" ?`
+    );
     if (!ok) return;
     this.service.delete(p.uuid!).subscribe({
-      next: () => { this.notification.success('Période supprimée'); this.refresh(); },
+      next: () => {
+        this.notification.success('Période supprimée');
+        this.refresh();
+      },
       error: () => this.notification.error('Erreur lors de la suppression')
     });
   }

@@ -20,10 +20,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatCardModule,
-    MatProgressSpinnerModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './etape-form-dialog.component.html',
   styleUrl: './etape-form-dialog.component.scss'
@@ -56,7 +57,9 @@ export class EtapeFormDialogComponent implements OnInit {
     if (this.form.invalid) return;
 
     const confirmed = await this.notification.confirm(
-      this.isEdit ? 'Voulez-vous vraiment modifier cette étape ?' : 'Voulez-vous vraiment enregistrer cette étape ?',
+      this.isEdit
+        ? 'Voulez-vous vraiment modifier cette étape ?'
+        : 'Voulez-vous vraiment enregistrer cette étape ?',
       'Confirmation'
     );
 

@@ -1,4 +1,12 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ViewChild,
+  ChangeDetectorRef,
+  inject
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort } from '@angular/material/sort';
@@ -23,15 +31,16 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   selector: 'app-categorie-depense-list',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatTableModule, 
-    MatSortModule, 
+    CommonModule,
+    MatTableModule,
+    MatSortModule,
     MatPaginatorModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatProgressSpinnerModule,
     MatDialogModule
   ],
@@ -68,14 +77,13 @@ export class CategorieDepenseListComponent implements OnInit, OnDestroy, AfterVi
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
-    this.searchSub = this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(term => {
-      this.searchTerm = term;
-      this.pageIndex = 0;
-      this.refresh();
-    });
+    this.searchSub = this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.searchTerm = term;
+        this.pageIndex = 0;
+        this.refresh();
+      });
     this.refresh();
   }
 
@@ -101,34 +109,42 @@ export class CategorieDepenseListComponent implements OnInit, OnDestroy, AfterVi
 
   refresh(): void {
     this.loading = true;
-    this.categorieDepenseService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
-      next: (response: any) => {
-        const items = response.data || (Array.isArray(response) ? response : []);
-        const meta = response.meta || {};
-        
-        this.dataSource.data = items;
-        this.totalElements = meta.totalElements || meta.total || items.length;
+    this.categorieDepenseService
+      .getAll(this.pageIndex + 1, this.pageSize, this.searchTerm)
+      .subscribe({
+        next: (response: any) => {
+          const items = response.data || (Array.isArray(response) ? response : []);
+          const meta = response.meta || {};
 
-        if (this.paginator) {
-          this.paginator.length = this.totalElements;
-          this.paginator.pageIndex = this.pageIndex;
-          this.paginator.pageSize = this.pageSize;
+          this.dataSource.data = items;
+          this.totalElements = meta.totalElements || meta.total || items.length;
+
+          if (this.paginator) {
+            this.paginator.length = this.totalElements;
+            this.paginator.pageIndex = this.pageIndex;
+            this.paginator.pageSize = this.pageSize;
+          }
+
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Erreur chargement catégories dépenses:', err);
+          this.notification.error('Impossible de charger les catégories');
+          this.loading = false;
         }
-
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Erreur chargement catégories dépenses:', err);
-        this.notification.error('Impossible de charger les catégories');
-        this.loading = false;
-      }
-    });
+      });
   }
 
-  get totalPages(): number { return Math.ceil(this.totalElements / this.pageSize) || 1; }
-  get currentPage(): number { return this.pageIndex; }
-  getEndIndex(): number { return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements); }
+  get totalPages(): number {
+    return Math.ceil(this.totalElements / this.pageSize) || 1;
+  }
+  get currentPage(): number {
+    return this.pageIndex;
+  }
+  getEndIndex(): number {
+    return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements);
+  }
 
   goToPage(page: number): void {
     const index = page - 1;
@@ -137,24 +153,43 @@ export class CategorieDepenseListComponent implements OnInit, OnDestroy, AfterVi
     this.refresh();
   }
 
-  nextPage(): void { if (this.pageIndex < this.totalPages - 1) { this.pageIndex++; this.refresh(); } }
-  prevPage(): void { if (this.pageIndex > 0) { this.pageIndex--; this.refresh(); } }
-  isFirstPage(): boolean { return this.pageIndex === 0; }
-  isLastPage(): boolean { return this.pageIndex >= this.totalPages - 1; }
+  nextPage(): void {
+    if (this.pageIndex < this.totalPages - 1) {
+      this.pageIndex++;
+      this.refresh();
+    }
+  }
+  prevPage(): void {
+    if (this.pageIndex > 0) {
+      this.pageIndex--;
+      this.refresh();
+    }
+  }
+  isFirstPage(): boolean {
+    return this.pageIndex === 0;
+  }
+  isLastPage(): boolean {
+    return this.pageIndex >= this.totalPages - 1;
+  }
 
   openForm(categorie?: CategorieDepense): void {
-    this.dialog.open(CategorieDepenseFormDialogComponent, {
-      width: '480px',
-      maxWidth: '95vw',
-      data: categorie,
-      panelClass: 'professional-dialog'
-    }).afterClosed().subscribe(result => {
-      if (result) this.refresh();
-    });
+    this.dialog
+      .open(CategorieDepenseFormDialogComponent, {
+        width: '480px',
+        maxWidth: '95vw',
+        data: categorie,
+        panelClass: 'professional-dialog'
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) this.refresh();
+      });
   }
 
   async deleteCategorie(categorie: CategorieDepense): Promise<void> {
-    const confirmed = await this.notification.confirm(`Souhaitez-vous vraiment supprimer la catégorie ${categorie.libelle} ?`);
+    const confirmed = await this.notification.confirm(
+      `Souhaitez-vous vraiment supprimer la catégorie ${categorie.libelle} ?`
+    );
     if (confirmed) {
       this.loading = true;
       this.categorieDepenseService.delete(categorie.uuid!).subscribe({

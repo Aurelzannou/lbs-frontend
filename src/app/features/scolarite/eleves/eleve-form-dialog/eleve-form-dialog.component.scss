@@ -12,30 +12,4 @@
   border: 1px solid #dbeafe;
 }
 
-.eleve-check {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0.875rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 100%;
-
-  input[type="checkbox"] {
-    width: 1.1rem;
-    height: 1.1rem;
-    cursor: pointer;
-    accent-color: #374151;
-    flex-shrink: 0;
-  }
-
-  span {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #374151;
-  }
-
-  &:hover { background: #f1f5f9; border-color: #cbd5e1; }
-}
+// .eleve-check styles now live globally in styles.scss (shared with dossier-eleve-form-dialog)

@@ -1,6 +1,5 @@
 <div class="rfm-dialog">
   <div class="rfm-card">
-
     <div class="rfm-header">
       <div class="rfm-header-inner">
         <div class="rfm-title-group">
@@ -8,8 +7,16 @@
             <mat-icon>payments</mat-icon>
           </div>
           <div>
-            <h3 class="rfm-title">{{ isEdit ? 'Modifier les Frais' : 'Nouveaux Frais Scolaires' }}</h3>
-            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour des informations' : 'Définition des frais scolaires par classe' }}</p>
+            <h3 class="rfm-title">
+              {{ isEdit ? 'Modifier les Frais' : 'Nouveaux Frais Scolaires' }}
+            </h3>
+            <p class="rfm-subtitle">
+              {{
+                isEdit
+                  ? 'Mise à jour des informations'
+                  : 'Définition des frais scolaires par classe'
+              }}
+            </p>
           </div>
         </div>
         <button mat-icon-button class="rfm-close" (click)="onCancel()">
@@ -20,7 +27,6 @@
 
     <div class="rfm-body">
       <form [formGroup]="form" class="rfm-form">
-
         <div class="rfm-row">
           <div class="rfm-select">
             <span class="rfm-label">Année Scolaire</span>
@@ -32,9 +38,13 @@
               placeholder="Sélectionner l'année"
               [loading]="loading"
               appendTo="body"
-              class="ng-field">
+              class="ng-field"
+            >
             </ng-select>
-            <div class="rfm-error" *ngIf="form.get('anneeScolaireId')?.invalid && form.get('anneeScolaireId')?.touched">
+            <div
+              class="rfm-error"
+              *ngIf="form.get('anneeScolaireId')?.invalid && form.get('anneeScolaireId')?.touched"
+            >
               Ce champ est obligatoire
             </div>
           </div>
@@ -51,9 +61,13 @@
               placeholder="Sélectionner le type"
               [loading]="loading"
               appendTo="body"
-              class="ng-field">
+              class="ng-field"
+            >
             </ng-select>
-            <div class="rfm-error" *ngIf="form.get('typeFraisId')?.invalid && form.get('typeFraisId')?.touched">
+            <div
+              class="rfm-error"
+              *ngIf="form.get('typeFraisId')?.invalid && form.get('typeFraisId')?.touched"
+            >
               Ce champ est obligatoire
             </div>
           </div>
@@ -70,9 +84,13 @@
               placeholder="Sélectionner une classe"
               [loading]="loading"
               appendTo="body"
-              class="ng-field">
+              class="ng-field"
+            >
             </ng-select>
-            <div class="rfm-error" *ngIf="form.get('classeId')?.invalid && form.get('classeId')?.touched">
+            <div
+              class="rfm-error"
+              *ngIf="form.get('classeId')?.invalid && form.get('classeId')?.touched"
+            >
               Ce champ est obligatoire
             </div>
           </div>
@@ -83,7 +101,7 @@
             <span class="rfm-label">Code / Libellé</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>tag</mat-icon>
-              <input matInput formControlName="code" placeholder="Ex: SCOL-2025">
+              <input matInput formControlName="code" placeholder="Ex: SCOL-2025" />
             </mat-form-field>
             <div class="rfm-error" *ngIf="form.get('code')?.invalid && form.get('code')?.touched">
               Obligatoire
@@ -93,11 +111,10 @@
             <span class="rfm-label">Montant (FCFA)</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>payments</mat-icon>
-              <input matInput type="number" formControlName="montant" placeholder="0">
+              <input matInput type="number" formControlName="montant" placeholder="0" />
             </mat-form-field>
           </div>
         </div>
-
       </form>
     </div>
 
@@ -106,12 +123,16 @@
         <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="saving">
           Annuler
         </button>
-        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || saving || loading">
+        <button
+          mat-flat-button
+          class="rfm-submit"
+          (click)="onSubmit()"
+          [disabled]="form.invalid || saving || loading"
+        >
           <mat-icon *ngIf="!saving">save</mat-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>
     </div>
-
   </div>
 </div>

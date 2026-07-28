@@ -39,17 +39,16 @@ function initializeKeycloak(keycloak: KeycloakService) {
 
     // Wrap initialization with a timeout to prevent white screen if Keycloak hangs
     const initPromise = keycloak.init(options);
-    const timeoutPromise = new Promise((_, reject) => 
+    const timeoutPromise = new Promise((_, reject) =>
       setTimeout(() => reject(new Error('Keycloak init timeout')), 5000)
     );
 
-    return Promise.race([initPromise, timeoutPromise])
-      .catch(err => {
-        console.warn('Échec ou timeout de l\'initialisation Keycloak:', err);
-        // Ne pas effacer les tokens : le backend les valide lui-même.
-        // Les supprimer ici casse l'auth sur les pages qui chargent pendant le timeout.
-        return Promise.resolve();
-      });
+    return Promise.race([initPromise, timeoutPromise]).catch((err) => {
+      console.warn("Échec ou timeout de l'initialisation Keycloak:", err);
+      // Ne pas effacer les tokens : le backend les valide lui-même.
+      // Les supprimer ici casse l'auth sur les pages qui chargent pendant le timeout.
+      return Promise.resolve();
+    });
   };
 }
 

@@ -31,7 +31,7 @@
     position: relative;
     z-index: 2;
     max-width: 480px;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
     .logo-container {
       margin-bottom: 3.5rem;
@@ -51,7 +51,7 @@
         font-weight: 900;
         font-size: 1.1rem;
         margin-bottom: 0.75rem;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
       }
 
       h1 {
@@ -132,7 +132,7 @@
 // ── Carte ─────────────────────────────────────────────────────────────────────
 .login-card {
   border-radius: 16px !important;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08) !important;
   border: 1px solid #e2e8f0;
 
   mat-card-header {
@@ -189,7 +189,12 @@
       color: #dc2626;
       font-size: 0.9rem;
 
-      mat-icon { font-size: 1.2rem; width: 1.2rem; height: 1.2rem; flex-shrink: 0; }
+      mat-icon {
+        font-size: 1.2rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        flex-shrink: 0;
+      }
 
       .alert-close {
         margin-left: auto;
@@ -200,7 +205,11 @@
         display: flex;
         align-items: center;
         padding: 0;
-        mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
+        mat-icon {
+          font-size: 1rem;
+          width: 1rem;
+          height: 1rem;
+        }
       }
     }
 
@@ -224,9 +233,13 @@
       background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
       color: white !important;
 
-      &:disabled { opacity: 0.6; }
+      &:disabled {
+        opacity: 0.6;
+      }
 
-      .btn-spinner { --mdc-circular-progress-active-indicator-color: white; }
+      .btn-spinner {
+        --mdc-circular-progress-active-indicator-color: white;
+      }
     }
   }
 
@@ -246,7 +259,9 @@
         font-weight: 700;
         text-decoration: none;
         margin-left: 0.35rem;
-        &:hover { text-decoration: underline; }
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
 
@@ -274,35 +289,59 @@
     font-weight: 600;
     transition: color 0.2s;
 
-    mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
-    &:hover { color: #2563eb; }
+    mat-icon {
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+    }
+    &:hover {
+      color: #2563eb;
+    }
   }
 }
 
 // ── Material form field overrides ─────────────────────────────────────────────
 ::ng-deep {
   .login-card mat-form-field {
-    .mat-mdc-form-field-icon-prefix mat-icon { color: #94a3b8; }
-    &.mat-focused .mat-mdc-form-field-icon-prefix mat-icon { color: #3b82f6; }
+    .mat-mdc-form-field-icon-prefix mat-icon {
+      color: #94a3b8;
+    }
+    &.mat-focused .mat-mdc-form-field-icon-prefix mat-icon {
+      color: #3b82f6;
+    }
     .mdc-notched-outline__leading,
     .mdc-notched-outline__notch,
-    .mdc-notched-outline__trailing { border-color: #e2e8f0 !important; }
+    .mdc-notched-outline__trailing {
+      border-color: #e2e8f0 !important;
+    }
     &.mat-focused {
       .mdc-notched-outline__leading,
       .mdc-notched-outline__notch,
-      .mdc-notched-outline__trailing { border-color: #3b82f6 !important; }
+      .mdc-notched-outline__trailing {
+        border-color: #3b82f6 !important;
+      }
     }
   }
 }
 
 // ── Animation ─────────────────────────────────────────────────────────────────
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0);    }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 // ── Responsive ────────────────────────────────────────────────────────────────
 @media (max-width: 992px) {
-  .illustration-section { display: none; }
-  .form-section { background: white; }
+  .illustration-section {
+    display: none;
+  }
+  .form-section {
+    background: white;
+  }
 }

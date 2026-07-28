@@ -21,7 +21,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatCardModule,
     MatProgressSpinnerModule,
@@ -88,7 +89,9 @@ export class MenuFormDialogComponent implements OnInit {
     if (this.form.invalid) return;
 
     const confirmed = await this.notification.confirm(
-      this.isEdit ? 'Voulez-vous vraiment modifier ce menu ?' : 'Voulez-vous vraiment créer ce menu ?',
+      this.isEdit
+        ? 'Voulez-vous vraiment modifier ce menu ?'
+        : 'Voulez-vous vraiment créer ce menu ?',
       'Confirmation'
     );
     if (!confirmed) return;

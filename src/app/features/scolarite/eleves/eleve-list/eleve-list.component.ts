@@ -1,15 +1,24 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ViewChild,
+  ChangeDetectorRef,
+  inject
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { EleveService } from '../../../../core/services/eleve.service';
+import { ClasseService } from '../../../../core/services/classe.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Eleve } from '../../../../core/models/eleve.model';
+import { Classe } from '../../../../core/models/classe.model';
 import { EleveFormDialogComponent } from '../eleve-form-dialog/eleve-form-dialog.component';
 import { EleveDetailDialogComponent } from '../eleve-detail-dialog/eleve-detail-dialog.component';
-import { DossierEleveFormDialogComponent } from '../../inscriptions/dossier-eleve-form-dialog/dossier-eleve-form-dialog.component';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -20,22 +29,27 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { FormsModule } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-eleve-list',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatTableModule, 
-    MatSortModule, 
+    CommonModule,
+    FormsModule,
+    MatTableModule,
+    MatSortModule,
     MatPaginatorModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatProgressSpinnerModule,
     MatDialogModule,
+    NgSelectModule,
     EleveDetailDialogComponent
   ],
   animations: [
@@ -51,13 +65,26 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
   private eleveService = inject(EleveService);
+  private classeService = inject(ClasseService);
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns: string[] = ['identite', 'sexe', 'dateNaissance', 'age', 'classe', 'souffrant', 'provenance', 'actions'];
+  displayedColumns: string[] = [
+    'identite',
+    'sexe',
+    'dateNaissance',
+    'age',
+    'classe',
+    'souffrant',
+    'provenance',
+    'actions'
+  ];
   dataSource = new MatTableDataSource<Eleve>([]);
   loading = false;
+
+  classes: Classe[] = [];
+  classeId: number | null = null;
 
   // Pagination et recherche
   totalElements = 0;
@@ -72,14 +99,25 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
-    this.searchSub = this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(term => {
-      this.searchTerm = term;
-      this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
-      this.refresh();
+    this.searchSub = this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.searchTerm = term;
+        this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
+        this.refresh();
+      });
+    this.loadClasses();
+    this.refresh();
+  }
+
+  loadClasses(): void {
+    this.classeService.getAll(1, 100).subscribe((res: any) => {
+      this.classes = res.data ?? (Array.isArray(res) ? res : []);
     });
+  }
+
+  onClasseChange(): void {
+    this.pageIndex = 0;
     this.refresh();
   }
 
@@ -106,30 +144,32 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
   refresh(): void {
     this.loading = true;
     // L'API utilise une pagination 1-based
-    this.eleveService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
-      next: (response: any) => {
-        const items = response.data || (Array.isArray(response) ? response : []);
-        const meta = response.meta || {};
-        
-        this.dataSource.data = items;
-        this.totalElements = meta.totalElements || meta.total || items.length;
+    this.eleveService
+      .getAll(this.pageIndex + 1, this.pageSize, this.searchTerm, null, this.classeId)
+      .subscribe({
+        next: (response: any) => {
+          const items = response.data || (Array.isArray(response) ? response : []);
+          const meta = response.meta || {};
 
-        // Mise à jour du paginator pour la cohérence
-        if (this.paginator) {
-          this.paginator.length = this.totalElements;
-          this.paginator.pageIndex = this.pageIndex;
-          this.paginator.pageSize = this.pageSize;
+          this.dataSource.data = items;
+          this.totalElements = meta.totalElements || meta.total || items.length;
+
+          // Mise à jour du paginator pour la cohérence
+          if (this.paginator) {
+            this.paginator.length = this.totalElements;
+            this.paginator.pageIndex = this.pageIndex;
+            this.paginator.pageSize = this.pageSize;
+          }
+
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Erreur chargement élèves:', err);
+          this.notification.error('Impossible de charger les élèves');
+          this.loading = false;
         }
-
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Erreur chargement élèves:', err);
-        this.notification.error('Impossible de charger les élèves');
-        this.loading = false;
-      }
-    });
+      });
   }
 
   // --- Pagination Methods ---
@@ -170,18 +210,27 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  isFirstPage(): boolean { return this.pageIndex === 0; }
-  isLastPage(): boolean { return this.pageIndex >= this.totalPages - 1; }
-  getEndIndex(): number { return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements); }
+  isFirstPage(): boolean {
+    return this.pageIndex === 0;
+  }
+  isLastPage(): boolean {
+    return this.pageIndex >= this.totalPages - 1;
+  }
+  getEndIndex(): number {
+    return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements);
+  }
 
-  openForm(eleve?: Eleve): void {
-    this.dialog.open(EleveFormDialogComponent, {
-      width: '700px',
-      data: eleve,
-      panelClass: 'professional-dialog'
-    }).afterClosed().subscribe(result => {
-      if (result) this.refresh();
-    });
+  openForm(eleve: Eleve): void {
+    this.dialog
+      .open(EleveFormDialogComponent, {
+        width: '700px',
+        data: eleve,
+        panelClass: 'professional-dialog'
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) this.refresh();
+      });
   }
 
   openDetail(eleve: Eleve): void {
@@ -192,28 +241,4 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  openInscriptionForm(eleve: Eleve): void {
-    this.dialog.open(DossierEleveFormDialogComponent, {
-      width: '800px',
-      data: { eleveId: eleve.id, eleve: eleve },
-      panelClass: 'professional-dialog'
-    });
-  }
-
-  async deleteEleve(eleve: Eleve): Promise<void> {
-    const confirmed = await this.notification.confirm(`Souhaitez-vous vraiment supprimer l'élève ${eleve.nom} ${eleve.prenom} ?`);
-    if (confirmed) {
-      this.loading = true;
-      this.eleveService.delete(eleve.uuid!).subscribe({
-        next: () => {
-          this.notification.success('Élève supprimé avec succès');
-          this.refresh();
-        },
-        error: () => {
-          this.notification.error('Erreur lors de la suppression');
-          this.loading = false;
-        }
-      });
-    }
-  }
 }

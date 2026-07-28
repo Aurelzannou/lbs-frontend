@@ -31,26 +31,61 @@
     position: relative;
     z-index: 2;
     max-width: 420px;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 
     .logo-container {
       margin-bottom: 3rem;
-      h1 { font-size: 5rem; font-weight: 900; margin: 0; letter-spacing: -4px; color: #fffbeb; line-height: 1; }
-      p  { font-size: 0.8rem; font-weight: 700; color: #fde68a; margin: 0.25rem 0 0; letter-spacing: 5px; text-transform: uppercase; }
+      h1 {
+        font-size: 5rem;
+        font-weight: 900;
+        margin: 0;
+        letter-spacing: -4px;
+        color: #fffbeb;
+        line-height: 1;
+      }
+      p {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #fde68a;
+        margin: 0.25rem 0 0;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+      }
     }
 
     .welcome-text {
       margin-bottom: 2.5rem;
-      h2 { font-size: 2.2rem; font-weight: 800; margin: 0 0 0.75rem; line-height: 1.15; }
-      p  { font-size: 1rem; opacity: 0.9; line-height: 1.7; margin: 0; }
+      h2 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin: 0 0 0.75rem;
+        line-height: 1.15;
+      }
+      p {
+        font-size: 1rem;
+        opacity: 0.9;
+        line-height: 1.7;
+        margin: 0;
+      }
     }
 
     .features-list {
-      display: flex; flex-direction: column; gap: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
       .feature-item {
-        display: flex; align-items: center; gap: 1rem;
-        font-size: 1rem; font-weight: 600;
-        mat-icon { font-size: 1.3rem; width: 1.3rem; height: 1.3rem; color: #fde68a; flex-shrink: 0; }
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        mat-icon {
+          font-size: 1.3rem;
+          width: 1.3rem;
+          height: 1.3rem;
+          color: #fde68a;
+          flex-shrink: 0;
+        }
       }
     }
   }
@@ -76,7 +111,7 @@
 // ── Carte ─────────────────────────────────────────────────────────────────────
 .register-card {
   border-radius: 16px !important;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08) !important;
   border: 1px solid #e2e8f0;
 
   mat-card-header {
@@ -86,17 +121,34 @@
     padding: 2.25rem 2.5rem 1.25rem;
 
     .card-logo {
-      width: 58px; height: 58px;
+      width: 58px;
+      height: 58px;
       border-radius: 14px;
       background: linear-gradient(135deg, #f59e0b, #b45309);
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-bottom: 1.1rem;
-      box-shadow: 0 4px 12px rgba(245,158,11,0.35);
-      mat-icon { color: white; font-size: 1.7rem; width: 1.7rem; height: 1.7rem; }
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+      mat-icon {
+        color: white;
+        font-size: 1.7rem;
+        width: 1.7rem;
+        height: 1.7rem;
+      }
     }
 
-    h3 { font-size: 1.65rem; font-weight: 700; color: #0f172a; margin: 0 0 0.35rem; }
-    .subtitle { color: #64748b; font-size: 0.88rem; margin: 0; }
+    h3 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 0.35rem;
+    }
+    .subtitle {
+      color: #64748b;
+      font-size: 0.88rem;
+      margin: 0;
+    }
   }
 
   mat-card-content {
@@ -104,15 +156,36 @@
 
     // ── Alerte erreur ──
     .alert-error {
-      display: flex; align-items: center; gap: 0.75rem;
-      background: #fef2f2; border: 1px solid #fecaca;
-      border-radius: 10px; padding: 0.8rem 1rem;
-      margin-bottom: 1.25rem; color: #dc2626; font-size: 0.88rem;
-      mat-icon { font-size: 1.15rem; width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1.25rem;
+      color: #dc2626;
+      font-size: 0.88rem;
+      mat-icon {
+        font-size: 1.15rem;
+        width: 1.15rem;
+        height: 1.15rem;
+        flex-shrink: 0;
+      }
       .alert-close {
-        margin-left: auto; background: none; border: none; cursor: pointer;
-        color: #dc2626; display: flex; align-items: center; padding: 0;
-        mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
+        margin-left: auto;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        padding: 0;
+        mat-icon {
+          font-size: 1rem;
+          width: 1rem;
+          height: 1rem;
+        }
       }
     }
 
@@ -139,7 +212,11 @@
         transition: all 0.2s ease;
         user-select: none;
 
-        mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
+        mat-icon {
+          font-size: 1.1rem;
+          width: 1.1rem;
+          height: 1.1rem;
+        }
 
         &:hover {
           border-color: #f59e0b;
@@ -158,40 +235,86 @@
 
     // ── Grille prénom/nom ──
     .row-fields {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem;
-      mat-form-field { width: 100%; }
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 1rem;
+      mat-form-field {
+        width: 100%;
+      }
     }
 
-    .full-width { width: 100%; margin-bottom: 0.1rem; }
+    .full-width {
+      width: 100%;
+      margin-bottom: 0.1rem;
+    }
 
     // ── Bouton submit ──
     .submit-btn {
-      width: 100%; height: 48px; font-size: 1rem; font-weight: 600;
-      border-radius: 10px; margin-top: 0.5rem;
-      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      width: 100%;
+      height: 48px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 10px;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
       background: linear-gradient(135deg, #f59e0b, #d97706) !important;
       color: white !important;
-      &:disabled { opacity: 0.6; }
-      .btn-spinner { --mdc-circular-progress-active-indicator-color: white; }
-      mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
+      &:disabled {
+        opacity: 0.6;
+      }
+      .btn-spinner {
+        --mdc-circular-progress-active-indicator-color: white;
+      }
+      mat-icon {
+        font-size: 1.1rem;
+        width: 1.1rem;
+        height: 1.1rem;
+      }
     }
 
     // ── État succès ──
     .success-state {
-      text-align: center; padding: 2rem 1rem;
+      text-align: center;
+      padding: 2rem 1rem;
       .success-icon {
-        width: 80px; height: 80px; border-radius: 50%;
-        background: #f0fdf4; border: 2px solid #bbf7d0;
-        display: flex; align-items: center; justify-content: center;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #f0fdf4;
+        border: 2px solid #bbf7d0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         margin: 0 auto 1.5rem;
-        mat-icon { font-size: 2.5rem; width: 2.5rem; height: 2.5rem; color: #16a34a; }
+        mat-icon {
+          font-size: 2.5rem;
+          width: 2.5rem;
+          height: 2.5rem;
+          color: #16a34a;
+        }
       }
-      h4 { font-size: 1.4rem; font-weight: 700; color: #0f172a; margin: 0 0 0.5rem; }
-      p  { color: #64748b; font-size: 0.9rem; margin: 0 0 1.5rem; }
+      h4 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 0.5rem;
+      }
+      p {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin: 0 0 1.5rem;
+      }
       .progress-bar {
-        height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden;
+        height: 6px;
+        background: #e2e8f0;
+        border-radius: 3px;
+        overflow: hidden;
         .progress-fill {
-          height: 100%; width: 0;
+          height: 100%;
+          width: 0;
           background: linear-gradient(90deg, #f59e0b, #d97706);
           animation: fillBar 4s linear forwards;
           border-radius: 3px;
@@ -201,54 +324,100 @@
   }
 
   mat-card-actions {
-    flex-direction: column; align-items: center;
+    flex-direction: column;
+    align-items: center;
     padding: 1rem 2.5rem 2rem;
 
     .footer-links {
-      font-size: 0.88rem; text-align: center; margin: 0 0 0.6rem; color: #64748b;
-      a { color: #d97706; font-weight: 700; text-decoration: none; margin-left: 0.35rem;
-          &:hover { text-decoration: underline; } }
+      font-size: 0.88rem;
+      text-align: center;
+      margin: 0 0 0.6rem;
+      color: #64748b;
+      a {
+        color: #d97706;
+        font-weight: 700;
+        text-decoration: none;
+        margin-left: 0.35rem;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
-    .copyright { font-size: 0.78rem; color: #94a3b8; margin: 0; text-align: center; }
+    .copyright {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin: 0;
+      text-align: center;
+    }
   }
 }
 
 // ── Material form field overrides ─────────────────────────────────────────────
 ::ng-deep {
   .register-card mat-form-field {
-    .mat-mdc-form-field-icon-prefix mat-icon { color: #94a3b8; }
-    &.mat-focused .mat-mdc-form-field-icon-prefix mat-icon { color: #d97706; }
+    .mat-mdc-form-field-icon-prefix mat-icon {
+      color: #94a3b8;
+    }
+    &.mat-focused .mat-mdc-form-field-icon-prefix mat-icon {
+      color: #d97706;
+    }
     .mdc-notched-outline__leading,
     .mdc-notched-outline__notch,
-    .mdc-notched-outline__trailing { border-color: #e2e8f0 !important; }
+    .mdc-notched-outline__trailing {
+      border-color: #e2e8f0 !important;
+    }
     &.mat-focused {
       .mdc-notched-outline__leading,
       .mdc-notched-outline__notch,
-      .mdc-notched-outline__trailing { border-color: #f59e0b !important; }
+      .mdc-notched-outline__trailing {
+        border-color: #f59e0b !important;
+      }
     }
   }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fillBar {
-  from { width: 0; }
-  to   { width: 100%; }
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 @media (max-width: 992px) {
-  .illustration-section { display: none; }
-  .form-section { background: white; }
+  .illustration-section {
+    display: none;
+  }
+  .form-section {
+    background: white;
+  }
 }
 
 @media (max-width: 576px) {
   .register-card {
-    mat-card-content { padding: 1rem 1.25rem 0.5rem; }
-    mat-card-actions { padding: 1rem 1.25rem 1.5rem; }
-    mat-card-header  { padding: 1.75rem 1.25rem 1rem; }
+    mat-card-content {
+      padding: 1rem 1.25rem 0.5rem;
+    }
+    mat-card-actions {
+      padding: 1rem 1.25rem 1.5rem;
+    }
+    mat-card-header {
+      padding: 1.75rem 1.25rem 1rem;
+    }
   }
-  .row-fields { grid-template-columns: 1fr !important; }
+  .row-fields {
+    grid-template-columns: 1fr !important;
+  }
 }

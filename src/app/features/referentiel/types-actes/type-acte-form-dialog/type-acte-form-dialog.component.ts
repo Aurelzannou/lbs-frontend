@@ -19,7 +19,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule
   ],
@@ -52,25 +53,28 @@ export class TypeActeFormDialogComponent implements OnInit {
   async onSubmit(): Promise<void> {
     if (this.form.valid) {
       const confirmed = await this.notification.confirm(
-        this.isEdit ? 'Voulez-vous modifier ce type d\'acte ?' : 'Voulez-vous créer ce type d\'acte ?',
+        this.isEdit
+          ? "Voulez-vous modifier ce type d'acte ?"
+          : "Voulez-vous créer ce type d'acte ?",
         'Confirmation'
       );
       if (!confirmed) return;
 
       this.saving = true;
       const val = this.form.value;
-      
-      const obs = this.isEdit && this.data?.uuid
-        ? this.typeActeService.update(this.data.uuid, val)
-        : this.typeActeService.create(val);
+
+      const obs =
+        this.isEdit && this.data?.uuid
+          ? this.typeActeService.update(this.data.uuid, val)
+          : this.typeActeService.create(val);
 
       obs.subscribe({
         next: () => {
-          this.notification.success(this.isEdit ? 'Type d\'acte mis à jour' : 'Type d\'acte créé');
+          this.notification.success(this.isEdit ? "Type d'acte mis à jour" : "Type d'acte créé");
           this.dialogRef.close(true);
         },
         error: (err) => {
-          console.error('Erreur sauvegarde type d\'acte:', err);
+          console.error("Erreur sauvegarde type d'acte:", err);
           this.notification.error('Erreur lors de la sauvegarde');
           this.saving = false;
         }

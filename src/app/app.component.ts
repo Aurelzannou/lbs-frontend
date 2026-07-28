@@ -34,24 +34,24 @@ export class AppComponent implements OnInit {
   private lastLoadedProfile: string | null = null;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private authService: AuthService,
     private menuService: MenuService
   ) {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      const url = event.urlAfterRedirects;
-      this.showLayout = !this.noLayoutPaths.some(path => url.includes(path));
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        const url = event.urlAfterRedirects;
+        this.showLayout = !this.noLayoutPaths.some((path) => url.includes(path));
 
-      if (this.showLayout && this.authService.isLoggedIn) {
-        const currentProfile = this.authService.getSelectedProfile();
-        if (this.menu.length === 0 || currentProfile !== this.lastLoadedProfile) {
-          this.loadMenu();
-          this.lastLoadedProfile = currentProfile;
+        if (this.showLayout && this.authService.isLoggedIn) {
+          const currentProfile = this.authService.getSelectedProfile();
+          if (this.menu.length === 0 || currentProfile !== this.lastLoadedProfile) {
+            this.loadMenu();
+            this.lastLoadedProfile = currentProfile;
+          }
         }
-      }
-    });
+      });
   }
 
   ngOnInit(): void {

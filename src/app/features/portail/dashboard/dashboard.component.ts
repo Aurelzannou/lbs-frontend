@@ -15,11 +15,19 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-portal-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatButtonModule, MatIconModule,
-            RouterModule, MatProgressSpinnerModule, MatInputModule, MatFormFieldModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterModule,
+    MatProgressSpinnerModule,
+    MatInputModule,
+    MatFormFieldModule
+  ],
   template: `
     <div class="portal-wrapper">
-
       <!-- Banner succès inscription -->
       <div class="success-banner" *ngIf="inscriptionSuccess">
         <mat-icon>check_circle</mat-icon>
@@ -68,7 +76,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
             <mat-icon>folder_open</mat-icon>
             Mes dossiers d'inscription
           </h2>
-          <span class="dossier-count" *ngIf="dossiers.length > 0">{{ dossiersFiltres.length }} / {{ dossiers.length }} dossier(s)</span>
+          <span class="dossier-count" *ngIf="dossiers.length > 0"
+            >{{ dossiersFiltres.length }} / {{ dossiers.length }} dossier(s)</span
+          >
         </div>
 
         <!-- Barre de recherche -->
@@ -79,8 +89,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
             type="text"
             placeholder="Rechercher par nom, classe, année, statut…"
             [(ngModel)]="recherche"
-            (ngModelChange)="filtrer()">
-          <button class="search-clear" *ngIf="recherche" (click)="recherche=''; filtrer()">
+            (ngModelChange)="filtrer()"
+          />
+          <button class="search-clear" *ngIf="recherche" (click)="recherche = ''; filtrer()">
             <mat-icon>close</mat-icon>
           </button>
         </div>
@@ -97,7 +108,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
           </button>
         </div>
 
-        <div *ngIf="!loadingDossiers && dossiers.length > 0 && dossiersFiltres.length === 0" class="empty-state">
+        <div
+          *ngIf="!loadingDossiers && dossiers.length > 0 && dossiersFiltres.length === 0"
+          class="empty-state"
+        >
           <mat-icon>search_off</mat-icon>
           <p>Aucun résultat pour « {{ recherche }} »</p>
         </div>
@@ -131,7 +145,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
                 <td>{{ d.classeLibelle || '—' }}</td>
                 <td>{{ d.anneeScolaireLibelle || '—' }}</td>
                 <td class="mono">{{ d.numero || '—' }}</td>
-                <td>{{ d.dateDebut ? (d.dateDebut | date:'dd/MM/yyyy') : '—' }}</td>
+                <td>{{ d.dateDebut ? (d.dateDebut | date: 'dd/MM/yyyy') : '—' }}</td>
                 <td>
                   <span class="statut-badge" [ngClass]="getStatutClass(d.statutLibelle)">
                     {{ d.statutLibelle || 'Déposé' }}
@@ -144,10 +158,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
         <!-- Cartes (mobile) -->
         <div class="cards-mobile" *ngIf="!loadingDossiers && dossiersFiltres.length > 0">
-          <div class="mobile-card" *ngFor="let d of dossiersFiltres" [class.new]="d.id === newDossierId">
+          <div
+            class="mobile-card"
+            *ngFor="let d of dossiersFiltres"
+            [class.new]="d.id === newDossierId"
+          >
             <div class="mc-header">
               <div class="cell-eleve">
-                <div class="avatar-sm">{{ (d.elevePrenom || '?')[0] }}{{ (d.eleveNom || '?')[0] }}</div>
+                <div class="avatar-sm">
+                  {{ (d.elevePrenom || '?')[0] }}{{ (d.eleveNom || '?')[0] }}
+                </div>
                 <div>
                   <span class="eleve-name">{{ d.elevePrenom }} {{ d.eleveNom }}</span>
                   <span class="new-badge" *ngIf="d.id === newDossierId">Nouveau</span>
@@ -158,243 +178,544 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
               </span>
             </div>
             <div class="mc-body">
-              <div class="mc-row"><span class="mc-label">Classe</span><span>{{ d.classeLibelle || '—' }}</span></div>
-              <div class="mc-row"><span class="mc-label">Année</span><span>{{ d.anneeScolaireLibelle || '—' }}</span></div>
-              <div class="mc-row"><span class="mc-label">N° Dossier</span><span class="mono">{{ d.numero || '—' }}</span></div>
-              <div class="mc-row"><span class="mc-label">Date dépôt</span><span>{{ d.dateDebut ? (d.dateDebut | date:'dd/MM/yyyy') : '—' }}</span></div>
+              <div class="mc-row">
+                <span class="mc-label">Classe</span><span>{{ d.classeLibelle || '—' }}</span>
+              </div>
+              <div class="mc-row">
+                <span class="mc-label">Année</span><span>{{ d.anneeScolaireLibelle || '—' }}</span>
+              </div>
+              <div class="mc-row">
+                <span class="mc-label">N° Dossier</span
+                ><span class="mono">{{ d.numero || '—' }}</span>
+              </div>
+              <div class="mc-row">
+                <span class="mc-label">Date dépôt</span
+                ><span>{{ d.dateDebut ? (d.dateDebut | date: 'dd/MM/yyyy') : '—' }}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   `,
-  styles: [`
-    .portal-wrapper {
-      padding: 2rem; max-width: 1100px; margin: 0 auto;
-      animation: fadeIn 0.5s ease-out; font-family: 'Inter', sans-serif;
-    }
-
-    // ── Banner succès ─────────────────────────────────────────────────────────
-    .success-banner {
-      display: flex; align-items: center; gap: 0.875rem;
-      background: #d1fae5; border: 1px solid #a7f3d0; border-radius: 12px;
-      padding: 1rem 1.25rem; margin-bottom: 1.5rem;
-      animation: slideDown 0.4s ease-out;
-
-      mat-icon { color: #059669; font-size: 1.4rem; width: 1.4rem; height: 1.4rem; flex-shrink: 0; }
-
-      div { flex: 1;
-        strong { display: block; color: #065f46; font-size: 0.95rem; }
-        span   { color: #047857; font-size: 0.82rem; }
+  styles: [
+    `
+      .portal-wrapper {
+        padding: 2rem;
+        max-width: 1100px;
+        margin: 0 auto;
+        animation: fadeIn 0.5s ease-out;
+        font-family: 'Inter', sans-serif;
       }
 
-      .banner-close {
-        background: none; border: none; cursor: pointer; color: #059669;
-        display: flex; align-items: center; padding: 0.25rem;
-        border-radius: 6px; transition: background 0.18s;
-        &:hover { background: #a7f3d0; }
-        mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
-      }
-    }
+      // ── Banner succès ─────────────────────────────────────────────────────────
+      .success-banner {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+        background: #d1fae5;
+        border: 1px solid #a7f3d0;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        animation: slideDown 0.4s ease-out;
 
-    // ── Header ────────────────────────────────────────────────────────────────
-    .portal-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 2rem;
-
-      .user-welcome {
-        display: flex; align-items: center; gap: 1.25rem;
-        .avatar-circle {
-          width: 52px; height: 52px; background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-          color: white; border-radius: 50%; display: flex; align-items: center;
-          justify-content: center; font-size: 1.2rem; font-weight: 800;
+        mat-icon {
+          color: #059669;
+          font-size: 1.4rem;
+          width: 1.4rem;
+          height: 1.4rem;
+          flex-shrink: 0;
         }
-        h1 { font-size: 1.6rem; font-weight: 800; color: #0f172a; margin: 0; }
-        p  { color: #64748b; margin: 0; font-size: 0.875rem; }
-      }
 
-      .logout-btn {
-        background: #f1f5f9; color: #475569; border-radius: 10px;
-        font-weight: 600; display: flex; align-items: center; gap: 0.4rem;
-        &:hover { background: #e2e8f0; color: #ef4444; }
-      }
-    }
-
-    // ── Action rapide ─────────────────────────────────────────────────────────
-    .quick-actions {
-      margin-bottom: 2rem;
-      .action-card {
-        cursor: pointer; border-radius: 1.5rem; border: none; transition: all 0.3s ease;
-        padding: 1.5rem; background: linear-gradient(135deg, #1e3a8a, #2563eb);
-        color: white; box-shadow: 0 10px 30px rgba(30,58,138,0.25);
-        &:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(30,58,138,0.35); }
-
-        .card-content { display: flex; align-items: center; gap: 1.5rem;
-          .icon-bg { width: 56px; height: 56px; background: rgba(255,255,255,0.15);
-                     border-radius: 1rem; display: flex; align-items: center; justify-content: center;
-                     mat-icon { font-size: 28px; width: 28px; height: 28px; } }
-          .text-content { flex: 1;
-            h2 { font-size: 1.3rem; font-weight: 800; margin: 0 0 0.2rem; }
-            p  { font-size: 0.9rem; opacity: 0.8; margin: 0; } }
-          .arrow { font-size: 26px; width: 26px; height: 26px; }
+        div {
+          flex: 1;
+          strong {
+            display: block;
+            color: #065f46;
+            font-size: 0.95rem;
+          }
+          span {
+            color: #047857;
+            font-size: 0.82rem;
+          }
         }
-      }
-    }
 
-    // ── Section dossiers ──────────────────────────────────────────────────────
-    .section-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 1rem;
-    }
-
-    .section-title {
-      display: flex; align-items: center; gap: 0.5rem;
-      font-size: 1rem; font-weight: 700; color: #1e293b; margin: 0;
-      mat-icon { color: #2563eb; font-size: 1.2rem; width: 1.2rem; height: 1.2rem; }
-    }
-
-    .dossier-count {
-      font-size: 0.78rem; font-weight: 700; color: #2563eb;
-      background: #dbeafe; padding: 0.2rem 0.6rem; border-radius: 20px;
-    }
-
-    .loading-center { display: flex; justify-content: center; padding: 2rem; }
-
-    .empty-state {
-      text-align: center; padding: 2.5rem;
-      background: white; border-radius: 12px; border: 1px dashed #e2e8f0;
-      mat-icon { font-size: 40px; width: 40px; height: 40px; color: #cbd5e1; }
-      p { color: #94a3b8; margin: 0.75rem 0 1.25rem; }
-    }
-
-    // ── Barre de recherche ────────────────────────────────────────────────────
-    .search-bar {
-      display: flex; align-items: center; gap: 0.75rem;
-      background: white; border: 1px solid #e2e8f0; border-radius: 10px;
-      padding: 0.5rem 1rem; margin-bottom: 1rem;
-      transition: border-color 0.2s;
-      &:focus-within { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
-
-      .search-icon { color: #94a3b8; font-size: 1.1rem; width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
-
-      .search-input {
-        flex: 1; border: none; outline: none; font-size: 0.875rem; color: #1e293b;
-        background: transparent;
-        &::placeholder { color: #94a3b8; }
-      }
-
-      .search-clear {
-        background: none; border: none; cursor: pointer; color: #94a3b8;
-        display: flex; align-items: center; padding: 0; border-radius: 4px;
-        &:hover { color: #64748b; }
-        mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
-      }
-    }
-
-    // ── Tableau ───────────────────────────────────────────────────────────────
-    .table-wrapper {
-      background: white; border-radius: 12px; border: 1px solid #f1f5f9;
-      overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
-
-    .dossiers-table {
-      width: 100%; border-collapse: collapse;
-
-      thead tr {
-        background: #f8fafc; border-bottom: 1px solid #e2e8f0;
-        th {
-          padding: 0.75rem 1rem; text-align: left;
-          font-size: 0.72rem; font-weight: 700; color: #64748b;
-          text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+        .banner-close {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #059669;
+          display: flex;
+          align-items: center;
+          padding: 0.25rem;
+          border-radius: 6px;
+          transition: background 0.18s;
+          &:hover {
+            background: #a7f3d0;
+          }
+          mat-icon {
+            font-size: 1.1rem;
+            width: 1.1rem;
+            height: 1.1rem;
+          }
         }
       }
 
-      tbody tr {
-        border-bottom: 1px solid #f1f5f9; transition: background 0.15s;
-        &:last-child { border-bottom: none; }
-        &:hover { background: #f8fafc; }
-        &.row-new { background: #f0fdf4;
-          &:hover { background: #dcfce7; }
+      // ── Header ────────────────────────────────────────────────────────────────
+      .portal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        .user-welcome {
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+          .avatar-circle {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 800;
+          }
+          h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+          }
+          p {
+            color: #64748b;
+            margin: 0;
+            font-size: 0.875rem;
+          }
         }
-        td { padding: 0.875rem 1rem; font-size: 0.85rem; color: #334155; vertical-align: middle; }
-      }
-    }
 
-    .cell-eleve {
-      display: flex; align-items: center; gap: 0.75rem;
-      .eleve-name { font-weight: 700; color: #1e293b; display: block; }
-    }
-
-    .avatar-sm {
-      width: 34px; height: 34px; border-radius: 50%; background: #1e293b; color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.65rem; font-weight: 700; flex-shrink: 0; text-transform: uppercase;
-    }
-
-    .mono { font-family: monospace; font-size: 0.78rem; color: #64748b; }
-
-    .statut-badge {
-      padding: 0.2rem 0.65rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700;
-      &.st-depose  { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-      &.st-attente { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
-      &.st-accepte { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-      &.st-refuse  { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-      &.st-inscrit { background: #d1fae5; color: #064e3b; border: 1px solid #6ee7b7; font-weight: 800; }
-      &.st-default { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
-    }
-
-    .new-badge {
-      font-size: 0.65rem; font-weight: 700; color: #059669;
-      background: #d1fae5; padding: 0.1rem 0.5rem; border-radius: 10px;
-    }
-
-    // ── Cartes mobile ─────────────────────────────────────────────────────────
-    .cards-mobile { display: none; flex-direction: column; gap: 0.75rem; }
-
-    .mobile-card {
-      background: white; border-radius: 12px; border: 1px solid #f1f5f9;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden;
-      &.new { border-color: #a7f3d0; background: #f0fdf4; }
-
-      .mc-header {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 0.875rem 1rem; border-bottom: 1px solid #f1f5f9;
+        .logout-btn {
+          background: #f1f5f9;
+          color: #475569;
+          border-radius: 10px;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          &:hover {
+            background: #e2e8f0;
+            color: #ef4444;
+          }
+        }
       }
 
-      .mc-body { padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.4rem; }
+      // ── Action rapide ─────────────────────────────────────────────────────────
+      .quick-actions {
+        margin-bottom: 2rem;
+        .action-card {
+          cursor: pointer;
+          border-radius: 1.5rem;
+          border: none;
+          transition: all 0.3s ease;
+          padding: 1.5rem;
+          background: linear-gradient(135deg, #1e3a8a, #2563eb);
+          color: white;
+          box-shadow: 0 10px 30px rgba(30, 58, 138, 0.25);
+          &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(30, 58, 138, 0.35);
+          }
 
-      .mc-row {
-        display: flex; justify-content: space-between; align-items: center;
-        font-size: 0.82rem;
-        .mc-label { color: #94a3b8; font-weight: 600; font-size: 0.75rem; }
-        span:last-child { color: #1e293b; font-weight: 500; }
+          .card-content {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            .icon-bg {
+              width: 56px;
+              height: 56px;
+              background: rgba(255, 255, 255, 0.15);
+              border-radius: 1rem;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              mat-icon {
+                font-size: 28px;
+                width: 28px;
+                height: 28px;
+              }
+            }
+            .text-content {
+              flex: 1;
+              h2 {
+                font-size: 1.3rem;
+                font-weight: 800;
+                margin: 0 0 0.2rem;
+              }
+              p {
+                font-size: 0.9rem;
+                opacity: 0.8;
+                margin: 0;
+              }
+            }
+            .arrow {
+              font-size: 26px;
+              width: 26px;
+              height: 26px;
+            }
+          }
+        }
       }
-    }
 
-    @keyframes fadeIn   { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+      // ── Section dossiers ──────────────────────────────────────────────────────
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
 
-    @media (max-width: 768px) {
-      .portal-wrapper { padding: 1rem; }
-      .portal-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-      .table-wrapper { display: none; }
-      .cards-mobile  { display: flex; }
-    }
-  `]
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+        mat-icon {
+          color: #2563eb;
+          font-size: 1.2rem;
+          width: 1.2rem;
+          height: 1.2rem;
+        }
+      }
+
+      .dossier-count {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #2563eb;
+        background: #dbeafe;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+      }
+
+      .loading-center {
+        display: flex;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 2.5rem;
+        background: white;
+        border-radius: 12px;
+        border: 1px dashed #e2e8f0;
+        mat-icon {
+          font-size: 40px;
+          width: 40px;
+          height: 40px;
+          color: #cbd5e1;
+        }
+        p {
+          color: #94a3b8;
+          margin: 0.75rem 0 1.25rem;
+        }
+      }
+
+      // ── Barre de recherche ────────────────────────────────────────────────────
+      .search-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.5rem 1rem;
+        margin-bottom: 1rem;
+        transition: border-color 0.2s;
+        &:focus-within {
+          border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+        }
+
+        .search-icon {
+          color: #94a3b8;
+          font-size: 1.1rem;
+          width: 1.1rem;
+          height: 1.1rem;
+          flex-shrink: 0;
+        }
+
+        .search-input {
+          flex: 1;
+          border: none;
+          outline: none;
+          font-size: 0.875rem;
+          color: #1e293b;
+          background: transparent;
+          &::placeholder {
+            color: #94a3b8;
+          }
+        }
+
+        .search-clear {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #94a3b8;
+          display: flex;
+          align-items: center;
+          padding: 0;
+          border-radius: 4px;
+          &:hover {
+            color: #64748b;
+          }
+          mat-icon {
+            font-size: 1rem;
+            width: 1rem;
+            height: 1rem;
+          }
+        }
+      }
+
+      // ── Tableau ───────────────────────────────────────────────────────────────
+      .table-wrapper {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #f1f5f9;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      }
+
+      .dossiers-table {
+        width: 100%;
+        border-collapse: collapse;
+
+        thead tr {
+          background: #f8fafc;
+          border-bottom: 1px solid #e2e8f0;
+          th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+          }
+        }
+
+        tbody tr {
+          border-bottom: 1px solid #f1f5f9;
+          transition: background 0.15s;
+          &:last-child {
+            border-bottom: none;
+          }
+          &:hover {
+            background: #f8fafc;
+          }
+          &.row-new {
+            background: #f0fdf4;
+            &:hover {
+              background: #dcfce7;
+            }
+          }
+          td {
+            padding: 0.875rem 1rem;
+            font-size: 0.85rem;
+            color: #334155;
+            vertical-align: middle;
+          }
+        }
+      }
+
+      .cell-eleve {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        .eleve-name {
+          font-weight: 700;
+          color: #1e293b;
+          display: block;
+        }
+      }
+
+      .avatar-sm {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #1e293b;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.65rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        text-transform: uppercase;
+      }
+
+      .mono {
+        font-family: monospace;
+        font-size: 0.78rem;
+        color: #64748b;
+      }
+
+      .statut-badge {
+        padding: 0.2rem 0.65rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        &.st-depose {
+          background: #fef3c7;
+          color: #92400e;
+          border: 1px solid #fde68a;
+        }
+        &.st-attente {
+          background: #dbeafe;
+          color: #1d4ed8;
+          border: 1px solid #bfdbfe;
+        }
+        &.st-accepte {
+          background: #d1fae5;
+          color: #065f46;
+          border: 1px solid #a7f3d0;
+        }
+        &.st-refuse {
+          background: #fee2e2;
+          color: #991b1b;
+          border: 1px solid #fecaca;
+        }
+        &.st-inscrit {
+          background: #d1fae5;
+          color: #064e3b;
+          border: 1px solid #6ee7b7;
+          font-weight: 800;
+        }
+        &.st-default {
+          background: #f1f5f9;
+          color: #64748b;
+          border: 1px solid #e2e8f0;
+        }
+      }
+
+      .new-badge {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: #059669;
+        background: #d1fae5;
+        padding: 0.1rem 0.5rem;
+        border-radius: 10px;
+      }
+
+      // ── Cartes mobile ─────────────────────────────────────────────────────────
+      .cards-mobile {
+        display: none;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .mobile-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #f1f5f9;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        &.new {
+          border-color: #a7f3d0;
+          background: #f0fdf4;
+        }
+
+        .mc-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.875rem 1rem;
+          border-bottom: 1px solid #f1f5f9;
+        }
+
+        .mc-body {
+          padding: 0.75rem 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+
+        .mc-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 0.82rem;
+          .mc-label {
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 0.75rem;
+          }
+          span:last-child {
+            color: #1e293b;
+            font-weight: 500;
+          }
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .portal-wrapper {
+          padding: 1rem;
+        }
+        .portal-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+        .table-wrapper {
+          display: none;
+        }
+        .cards-mobile {
+          display: flex;
+        }
+      }
+    `
+  ]
 })
 export class PortalDashboardComponent implements OnInit {
-  private authService       = inject(TuteurAuthService);
-  private keycloakService   = inject(KeycloakService);
+  private authService = inject(TuteurAuthService);
+  private keycloakService = inject(KeycloakService);
   private validationService = inject(ValidationService);
-  private router            = inject(Router);
+  private router = inject(Router);
 
-  userName           = 'Parent';
-  userInitial        = 'P';
-  dossiers: any[]    = [];
+  userName = 'Parent';
+  userInitial = 'P';
+  dossiers: any[] = [];
   dossiersFiltres: any[] = [];
-  recherche          = '';
-  loadingDossiers    = false;
+  recherche = '';
+  loadingDossiers = false;
   inscriptionSuccess = false;
   newDossierId: number | null = null;
 
@@ -408,7 +729,7 @@ export class PortalDashboardComponent implements OnInit {
     try {
       if (await this.keycloakService.isLoggedIn()) {
         const profile = await this.keycloakService.loadUserProfile();
-        this.userName    = profile.firstName || 'Parent';
+        this.userName = profile.firstName || 'Parent';
         this.userInitial = this.userName.charAt(0).toUpperCase();
       }
     } catch {
@@ -422,35 +743,50 @@ export class PortalDashboardComponent implements OnInit {
     this.loadingDossiers = true;
     this.validationService.getMesDossiers().subscribe({
       next: (data: any) => {
-        this.dossiers = Array.isArray(data) ? data : (data?.data || []);
+        this.dossiers = Array.isArray(data) ? data : data?.data || [];
         this.dossiersFiltres = [...this.dossiers];
         this.loadingDossiers = false;
       },
-      error: () => { this.loadingDossiers = false; }
+      error: () => {
+        this.loadingDossiers = false;
+      }
     });
   }
 
   filtrer(): void {
     const q = this.recherche.toLowerCase().trim();
-    if (!q) { this.dossiersFiltres = [...this.dossiers]; return; }
-    this.dossiersFiltres = this.dossiers.filter(d => {
-      const nom    = `${d.elevePrenom || ''} ${d.eleveNom || ''}`.toLowerCase();
+    if (!q) {
+      this.dossiersFiltres = [...this.dossiers];
+      return;
+    }
+    this.dossiersFiltres = this.dossiers.filter((d) => {
+      const nom = `${d.elevePrenom || ''} ${d.eleveNom || ''}`.toLowerCase();
       const classe = (d.classeLibelle || '').toLowerCase();
-      const annee  = (d.anneeScolaireLibelle || '').toLowerCase();
+      const annee = (d.anneeScolaireLibelle || '').toLowerCase();
       const statut = (d.statutLibelle || '').toLowerCase();
       const numero = (d.numero || '').toLowerCase();
-      return nom.includes(q) || classe.includes(q) || annee.includes(q)
-          || statut.includes(q) || numero.includes(q);
+      return (
+        nom.includes(q) ||
+        classe.includes(q) ||
+        annee.includes(q) ||
+        statut.includes(q) ||
+        numero.includes(q)
+      );
     });
   }
 
   getStatutClass(code: string): string {
     const map: Record<string, string> = {
-      DEPOSE: 'st-depose', EN_ATTENTE: 'st-attente',
-      ACCEPTE: 'st-accepte', REFUSE: 'st-refuse', INSCRIT: 'st-inscrit'
+      DEPOSE: 'st-depose',
+      EN_ATTENTE: 'st-attente',
+      ACCEPTE: 'st-accepte',
+      REFUSE: 'st-refuse',
+      INSCRIT: 'st-inscrit'
     };
     return map[code] || 'st-default';
   }
 
-  logout() { this.authService.logout(); }
+  logout() {
+    this.authService.logout();
+  }
 }

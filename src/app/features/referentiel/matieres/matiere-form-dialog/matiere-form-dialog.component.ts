@@ -19,7 +19,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule
   ],
@@ -59,10 +60,11 @@ export class MatiereFormDialogComponent implements OnInit {
 
       this.saving = true;
       const val = this.form.value;
-      
-      const obs = this.isEdit && this.data?.uuid
-        ? this.matiereService.update(this.data.uuid, val)
-        : this.matiereService.create(val);
+
+      const obs =
+        this.isEdit && this.data?.uuid
+          ? this.matiereService.update(this.data.uuid, val)
+          : this.matiereService.create(val);
 
       obs.subscribe({
         next: () => {

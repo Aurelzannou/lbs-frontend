@@ -1,18 +1,14 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TuteurAuthService {
-  private http = inject(HttpClient);
   private router = inject(Router);
-  private readonly apiUrl = environment.apiUrl;
-  
+
   private tuteurSubject = new BehaviorSubject<any>(null);
   public tuteur$ = this.tuteurSubject.asObservable();
 
@@ -36,17 +32,12 @@ export class TuteurAuthService {
   login(credentials: any): Observable<any> {
     // On utilise maintenant le login Keycloak via AuthService
     return this.authService.loginWithCredentials(credentials.email, credentials.password).pipe(
-      tap(response => {
+      tap((response) => {
         // Optionnel : stocker des infos spécifiques tuteur si besoin
         localStorage.setItem('tuteur_data', JSON.stringify(response.profile));
         this.tuteurSubject.next(response.profile);
       })
     );
-  }
-
-  register(tuteur: any): Observable<any> {
-    // L'URL reste la même car le backend gère maintenant la création Keycloak
-    return this.http.post<any>(`${this.apiUrl}/api/portail/auth/register`, tuteur);
   }
 
   logout(): void {

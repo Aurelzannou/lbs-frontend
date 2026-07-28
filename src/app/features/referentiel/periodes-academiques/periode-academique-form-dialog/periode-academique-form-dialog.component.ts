@@ -23,7 +23,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule,
     NgSelectModule
@@ -53,10 +54,16 @@ export class PeriodeAcademiqueFormDialogComponent implements OnInit {
 
   private initForm(): void {
     this.form = this.fb.group({
-      anneeScolaireId: [this.data?.anneeScolaireId || this.data?.anneeScolaire?.id || null, [Validators.required]],
+      anneeScolaireId: [
+        this.data?.anneeScolaireId || this.data?.anneeScolaire?.id || null,
+        [Validators.required]
+      ],
       code: [this.data?.code || '', [Validators.required, Validators.maxLength(20)]],
       libelle: [this.data?.libelle || '', [Validators.required]],
-      dateDebut: [this.data?.dateDebut ? new Date(this.data.dateDebut) : null, [Validators.required]],
+      dateDebut: [
+        this.data?.dateDebut ? new Date(this.data.dateDebut) : null,
+        [Validators.required]
+      ],
       dateFin: [this.data?.dateFin ? new Date(this.data.dateFin) : null, [Validators.required]]
     });
   }
@@ -79,10 +86,11 @@ export class PeriodeAcademiqueFormDialogComponent implements OnInit {
     if (this.form.valid) {
       this.saving = true;
       const val = this.form.value;
-      
-      const obs = this.isEdit && this.data?.uuid
-        ? this.periodeService.update(this.data.uuid, val)
-        : this.periodeService.create(val);
+
+      const obs =
+        this.isEdit && this.data?.uuid
+          ? this.periodeService.update(this.data.uuid, val)
+          : this.periodeService.create(val);
 
       obs.subscribe({
         next: () => {

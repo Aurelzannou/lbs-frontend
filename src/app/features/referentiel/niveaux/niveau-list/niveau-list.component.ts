@@ -1,4 +1,12 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, inject, ViewChild, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  inject,
+  ViewChild,
+  ChangeDetectorRef
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
@@ -23,15 +31,16 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   selector: 'app-niveau-list',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatTableModule, 
-    MatPaginatorModule, 
-    MatSortModule, 
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
     MatDialogModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatTooltipModule,
     MatProgressSpinnerModule
   ],
@@ -68,14 +77,13 @@ export class NiveauListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     // Debounce : attend 300ms après la dernière frappe avant d'appeler le backend
-    this.searchSub = this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(term => {
-      this.searchTerm = term;
-      this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
-      this.refresh();
-    });
+    this.searchSub = this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.searchTerm = term;
+        this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
+        this.refresh();
+      });
     this.refresh();
   }
 
@@ -152,7 +160,14 @@ export class NiveauListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   refresh(): void {
     this.loading = true;
-    console.log('[NiveauList] refresh() appelé - page:', this.pageIndex, 'taille:', this.pageSize, 'filtre:', this.searchTerm);
+    console.log(
+      '[NiveauList] refresh() appelé - page:',
+      this.pageIndex,
+      'taille:',
+      this.pageSize,
+      'filtre:',
+      this.searchTerm
+    );
     // L'API utilise une pagination 1-based (page 1 = première page)
     this.niveauService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
       next: (response: any) => {
@@ -164,7 +179,12 @@ export class NiveauListComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.totalElements = meta.totalElements || meta.total || items.length;
 
-        console.log('[NiveauList] éléments à afficher:', items.length, 'Total:', this.totalElements);
+        console.log(
+          '[NiveauList] éléments à afficher:',
+          items.length,
+          'Total:',
+          this.totalElements
+        );
 
         this.dataSource.data = items;
 
@@ -197,7 +217,7 @@ export class NiveauListComponent implements OnInit, AfterViewInit, OnDestroy {
       panelClass: 'professional-dialog'
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.refresh();
       }
@@ -205,7 +225,9 @@ export class NiveauListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async deleteNiveau(niveau: Niveau): Promise<void> {
-    const confirmed = await this.notification.confirm(`Êtes-vous sûr de vouloir supprimer le niveau "${niveau.libelle}" ?`);
+    const confirmed = await this.notification.confirm(
+      `Êtes-vous sûr de vouloir supprimer le niveau "${niveau.libelle}" ?`
+    );
     if (confirmed) {
       this.loading = true;
       this.niveauService.delete(niveau.uuid!).subscribe({

@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControlOptions,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
@@ -33,7 +39,6 @@ export class RegisterComponent implements OnInit {
   error: string | null = null;
   success = false;
   showPassword = false;
-  userType: 'ADMIN' | 'PARENT' = 'ADMIN';
 
   constructor(
     private fb: FormBuilder,
@@ -42,37 +47,21 @@ export class RegisterComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.registerForm = this.fb.group({
-      firstName:       ['', [Validators.required]],
-      lastName:        ['', [Validators.required]],
-      email:           ['', [Validators.required, Validators.email]],
-      username:        ['', [Validators.required, Validators.minLength(3)]],
-      telephone:       [''],
-      password:        ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
-    }, { validators: [this.passwordMatchValidator] } as AbstractControlOptions);
-  }
-
-  setUserType(type: 'ADMIN' | 'PARENT'): void {
-    this.userType = type;
-    const usernameCtrl  = this.registerForm.get('username');
-    const telephoneCtrl = this.registerForm.get('telephone');
-
-    if (type === 'ADMIN') {
-      usernameCtrl?.setValidators([Validators.required, Validators.minLength(3)]);
-      telephoneCtrl?.clearValidators();
-    } else {
-      usernameCtrl?.clearValidators();
-      telephoneCtrl?.setValidators([Validators.required]);
-    }
-
-    usernameCtrl?.updateValueAndValidity();
-    telephoneCtrl?.updateValueAndValidity();
+    this.registerForm = this.fb.group(
+      {
+        firstName: ['', [Validators.required]],
+        lastName: ['', [Validators.required]],
+        email: ['', [Validators.required, Validators.email]],
+        telephone: ['', [Validators.required]],
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        confirmPassword: ['', [Validators.required]]
+      },
+      { validators: [this.passwordMatchValidator] } as AbstractControlOptions
+    );
   }
 
   passwordMatchValidator(g: FormGroup) {
-    return g.get('password')?.value === g.get('confirmPassword')?.value
-      ? null : { mismatch: true };
+    return g.get('password')?.value === g.get('confirmPassword')?.value ? null : { mismatch: true };
   }
 
   togglePassword(): void {
@@ -85,8 +74,7 @@ export class RegisterComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    const { confirmPassword, ...formData } = this.registerForm.value;
-    const payload = { ...formData, userType: this.userType };
+    const { confirmPassword, ...payload } = this.registerForm.value;
 
     this.authService.register(payload).subscribe({
       next: () => {
@@ -109,7 +97,7 @@ export class RegisterComponent implements OnInit {
             this.error = err.error;
           }
         } else {
-          this.error = "Impossible de contacter le serveur. Veuillez réessayer plus tard.";
+          this.error = 'Impossible de contacter le serveur. Veuillez réessayer plus tard.';
         }
         console.error('Register error:', err);
       }

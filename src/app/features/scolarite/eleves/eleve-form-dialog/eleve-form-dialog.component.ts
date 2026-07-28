@@ -23,11 +23,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    NgSelectModule,
+    NgSelectModule
   ],
   templateUrl: './eleve-form-dialog.component.html',
   styleUrl: './eleve-form-dialog.component.scss'
@@ -72,7 +73,7 @@ export class EleveFormDialogComponent implements OnInit {
   get calculatedAge(): number | null {
     const dob = this.form.get('dateNaissance')?.value;
     if (!dob) return null;
-    
+
     const birthDate = new Date(dob);
     if (isNaN(birthDate.getTime())) return null;
 
@@ -98,7 +99,9 @@ export class EleveFormDialogComponent implements OnInit {
     if (this.form.invalid) return;
 
     const confirmed = await this.notification.confirm(
-      this.isEdit ? 'Voulez-vous vraiment modifier cet élève ?' : 'Voulez-vous vraiment enregistrer cet élève ?',
+      this.isEdit
+        ? 'Voulez-vous vraiment modifier cet élève ?'
+        : 'Voulez-vous vraiment enregistrer cet élève ?',
       'Confirmation'
     );
 

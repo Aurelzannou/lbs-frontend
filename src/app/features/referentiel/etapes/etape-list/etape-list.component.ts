@@ -1,4 +1,11 @@
-import { Component, OnInit, AfterViewInit, inject, ViewChild, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  inject,
+  ViewChild,
+  ChangeDetectorRef
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
@@ -31,14 +38,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatTooltipModule,
     MatProgressSpinnerModule
   ],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
     ]),
     trigger('rowsAnimation', [
@@ -73,14 +81,13 @@ export class EtapeListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     // Debounce : attend 300ms après la dernière frappe avant d'appeler le backend
-    this.searchSub = this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(term => {
-      this.searchTerm = term;
-      this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
-      this.refresh();
-    });
+    this.searchSub = this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.searchTerm = term;
+        this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
+        this.refresh();
+      });
     this.refresh();
   }
 
@@ -197,7 +204,7 @@ export class EtapeListComponent implements OnInit, AfterViewInit {
       panelClass: 'professional-dialog'
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.refresh();
       }
@@ -205,7 +212,9 @@ export class EtapeListComponent implements OnInit, AfterViewInit {
   }
 
   async deleteEtape(etape: Etape): Promise<void> {
-    const confirmed = await this.notification.confirm(`Êtes-vous sûr de vouloir supprimer l'étape "${etape.libelle}" ?`);
+    const confirmed = await this.notification.confirm(
+      `Êtes-vous sûr de vouloir supprimer l'étape "${etape.libelle}" ?`
+    );
     if (confirmed) {
       this.loading = true;
       this.etapeService.delete(etape.uuid!).subscribe({

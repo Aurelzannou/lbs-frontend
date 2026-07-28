@@ -1,6 +1,5 @@
 <div class="rfm-dialog">
   <div class="rfm-card">
-
     <div class="rfm-header">
       <div class="rfm-header-inner">
         <div class="rfm-title-group">
@@ -8,8 +7,14 @@
             <mat-icon>account_tree</mat-icon>
           </div>
           <div>
-            <h3 class="rfm-title">{{ isEdit ? 'Modifier l\'Étape' : 'Nouvelle Étape' }}</h3>
-            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour des informations' : 'Définition d\'une nouvelle étape administrative' }}</p>
+            <h3 class="rfm-title">{{ isEdit ? "Modifier l'Étape" : 'Nouvelle Étape' }}</h3>
+            <p class="rfm-subtitle">
+              {{
+                isEdit
+                  ? 'Mise à jour des informations'
+                  : "Définition d'une nouvelle étape administrative"
+              }}
+            </p>
           </div>
         </div>
         <button mat-icon-button class="rfm-close" (click)="onCancel()">
@@ -20,13 +25,17 @@
 
     <div class="rfm-body">
       <form [formGroup]="form" class="rfm-form">
-
         <div class="rfm-row">
           <div class="rfm-field">
             <span class="rfm-label">Code de l'étape</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>tag</mat-icon>
-              <input matInput formControlName="code" placeholder="Ex: INSCRIPTION, VALIDATION..." style="text-transform: uppercase">
+              <input
+                matInput
+                formControlName="code"
+                placeholder="Ex: INSCRIPTION, VALIDATION..."
+                style="text-transform: uppercase"
+              />
             </mat-form-field>
             <div class="rfm-error" *ngIf="form.get('code')?.invalid && form.get('code')?.touched">
               Ce champ est obligatoire
@@ -39,9 +48,12 @@
             <span class="rfm-label">Libellé</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>notes</mat-icon>
-              <input matInput formControlName="libelle" placeholder="Ex: Inscription des élèves">
+              <input matInput formControlName="libelle" placeholder="Ex: Inscription des élèves" />
             </mat-form-field>
-            <div class="rfm-error" *ngIf="form.get('libelle')?.invalid && form.get('libelle')?.touched">
+            <div
+              class="rfm-error"
+              *ngIf="form.get('libelle')?.invalid && form.get('libelle')?.touched"
+            >
               Ce champ est obligatoire
             </div>
           </div>
@@ -52,23 +64,33 @@
             <span class="rfm-label">Description <span class="rfm-opt">(optionnel)</span></span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>subject</mat-icon>
-              <textarea matInput formControlName="description" placeholder="Détails sur cette étape..." rows="3"></textarea>
+              <textarea
+                matInput
+                formControlName="description"
+                placeholder="Détails sur cette étape..."
+                rows="3"
+              ></textarea>
             </mat-form-field>
           </div>
         </div>
-
       </form>
     </div>
 
     <div class="rfm-footer">
       <div class="rfm-actions">
-        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="loading">Annuler</button>
-        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || loading">
+        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="loading">
+          Annuler
+        </button>
+        <button
+          mat-flat-button
+          class="rfm-submit"
+          (click)="onSubmit()"
+          [disabled]="form.invalid || loading"
+        >
           <mat-icon *ngIf="!loading">save</mat-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>
     </div>
-
   </div>
 </div>

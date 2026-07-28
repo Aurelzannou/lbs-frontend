@@ -14,7 +14,7 @@ export class NotificationService {
 
   error(error: any, title: string = 'Erreur'): void {
     let message = 'Une erreur est survenue';
-    
+
     if (typeof error === 'string') {
       message = error;
     } else if (error?.error?.message) {

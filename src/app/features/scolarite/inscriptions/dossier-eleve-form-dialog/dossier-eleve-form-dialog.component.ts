@@ -16,6 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-dossier-eleve-form-dialog',
@@ -25,11 +26,13 @@ import { MatSelectModule } from '@angular/material/select';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatSelectModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatCardModule
+    MatCardModule,
+    NgSelectModule
   ],
   templateUrl: './dossier-eleve-form-dialog.component.html',
   styleUrl: './dossier-eleve-form-dialog.component.scss'
@@ -62,8 +65,17 @@ export class DossierEleveFormDialogComponent implements OnInit {
   private initForm(): void {
     if (this.isEdit) {
       this.form = this.fb.group({
+        nom: [this.data?.eleveNom || null, [Validators.required]],
+        prenom: [this.data?.elevePrenom || null, [Validators.required]],
+        sexe: [this.data?.sexe || null, [Validators.required]],
+        dateNaissance: [this.data?.dateNaissance || null],
+        souffrant: [this.data?.souffrant || false],
+        provenance: [this.data?.provenance || null],
         classeId: [this.data?.classeId || this.data?.classe?.id || null, [Validators.required]],
-        anneeScolaireId: [this.data?.anneeScolaireId || this.data?.anneeScolaire?.id || null, [Validators.required]],
+        anneeScolaireId: [
+          this.data?.anneeScolaireId || this.data?.anneeScolaire?.id || null,
+          [Validators.required]
+        ]
       });
     } else {
       this.form = this.fb.group({
@@ -71,21 +83,25 @@ export class DossierEleveFormDialogComponent implements OnInit {
         prenom: [null, [Validators.required]],
         sexe: [null, [Validators.required]],
         dateNaissance: [null],
+        souffrant: [false],
+        provenance: [null],
         classeId: [null, [Validators.required]],
-        anneeScolaireId: [null, [Validators.required]],
+        anneeScolaireId: [null, [Validators.required]]
       });
     }
   }
 
   private loadData(): void {
-    this.classeService.getAll(1, 100).subscribe(res => this.classes = res.data || res);
-    this.anneeService.getAll(1, 100).subscribe(res => this.annees = res.data || res);
+    this.classeService.getAll(1, 100).subscribe((res) => (this.classes = res.data || res));
+    this.anneeService.getAll(1, 100).subscribe((res) => (this.annees = res.data || res));
   }
 
   async onSubmit(): Promise<void> {
     if (this.form.valid) {
       const confirmed = await this.notification.confirm(
-        this.isEdit ? 'Voulez-vous modifier ce dossier ?' : 'Voulez-vous créer ce dossier d\'inscription ?'
+        this.isEdit
+          ? 'Voulez-vous modifier ce dossier ?'
+          : "Voulez-vous créer ce dossier d'inscription ?"
       );
       if (!confirmed) return;
 

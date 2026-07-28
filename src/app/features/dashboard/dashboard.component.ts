@@ -15,11 +15,14 @@ import { RouterModule } from '@angular/router';
       <div class="welcome-banner">
         <div class="banner-content">
           <h1>Tableau de Bord</h1>
-          <p>Bienvenue dans votre interface de gestion scolaire. Voici l'état actuel de votre établissement.</p>
+          <p>
+            Bienvenue dans votre interface de gestion scolaire. Voici l'état actuel de votre
+            établissement.
+          </p>
         </div>
         <div class="banner-image"></div>
       </div>
-      
+
       <div class="stats-grid">
         <mat-card class="stat-card">
           <mat-card-content>
@@ -32,7 +35,7 @@ import { RouterModule } from '@angular/router';
             </div>
           </mat-card-content>
         </mat-card>
-        
+
         <mat-card class="stat-card">
           <mat-card-content>
             <div class="stat-icon teachers-bg">
@@ -44,7 +47,7 @@ import { RouterModule } from '@angular/router';
             </div>
           </mat-card-content>
         </mat-card>
-        
+
         <mat-card class="stat-card">
           <mat-card-content>
             <div class="stat-icon enrol-bg">
@@ -56,7 +59,7 @@ import { RouterModule } from '@angular/router';
             </div>
           </mat-card-content>
         </mat-card>
-        
+
         <mat-card class="stat-card">
           <mat-card-content>
             <div class="stat-icon payments-bg">
@@ -69,7 +72,7 @@ import { RouterModule } from '@angular/router';
           </mat-card-content>
         </mat-card>
       </div>
-      
+
       <div class="main-sections">
         <div class="activity-section">
           <header class="section-header">
@@ -85,15 +88,18 @@ import { RouterModule } from '@angular/router';
             </mat-card-content>
           </mat-card>
         </div>
-        
+
         <div class="quick-actions">
           <header class="section-header">
             <h2>Actions Rapides</h2>
           </header>
           <div class="actions-grid">
-            <button mat-flat-button class="action-btn yellow-btn" 
-                    routerLink="/scolarite/inscriptions" 
-                    [queryParams]="{ openForm: 'true' }">
+            <button
+              mat-flat-button
+              class="action-btn yellow-btn"
+              routerLink="/scolarite/inscriptions"
+              [queryParams]="{ openForm: 'true' }"
+            >
               <mat-icon>person_add</mat-icon> Inscrire un élève
             </button>
             <button mat-flat-button class="action-btn outline-btn">
@@ -171,7 +177,7 @@ import { RouterModule } from '@angular/router';
       border: 2px solid #fef3c7;
       background: white;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      
+
       &:hover {
         transform: translateY(-8px);
         box-shadow: 0 15px 30px -10px rgba(245, 158, 11, 0.2);
@@ -193,7 +199,7 @@ import { RouterModule } from '@angular/router';
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 8px 16px -4px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
 
       mat-icon {
         color: white;
@@ -203,10 +209,21 @@ import { RouterModule } from '@angular/router';
       }
     }
 
-    .students-bg { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
-    .teachers-bg { background: linear-gradient(135deg, #78350f 0%, #451a03 100%); }
-    .enrol-bg { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); }
-    .payments-bg { background: linear-gradient(135deg, #fde68a 0%, #fbbf24 100%); mat-icon { color: #92400e; } }
+    .students-bg {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    }
+    .teachers-bg {
+      background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
+    }
+    .enrol-bg {
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+    }
+    .payments-bg {
+      background: linear-gradient(135deg, #fde68a 0%, #fbbf24 100%);
+      mat-icon {
+        color: #92400e;
+      }
+    }
 
     .stat-info {
       display: flex;
@@ -239,7 +256,7 @@ import { RouterModule } from '@angular/router';
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1.25rem;
-      
+
       h2 {
         font-size: 1.5rem;
         font-weight: 800;
@@ -266,8 +283,15 @@ import { RouterModule } from '@angular/router';
       color: #d97706;
       opacity: 0.6;
 
-      mat-icon { font-size: 48px; width: 48px; height: 48px; }
-      p { font-weight: 600; margin: 0; }
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+      }
+      p {
+        font-weight: 600;
+        margin: 0;
+      }
     }
 
     .actions-grid {
@@ -285,30 +309,49 @@ import { RouterModule } from '@angular/router';
       align-items: center;
       justify-content: center;
       gap: 0.75rem;
-      
-      mat-icon { margin-right: 0.5rem; }
+
+      mat-icon {
+        margin-right: 0.5rem;
+      }
 
       &.yellow-btn {
         background: #fbbf24;
         color: #451a03;
-        &:hover { background: #f59e0b; }
+        &:hover {
+          background: #f59e0b;
+        }
       }
 
       &.outline-btn {
         border: 2px solid #fbbf24;
         color: #92400e;
-        &:hover { background: #fef3c7; }
+        &:hover {
+          background: #fef3c7;
+        }
       }
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @media (max-width: 1024px) {
-      .main-sections { grid-template-columns: 1fr; }
-      .welcome-banner { padding: 2rem; h1 { font-size: 2rem; } }
+      .main-sections {
+        grid-template-columns: 1fr;
+      }
+      .welcome-banner {
+        padding: 2rem;
+        h1 {
+          font-size: 2rem;
+        }
+      }
     }
   `
 })

@@ -19,9 +19,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
-    MatProgressSpinnerModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './categorie-depense-form-dialog.component.html',
   styleUrl: './categorie-depense-form-dialog.component.scss'
@@ -52,17 +53,20 @@ export class CategorieDepenseFormDialogComponent implements OnInit {
   async onSubmit(): Promise<void> {
     if (this.form.valid) {
       const confirmed = await this.notification.confirm(
-        this.isEdit ? 'Voulez-vous modifier cette catégorie ?' : 'Voulez-vous créer cette catégorie ?',
+        this.isEdit
+          ? 'Voulez-vous modifier cette catégorie ?'
+          : 'Voulez-vous créer cette catégorie ?',
         'Confirmation'
       );
       if (!confirmed) return;
 
       this.saving = true;
       const val = this.form.value;
-      
-      const obs = this.isEdit && this.data?.uuid
-        ? this.categorieDepenseService.update(this.data.uuid, val)
-        : this.categorieDepenseService.create(val);
+
+      const obs =
+        this.isEdit && this.data?.uuid
+          ? this.categorieDepenseService.update(this.data.uuid, val)
+          : this.categorieDepenseService.create(val);
 
       obs.subscribe({
         next: () => {

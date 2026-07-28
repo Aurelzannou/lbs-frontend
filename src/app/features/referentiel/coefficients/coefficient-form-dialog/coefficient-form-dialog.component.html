@@ -1,6 +1,5 @@
 <div class="rfm-dialog">
   <div class="rfm-card">
-
     <div class="rfm-header">
       <div class="rfm-header-inner">
         <div class="rfm-title-group">
@@ -8,8 +7,16 @@
             <mat-icon>functions</mat-icon>
           </div>
           <div>
-            <h3 class="rfm-title">{{ isEdit ? 'Modifier le Coefficient' : 'Nouveau Coefficient' }}</h3>
-            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour des informations' : 'Attribution d\'un coefficient matière/niveau' }}</p>
+            <h3 class="rfm-title">
+              {{ isEdit ? 'Modifier le Coefficient' : 'Nouveau Coefficient' }}
+            </h3>
+            <p class="rfm-subtitle">
+              {{
+                isEdit
+                  ? 'Mise à jour des informations'
+                  : "Attribution d'un coefficient matière/niveau"
+              }}
+            </p>
           </div>
         </div>
         <button mat-icon-button class="rfm-close" (click)="onCancel()">
@@ -20,7 +27,6 @@
 
     <div class="rfm-body">
       <form [formGroup]="form" class="rfm-form">
-
         <div class="rfm-row">
           <div class="rfm-select">
             <span class="rfm-label">Niveau</span>
@@ -32,9 +38,13 @@
               placeholder="Sélectionner un niveau"
               [loading]="loading"
               appendTo="body"
-              class="ng-field">
+              class="ng-field"
+            >
             </ng-select>
-            <div class="rfm-error" *ngIf="form.get('niveauId')?.invalid && form.get('niveauId')?.touched">
+            <div
+              class="rfm-error"
+              *ngIf="form.get('niveauId')?.invalid && form.get('niveauId')?.touched"
+            >
               Ce champ est obligatoire
             </div>
           </div>
@@ -51,9 +61,13 @@
               placeholder="Sélectionner une matière"
               [loading]="loading"
               appendTo="body"
-              class="ng-field">
+              class="ng-field"
+            >
             </ng-select>
-            <div class="rfm-error" *ngIf="form.get('matiereId')?.invalid && form.get('matiereId')?.touched">
+            <div
+              class="rfm-error"
+              *ngIf="form.get('matiereId')?.invalid && form.get('matiereId')?.touched"
+            >
               Ce champ est obligatoire
             </div>
           </div>
@@ -64,7 +78,7 @@
             <span class="rfm-label">Code</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>tag</mat-icon>
-              <input matInput formControlName="code" placeholder="Ex: COEFF-MATH-6">
+              <input matInput formControlName="code" placeholder="Ex: COEFF-MATH-6" />
             </mat-form-field>
             <div class="rfm-error" *ngIf="form.get('code')?.invalid && form.get('code')?.touched">
               Obligatoire
@@ -74,14 +88,16 @@
             <span class="rfm-label">Valeur</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>pin</mat-icon>
-              <input matInput type="number" formControlName="valeur" placeholder="Ex: 4">
+              <input matInput type="number" formControlName="valeur" placeholder="Ex: 4" />
             </mat-form-field>
-            <div class="rfm-error" *ngIf="form.get('valeur')?.invalid && form.get('valeur')?.touched">
+            <div
+              class="rfm-error"
+              *ngIf="form.get('valeur')?.invalid && form.get('valeur')?.touched"
+            >
               Obligatoire (min. 1)
             </div>
           </div>
         </div>
-
       </form>
     </div>
 
@@ -90,12 +106,16 @@
         <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="saving">
           Annuler
         </button>
-        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || saving || loading">
+        <button
+          mat-flat-button
+          class="rfm-submit"
+          (click)="onSubmit()"
+          [disabled]="form.invalid || saving || loading"
+        >
           <mat-icon *ngIf="!saving">save</mat-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>
     </div>
-
   </div>
 </div>

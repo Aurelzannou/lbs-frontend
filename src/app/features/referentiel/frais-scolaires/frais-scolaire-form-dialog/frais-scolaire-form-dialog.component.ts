@@ -26,7 +26,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule,
     NgSelectModule
@@ -60,8 +61,14 @@ export class FraisScolaireFormDialogComponent implements OnInit {
 
   private initForm(): void {
     this.form = this.fb.group({
-      anneeScolaireId: [this.data?.anneeScolaireId || this.data?.anneeScolaire?.id || null, [Validators.required]],
-      typeFraisId: [this.data?.typeFraisId || this.data?.typeFrais?.id || null, [Validators.required]],
+      anneeScolaireId: [
+        this.data?.anneeScolaireId || this.data?.anneeScolaire?.id || null,
+        [Validators.required]
+      ],
+      typeFraisId: [
+        this.data?.typeFraisId || this.data?.typeFrais?.id || null,
+        [Validators.required]
+      ],
       classeId: [this.data?.classeId || this.data?.classe?.id || null, [Validators.required]],
       code: [this.data?.code || '', [Validators.required]],
       montant: [this.data?.montant || 0, [Validators.required, Validators.min(0)]]
@@ -70,15 +77,17 @@ export class FraisScolaireFormDialogComponent implements OnInit {
 
   private loadData(): void {
     this.loading = true;
-    
+
     // Load Classes
-    this.classeService.getAll(1, 100).subscribe(res => this.classes = res.data || []);
-    
+    this.classeService.getAll(1, 100).subscribe((res) => (this.classes = res.data || []));
+
     // Load Annees Scolaires
-    this.anneeScolaireService.getAll(1, 100).subscribe(res => this.anneesScolaires = res.data || []);
-    
+    this.anneeScolaireService
+      .getAll(1, 100)
+      .subscribe((res) => (this.anneesScolaires = res.data || []));
+
     // Load Types de Frais
-    this.typeFraisService.getAll(1, 100).subscribe(res => {
+    this.typeFraisService.getAll(1, 100).subscribe((res) => {
       this.typesFrais = res.data || [];
       this.loading = false;
     });
@@ -94,10 +103,11 @@ export class FraisScolaireFormDialogComponent implements OnInit {
 
       this.saving = true;
       const val = this.form.value;
-      
-      const obs = this.isEdit && this.data?.uuid
-        ? this.fraisScolaireService.update(this.data.uuid, val)
-        : this.fraisScolaireService.create(val);
+
+      const obs =
+        this.isEdit && this.data?.uuid
+          ? this.fraisScolaireService.update(this.data.uuid, val)
+          : this.fraisScolaireService.create(val);
 
       obs.subscribe({
         next: () => {

@@ -19,9 +19,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
-    MatProgressSpinnerModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './caisse-form-dialog.component.html',
   styleUrl: './caisse-form-dialog.component.scss'
@@ -60,10 +61,11 @@ export class CaisseFormDialogComponent implements OnInit {
 
       this.saving = true;
       const val = this.form.value;
-      
-      const obs = this.isEdit && this.data?.uuid
-        ? this.caisseService.update(this.data.uuid, val)
-        : this.caisseService.create(val);
+
+      const obs =
+        this.isEdit && this.data?.uuid
+          ? this.caisseService.update(this.data.uuid, val)
+          : this.caisseService.create(val);
 
       obs.subscribe({
         next: () => {

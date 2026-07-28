@@ -17,11 +17,17 @@ export class ValidationService {
     return this.api.get<any[]>('/api/validation/mes-dossiers');
   }
 
-  /** Retourne les dossiers pour validation (admin), filtrables par statut, année et recherche. */
-  getAll(statut?: string, anneeId?: number | null, filter?: string): Observable<any> {
+  /** Retourne les dossiers pour validation (admin), filtrables par statut, année, classe et recherche. */
+  getAll(
+    statut?: string,
+    anneeId?: number | null,
+    filter?: string,
+    classeId?: number | null
+  ): Observable<any> {
     let params = new HttpParams();
-    if (statut)  params = params.set('statut', statut);
+    if (statut) params = params.set('statut', statut);
     if (anneeId) params = params.set('anneeId', anneeId.toString());
+    if (classeId) params = params.set('classeId', classeId.toString());
     if (filter?.trim()) params = params.set('filter', filter.trim());
     return this.api.get<any>('/api/validation/dossiers', params);
   }

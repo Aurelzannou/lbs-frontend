@@ -12,10 +12,8 @@ export class PaiementService {
   private readonly endpoint = '/api/paiements';
 
   getAll(page: number = 1, size: number = 10, filter: string = ''): Observable<any> {
-    let params = new HttpParams()
-      .set('page', (page - 1).toString())
-      .set('size', size.toString());
-    
+    let params = new HttpParams().set('page', (page - 1).toString()).set('size', size.toString());
+
     if (filter && filter.trim().length > 0) {
       params = params.set('filter', filter.trim());
     }
@@ -32,7 +30,7 @@ export class PaiementService {
   }
 
   // Spécifique au paiement en ligne (Feeda Pay)
-  initiateMomo(data: { telephone: string, montant: number, dossierId: number }): Observable<any> {
+  initiateMomo(data: { telephone: string; montant: number; dossierId: number }): Observable<any> {
     return this.api.post<any>(`${this.endpoint}/momo/initiate`, data);
   }
 

@@ -1,10 +1,8 @@
 <div class="login-wrapper">
-
   <!-- ── Panneau gauche – illustration ── -->
   <div class="illustration-section">
     <div class="overlay"></div>
     <div class="content">
-
       <div class="logo-container">
         <div class="logo-badge">LBS</div>
         <h1>LBS Education</h1>
@@ -30,16 +28,13 @@
           <span>Suivi des dossiers en temps réel</span>
         </div>
       </div>
-
     </div>
   </div>
 
   <!-- ── Panneau droit – formulaire ── -->
   <div class="form-section">
     <div class="login-container">
-
       <mat-card class="login-card">
-
         <mat-card-header>
           <div class="card-logo">
             <mat-icon>family_restroom</mat-icon>
@@ -49,7 +44,6 @@
         </mat-card-header>
 
         <mat-card-content>
-
           <!-- Message d'erreur -->
           @if (error) {
             <div class="alert-error">
@@ -62,15 +56,16 @@
           }
 
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Adresse Email</mat-label>
               <mat-icon matPrefix>mail_outline</mat-icon>
-              <input matInput
-                     formControlName="email"
-                     type="email"
-                     placeholder="Ex: parent@exemple.com"
-                     autocomplete="email">
+              <input
+                matInput
+                formControlName="email"
+                type="email"
+                placeholder="Ex: parent@exemple.com"
+                autocomplete="email"
+              />
               <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
                 L'email est requis
               </mat-error>
@@ -82,14 +77,20 @@
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Mot de passe</mat-label>
               <mat-icon matPrefix>lock_outline</mat-icon>
-              <input matInput
-                     [type]="showPassword ? 'text' : 'password'"
-                     formControlName="password"
-                     placeholder="••••••••"
-                     autocomplete="current-password">
-              <button mat-icon-button matSuffix type="button"
-                      (click)="showPassword = !showPassword"
-                      [attr.aria-label]="showPassword ? 'Cacher' : 'Afficher'">
+              <input
+                matInput
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="showPassword = !showPassword"
+                [attr.aria-label]="showPassword ? 'Cacher' : 'Afficher'"
+              >
                 <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
               <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
@@ -97,16 +98,17 @@
               </mat-error>
             </mat-form-field>
 
-            <button mat-flat-button
-                    class="submit-btn"
-                    color="primary"
-                    type="submit"
-                    [disabled]="loading || loginForm.invalid">
+            <button
+              mat-flat-button
+              class="submit-btn"
+              color="primary"
+              type="submit"
+              [disabled]="loading || loginForm.invalid"
+            >
               <mat-spinner *ngIf="loading" diameter="20" class="btn-spinner"></mat-spinner>
               <span *ngIf="!loading">Se connecter</span>
               <span *ngIf="loading">Connexion en cours…</span>
             </button>
-
           </form>
         </mat-card-content>
 
@@ -117,7 +119,6 @@
           </p>
           <p class="copyright">© 2026 LBS Education. Tous droits réservés.</p>
         </mat-card-actions>
-
       </mat-card>
 
       <div class="back-home">
@@ -126,8 +127,6 @@
           Retour à l'accueil
         </a>
       </div>
-
     </div>
   </div>
-
 </div>

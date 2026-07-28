@@ -1,6 +1,5 @@
 <div class="rfm-dialog">
   <div class="rfm-card">
-
     <div class="rfm-header">
       <div class="rfm-header-inner">
         <div class="rfm-title-group">
@@ -20,17 +19,18 @@
 
     <div class="rfm-body">
       <div class="rfm-form">
-
         <div class="rfm-row">
           <div class="rfm-field rfm-select">
             <span class="rfm-label">Sélection des Profils</span>
-            <ng-select [items]="allProfils"
-                       [(ngModel)]="selectedProfilCodes"
-                       [multiple]="true"
-                       bindLabel="libelle"
-                       bindValue="code"
-                       placeholder="Rechercher des profils..."
-                       [searchable]="true">
+            <ng-select
+              [items]="allProfils"
+              [(ngModel)]="selectedProfilCodes"
+              [multiple]="true"
+              bindLabel="libelle"
+              bindValue="code"
+              placeholder="Rechercher des profils..."
+              [searchable]="true"
+            >
               <ng-template ng-option-tmp let-item="item">
                 <div class="profil-option">
                   <span class="profil-label">{{ item.libelle }}</span>
@@ -38,10 +38,11 @@
                 </div>
               </ng-template>
             </ng-select>
-            <p class="field-hint">Tous les droits associés à ces profils seront octroyés à l'utilisateur.</p>
+            <p class="field-hint">
+              Tous les droits associés à ces profils seront octroyés à l'utilisateur.
+            </p>
           </div>
         </div>
-
       </div>
     </div>
 
@@ -56,6 +57,5 @@
         </button>
       </div>
     </div>
-
   </div>
 </div>

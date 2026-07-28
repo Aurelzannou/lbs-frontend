@@ -12,9 +12,7 @@ export class AnneeScolaireService {
   private readonly endpoint = '/api/annees-scolaires';
 
   getAll(page: number = 0, size: number = 25, filter: string = ''): Observable<any> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
     if (filter && filter.trim().length > 0) {
       params = params.set('filter', filter.trim());
     }

@@ -19,10 +19,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatCardModule,
-    MatProgressSpinnerModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './profil-form-dialog.component.html',
   styleUrl: './profil-form-dialog.component.scss'
@@ -54,7 +55,9 @@ export class ProfilFormDialogComponent implements OnInit {
     if (this.form.invalid) return;
 
     const confirmed = await this.notification.confirm(
-      this.isEdit ? 'Voulez-vous vraiment modifier ce profil ?' : 'Voulez-vous vraiment créer ce profil ?',
+      this.isEdit
+        ? 'Voulez-vous vraiment modifier ce profil ?'
+        : 'Voulez-vous vraiment créer ce profil ?',
       'Confirmation'
     );
 

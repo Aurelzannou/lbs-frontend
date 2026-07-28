@@ -30,7 +30,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             this.authService.logout();
           }
         } else if (error.status === 403) {
-          this.notification.warning('Vous n\'avez pas les droits pour effectuer cette action.');
+          this.notification.warning("Vous n'avez pas les droits pour effectuer cette action.");
         } else if (error.status === 409 || error.status === 400) {
           this.notification.error(error);
         } else if (error.status === 500) {

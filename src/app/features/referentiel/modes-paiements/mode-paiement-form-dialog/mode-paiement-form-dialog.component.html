@@ -1,6 +1,5 @@
 <div class="rfm-dialog">
   <div class="rfm-card">
-
     <div class="rfm-header">
       <div class="rfm-header-inner">
         <div class="rfm-title-group">
@@ -8,8 +7,12 @@
             <mat-icon>payment</mat-icon>
           </div>
           <div>
-            <h3 class="rfm-title">{{ isEdit ? 'Modifier le Mode' : 'Nouveau Mode de Paiement' }}</h3>
-            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour des informations' : 'Nouveau mode de paiement' }}</p>
+            <h3 class="rfm-title">
+              {{ isEdit ? 'Modifier le Mode' : 'Nouveau Mode de Paiement' }}
+            </h3>
+            <p class="rfm-subtitle">
+              {{ isEdit ? 'Mise à jour des informations' : 'Nouveau mode de paiement' }}
+            </p>
           </div>
         </div>
         <button mat-icon-button class="rfm-close" (click)="onCancel()">
@@ -20,13 +23,12 @@
 
     <div class="rfm-body">
       <form [formGroup]="form" class="rfm-form">
-
         <div class="rfm-row">
           <div class="rfm-field">
             <span class="rfm-label">Code</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>tag</mat-icon>
-              <input matInput formControlName="code" placeholder="Ex: ESPECE">
+              <input matInput formControlName="code" placeholder="Ex: ESPECE" />
             </mat-form-field>
             <div class="rfm-error" *ngIf="form.get('code')?.invalid && form.get('code')?.touched">
               Ce champ est obligatoire
@@ -39,14 +41,16 @@
             <span class="rfm-label">Libellé</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>notes</mat-icon>
-              <input matInput formControlName="libelle" placeholder="Ex: Espèces">
+              <input matInput formControlName="libelle" placeholder="Ex: Espèces" />
             </mat-form-field>
-            <div class="rfm-error" *ngIf="form.get('libelle')?.invalid && form.get('libelle')?.touched">
+            <div
+              class="rfm-error"
+              *ngIf="form.get('libelle')?.invalid && form.get('libelle')?.touched"
+            >
               Ce champ est obligatoire
             </div>
           </div>
         </div>
-
       </form>
     </div>
 
@@ -55,12 +59,16 @@
         <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="saving">
           Annuler
         </button>
-        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || saving">
+        <button
+          mat-flat-button
+          class="rfm-submit"
+          (click)="onSubmit()"
+          [disabled]="form.invalid || saving"
+        >
           <mat-icon *ngIf="!saving">save</mat-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>
     </div>
-
   </div>
 </div>

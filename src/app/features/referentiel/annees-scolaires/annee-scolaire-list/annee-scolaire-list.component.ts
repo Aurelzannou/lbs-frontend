@@ -1,4 +1,12 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, inject, ViewChild, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  inject,
+  ViewChild,
+  ChangeDetectorRef
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
@@ -23,15 +31,16 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   selector: 'app-annee-scolaire-list',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatTableModule, 
-    MatPaginatorModule, 
-    MatSortModule, 
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
     MatDialogModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatTooltipModule,
     MatProgressSpinnerModule
   ],
@@ -67,14 +76,13 @@ export class AnneeScolaireListComponent implements OnInit, AfterViewInit, OnDest
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
-    this.searchSub = this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(term => {
-      this.searchTerm = term;
-      this.pageIndex = 0;
-      this.refresh();
-    });
+    this.searchSub = this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.searchTerm = term;
+        this.pageIndex = 0;
+        this.refresh();
+      });
     this.refresh();
   }
 
@@ -153,7 +161,7 @@ export class AnneeScolaireListComponent implements OnInit, AfterViewInit, OnDest
       panelClass: 'professional-dialog'
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.refresh();
       }
@@ -161,7 +169,9 @@ export class AnneeScolaireListComponent implements OnInit, AfterViewInit, OnDest
   }
 
   async deleteAnneeScolaire(anneeScolaire: AnneeScolaire): Promise<void> {
-    const confirmed = await this.notification.confirm(`Êtes-vous sûr de vouloir supprimer l'année scolaire "${anneeScolaire.libelle}" ?`);
+    const confirmed = await this.notification.confirm(
+      `Êtes-vous sûr de vouloir supprimer l'année scolaire "${anneeScolaire.libelle}" ?`
+    );
     if (confirmed) {
       this.loading = true;
       this.anneeScolaireService.delete(anneeScolaire.uuid!).subscribe({

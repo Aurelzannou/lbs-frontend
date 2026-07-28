@@ -25,9 +25,7 @@ import { AuthService } from '../../../core/services/auth.service';
         <button mat-icon-button (click)="onToggleSidebar()" class="menu-toggle">
           <mat-icon>menu</mat-icon>
         </button>
-        <a class="logo-text" routerLink="/dashboard">
-          LBS-<span class="logo-bold">Admin</span>
-        </a>
+        <a class="logo-text" routerLink="/dashboard"> LBS-<span class="logo-bold">Admin</span> </a>
       </div>
 
       <div class="header-right">
@@ -56,93 +54,99 @@ import { AuthService } from '../../../core/services/auth.service';
       </div>
     </mat-toolbar>
   `,
-  styles: [`
-    .app-header {
-      background: white;
-      border-bottom: 2px solid #fef3c7;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 1rem;
-      height: 64px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .menu-toggle {
-      color: #64748b;
-      &:hover { color: #0f172a; }
-    }
-
-    .logo-text {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.4rem;
-      color: #0f172a;
-      text-decoration: none;
-      padding-left: 0.75rem;
-      border-left: 1px solid #e2e8f0;
-
-      .logo-bold {
-        font-weight: 900;
-        color: #d97706;
+  styles: [
+    `
+      .app-header {
+        background: white;
+        border-bottom: 2px solid #fef3c7;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        height: 64px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
       }
-    }
 
-    .header-right {
-      display: flex;
-      align-items: center;
-    }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
 
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      cursor: pointer;
-      padding: 0.5rem 0.75rem;
-      border-radius: 12px;
-      transition: background 0.2s;
+      .menu-toggle {
+        color: #64748b;
+        &:hover {
+          color: #0f172a;
+        }
+      }
 
-      &:hover { background: #f8fafc; }
-    }
+      .logo-text {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.4rem;
+        color: #0f172a;
+        text-decoration: none;
+        padding-left: 0.75rem;
+        border-left: 1px solid #e2e8f0;
 
-    .user-avatar {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-      color: white;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.85rem;
-    }
+        .logo-bold {
+          font-weight: 900;
+          color: #d97706;
+        }
+      }
 
-    .user-name {
-      font-weight: 600;
-      color: #334155;
-      font-size: 0.9rem;
-    }
+      .header-right {
+        display: flex;
+        align-items: center;
+      }
 
-    .dropdown-icon {
-      color: #94a3b8;
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-    }
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        padding: 0.5rem 0.75rem;
+        border-radius: 12px;
+        transition: background 0.2s;
 
-    .login-btn {
-      border-radius: 10px;
-    }
-  `]
+        &:hover {
+          background: #f8fafc;
+        }
+      }
+
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .user-name {
+        font-weight: 600;
+        color: #334155;
+        font-size: 0.9rem;
+      }
+
+      .dropdown-icon {
+        color: #94a3b8;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+
+      .login-btn {
+        border-radius: 10px;
+      }
+    `
+  ]
 })
 export class HeaderComponent implements OnInit {
   @Output() toggleSidebar = new EventEmitter<void>();
@@ -159,7 +163,8 @@ export class HeaderComponent implements OnInit {
     this.authenticated = await this.keycloakService.isLoggedIn();
     if (this.authenticated) {
       const profile = await this.keycloakService.loadUserProfile();
-      this.userName = `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || 'Utilisateur';
+      this.userName =
+        `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || 'Utilisateur';
       this.userInitial = this.userName.charAt(0).toUpperCase();
     }
   }

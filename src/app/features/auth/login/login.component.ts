@@ -19,7 +19,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     RouterModule,
     MatButtonModule,
     MatCardModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule
   ],
@@ -29,12 +30,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup = inject(FormBuilder).group({
     username: ['', [Validators.required]],
-    password: ['', [Validators.required]]
+    password: ['', [Validators.required]],
+    otpCode: ['']
   });
-  
+
   loading = false;
   showPassword = false;
   error: string | null = null;
+  /** Passe à true si le compte a l'OTP activé et qu'un code de vérification est requis. */
+  otpRequired = false;
 
   constructor(
     private authService: AuthService,
@@ -60,7 +64,6 @@ export class LoginComponent implements OnInit {
     }
   }
 
-
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
@@ -73,23 +76,48 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    const { username, password } = this.loginForm.value;
+    const { username, password, otpCode } = this.loginForm.value;
 
-    this.authService.loginWithCredentials(username, password).subscribe({
-      next: (result: any) => {
-        // Les rôles sont extraits directement du JWT — fiables immédiatement
-        const businessRoles: string[] = result?.businessRoles ?? this.authService.getBusinessRoles();
-        
-        console.log('Rôles métier détectés :', businessRoles);
-        this.authService.redirectAfterLogin(businessRoles);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = 'Identifiants invalides ou erreur de connexion.';
-        console.error('Login error:', err);
-      }
-    });
+    this.authService
+      .loginWithCredentials(username, password, this.otpRequired ? otpCode : undefined)
+      .subscribe({
+        next: (result: any) => {
+          // Les rôles sont extraits directement du JWT — fiables immédiatement
+          const businessRoles: string[] =
+            result?.businessRoles ?? this.authService.getBusinessRoles();
+
+          console.log('Rôles métier détectés :', businessRoles);
+          this.authService.redirectAfterLogin(businessRoles);
+        },
+        error: (err) => {
+          if (this.otpRequired) {
+            // Le code fourni était incorrect
+            this.loading = false;
+            this.error = 'Code de vérification invalide.';
+            console.error('Login error:', err);
+            return;
+          }
+
+          // Premier échec : mot de passe invalide, ou compte avec OTP activé sans code fourni.
+          // On désambiguïse via le backend avant d'afficher une erreur définitive.
+          this.authService.isOtpRequired(username).subscribe({
+            next: (otpRequired) => {
+              this.loading = false;
+              if (otpRequired) {
+                this.otpRequired = true;
+                this.loginForm.get('otpCode')?.setValidators([Validators.required]);
+                this.loginForm.get('otpCode')?.updateValueAndValidity();
+              } else {
+                this.error = 'Identifiants invalides ou erreur de connexion.';
+              }
+            },
+            error: () => {
+              this.loading = false;
+              this.error = 'Identifiants invalides ou erreur de connexion.';
+            }
+          });
+          console.error('Login error:', err);
+        }
+      });
   }
-
-
 }

@@ -28,10 +28,14 @@ import { KeycloakProfile } from 'keycloak-js';
   ],
   template: `
     <mat-sidenav-container class="sidenav-container">
-      <mat-sidenav #drawer class="sidenav" fixedInViewport
-          [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-          [mode]="(isHandset$ | async) ? 'over' : 'side'"
-          [opened]="(isHandset$ | async) === false">
+      <mat-sidenav
+        #drawer
+        class="sidenav"
+        fixedInViewport
+        [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+        [mode]="(isHandset$ | async) ? 'over' : 'side'"
+        [opened]="(isHandset$ | async) === false"
+      >
         <mat-toolbar class="drawer-header">Menu</mat-toolbar>
         <mat-nav-list>
           <a mat-list-item routerLink="/home" routerLinkActive="active-link">
@@ -52,7 +56,7 @@ import { KeycloakProfile } from 'keycloak-js';
           </a>
         </mat-nav-list>
       </mat-sidenav>
-      
+
       <mat-sidenav-content>
         <mat-toolbar color="primary" class="main-toolbar">
           <button
@@ -60,13 +64,14 @@ import { KeycloakProfile } from 'keycloak-js';
             aria-label="Toggle sidenav"
             mat-icon-button
             (click)="drawer.toggle()"
-            *ngIf="isHandset$ | async">
+            *ngIf="isHandset$ | async"
+          >
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
-          
+
           <span class="brand">LBS Application</span>
           <span class="spacer"></span>
-          
+
           <div class="user-actions">
             @if (authService.isLoggedIn) {
               <span class="username">{{ (userProfile$ | async)?.firstName }}</span>
@@ -80,15 +85,16 @@ import { KeycloakProfile } from 'keycloak-js';
               </button>
             }
           </div>
-          
-          <mat-progress-bar 
-            *ngIf="loadingService.isLoading()" 
-            class="loading-bar" 
-            mode="indeterminate" 
-            color="accent">
+
+          <mat-progress-bar
+            *ngIf="loadingService.isLoading()"
+            class="loading-bar"
+            mode="indeterminate"
+            color="accent"
+          >
           </mat-progress-bar>
         </mat-toolbar>
-        
+
         <main class="content-wrapper">
           <ng-content></ng-content>
         </main>
@@ -99,65 +105,65 @@ import { KeycloakProfile } from 'keycloak-js';
     .sidenav-container {
       height: 100vh;
     }
-    
+
     .sidenav {
       width: 250px;
       border-right: none;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
-      box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
     }
-    
+
     .drawer-header {
       font-weight: 600;
       color: var(--primary-color, #1976d2);
-      border-bottom: 1px solid rgba(0,0,0,0.05);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
-    
+
     .main-toolbar {
       position: sticky;
       top: 0;
       z-index: 2;
       background: rgba(25, 118, 210, 0.9) !important;
       backdrop-filter: blur(8px);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    
+
     .loading-bar {
       position: absolute;
       bottom: 0;
       left: 0;
       width: 100%;
     }
-    
+
     .spacer {
       flex: 1 1 auto;
     }
-    
+
     .brand {
       font-family: 'Outfit', sans-serif;
       font-weight: 700;
       letter-spacing: 0.5px;
     }
-    
+
     .user-actions {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-    
+
     .username {
       font-size: 0.9rem;
       font-weight: 500;
       opacity: 0.9;
     }
-    
+
     .content-wrapper {
       padding: 24px;
       min-height: calc(100vh - 64px);
       background: #f8f9fa;
     }
-    
+
     .active-link {
       background: rgba(25, 118, 210, 0.1) !important;
       color: #1976d2 !important;
@@ -168,7 +174,7 @@ import { KeycloakProfile } from 'keycloak-js';
 export class LayoutComponent implements OnInit {
   authService = inject(AuthService);
   loadingService = inject(LoadingService);
-  isHandset$: Observable<boolean> = of(false); 
+  isHandset$: Observable<boolean> = of(false);
   userProfile$: Observable<KeycloakProfile | null> = of(null);
 
   ngOnInit(): void {

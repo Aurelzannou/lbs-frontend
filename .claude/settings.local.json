@@ -22,7 +22,18 @@
       "Bash(Remove-Item -Force \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\java\\\\com\\\\App\\\\lbs_backend\\\\mapper\\\\PeriodeRentreeMapper.java\")",
       "Bash(Remove-Item -Force \"C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\java\\\\com\\\\App\\\\lbs_backend\\\\repository\\\\PeriodeRentreeRepository.java\")",
       "mcp__Claude_in_Chrome__navigate",
-      "Bash(cd \"/c/Users/di/Desktop/frontend-angular\" && find . -iname \"*sanction*\" -o -iname \"*declaration*\" 2>/dev/null | grep -v node_modules)"
+      "Bash(cd \"/c/Users/di/Desktop/frontend-angular\" && find . -iname \"*sanction*\" -o -iname \"*declaration*\" 2>/dev/null | grep -v node_modules)",
+      "Bash(./mvnw -B clean compile)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:8082/actuator/health)",
+      "Bash(./mvnw -B spring-boot:run -Dspring-boot.run.arguments=--server.port=8090)",
+      "Bash(echo \"PID=$!\")",
+      "Bash(docker exec *)",
+      "Bash(curl -s -X POST http://localhost:8090/api/auth/register -H 'Content-Type: application/json' -d '{\"firstName\":\"Jean\",\"lastName\":\"Dupont\",\"email\":\"jean.dupont.test@example.com\",\"password\":\"test1234\",\"telephone\":\"+22900000000\"}')",
+      "Bash(grep -n -i \"erreur\\\\|error\\\\|exception\\\\|rabbit\\\\|mail\" /tmp/verify_delayed_eleve.log | tail -60)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //F //PID 18988)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:8090/actuator/health)",
+      "Bash(./mvnw.cmd -q -B compile)"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"

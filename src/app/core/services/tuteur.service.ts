@@ -12,10 +12,8 @@ export class TuteurService {
   private readonly endpoint = '/api/tuteurs';
 
   getAll(page: number = 1, size: number = 10, filter: string = ''): Observable<any> {
-    let params = new HttpParams()
-      .set('page', (page - 1).toString())
-      .set('size', size.toString());
-    
+    let params = new HttpParams().set('page', (page - 1).toString()).set('size', size.toString());
+
     if (filter && filter.trim().length > 0) {
       params = params.set('filter', filter.trim());
     }

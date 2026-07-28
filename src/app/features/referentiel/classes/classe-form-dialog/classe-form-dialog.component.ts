@@ -23,7 +23,8 @@ import { MatSelectModule } from '@angular/material/select';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule,
     MatSelectModule,
@@ -84,10 +85,11 @@ export class ClasseFormDialogComponent implements OnInit {
 
       this.saving = true;
       const val = this.form.value;
-      
-      const obs = this.isEdit && this.data?.uuid
-        ? this.classeService.update(this.data.uuid, val)
-        : this.classeService.create(val);
+
+      const obs =
+        this.isEdit && this.data?.uuid
+          ? this.classeService.update(this.data.uuid, val)
+          : this.classeService.create(val);
 
       obs.subscribe({
         next: () => {

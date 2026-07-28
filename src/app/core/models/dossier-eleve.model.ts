@@ -13,6 +13,10 @@ export interface DossierEleve {
   eleve?: Eleve;
   eleveNom?: string;
   elevePrenom?: string;
+  sexe?: string;
+  dateNaissance?: string;
+  souffrant?: boolean;
+  provenance?: string;
   classeId?: number;
   classe?: Classe;
   classeLibelle?: string;

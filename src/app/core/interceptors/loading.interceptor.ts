@@ -1,10 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor
-} from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { LoadingService } from '../services/loading.service';
@@ -18,7 +13,7 @@ export class LoadingInterceptor implements HttpInterceptor {
     if (this.activeRequests === 0) {
       this.loadingService.show();
     }
-    
+
     this.activeRequests++;
 
     return next.handle(request).pipe(

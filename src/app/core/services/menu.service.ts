@@ -48,7 +48,7 @@ export class MenuService {
     }
 
     return this.http.get<any>(`${this.apiUrl}/my-menu`, { params }).pipe(
-      map(response => {
+      map((response) => {
         const menus = response.data || [];
         return this.mapToMenuItems(menus);
       })
@@ -56,10 +56,11 @@ export class MenuService {
   }
 
   private mapToMenuItems(menus: MenuResponse[]): MenuItem[] {
-    return menus.map(menu => {
-      const enfants = menu.listeMenuEnfant && menu.listeMenuEnfant.length > 0
-        ? this.mapToMenuItems(menu.listeMenuEnfant)
-        : undefined;
+    return menus.map((menu) => {
+      const enfants =
+        menu.listeMenuEnfant && menu.listeMenuEnfant.length > 0
+          ? this.mapToMenuItems(menu.listeMenuEnfant)
+          : undefined;
 
       const item: MenuItem = {
         title: menu.titre,
@@ -89,27 +90,27 @@ export class MenuService {
   }
 
   getOne(id: number): Observable<MenuResponse> {
-    return this.http.get<any>(`${environment.apiUrl}/api/administration/menus/${id}`).pipe(
-      map(response => response.data)
-    );
+    return this.http
+      .get<any>(`${environment.apiUrl}/api/administration/menus/${id}`)
+      .pipe(map((response) => response.data));
   }
 
   create(menu: any): Observable<MenuResponse> {
-    return this.http.post<any>(`${environment.apiUrl}/api/administration/menus`, menu).pipe(
-      map(response => response.data)
-    );
+    return this.http
+      .post<any>(`${environment.apiUrl}/api/administration/menus`, menu)
+      .pipe(map((response) => response.data));
   }
 
   update(id: number, menu: any): Observable<MenuResponse> {
-    return this.http.put<any>(`${environment.apiUrl}/api/administration/menus/${id}`, menu).pipe(
-      map(response => response.data)
-    );
+    return this.http
+      .put<any>(`${environment.apiUrl}/api/administration/menus/${id}`, menu)
+      .pipe(map((response) => response.data));
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<any>(`${environment.apiUrl}/api/administration/menus/${id}`).pipe(
-      map(response => response.data)
-    );
+    return this.http
+      .delete<any>(`${environment.apiUrl}/api/administration/menus/${id}`)
+      .pipe(map((response) => response.data));
   }
 
   /**
@@ -117,14 +118,14 @@ export class MenuService {
    */
   getIconByCode(code: string): string {
     const iconMap: { [key: string]: string } = {
-      'DASHBOARD': 'home-outline',
-      'REFERENTIEL': 'settings-2-outline',
-      'NIVEAU': 'layers-outline',
-      'ETAPE': 'list-outline',
-      'ADMINISTRATION': 'shield-outline',
-      'USER': 'people-outline',
-      'PROFIL': 'lock-outline',
-      'MENU': 'menu-outline',
+      DASHBOARD: 'home-outline',
+      REFERENTIEL: 'settings-2-outline',
+      NIVEAU: 'layers-outline',
+      ETAPE: 'list-outline',
+      ADMINISTRATION: 'shield-outline',
+      USER: 'people-outline',
+      PROFIL: 'lock-outline',
+      MENU: 'menu-outline'
     };
     return iconMap[code] || 'cube-outline';
   }

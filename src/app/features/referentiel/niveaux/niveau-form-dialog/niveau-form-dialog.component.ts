@@ -20,10 +20,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatCardModule,
-    MatProgressSpinnerModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './niveau-form-dialog.component.html',
   styleUrl: './niveau-form-dialog.component.scss'
@@ -32,7 +33,7 @@ export class NiveauFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private niveauService = inject(NiveauService);
   private notification = inject(NotificationService);
-  
+
   form!: FormGroup;
   isEdit = false;
   loading = false;
@@ -55,8 +56,10 @@ export class NiveauFormDialogComponent implements OnInit {
     if (this.form.invalid) return;
 
     const confirmed = await this.notification.confirm(
-      this.isEdit ? 'Voulez-vous vraiment modifier ce niveau ?' : 'Voulez-vous vraiment créer ce niveau ?',
-      'Confirmation d\'enregistrement'
+      this.isEdit
+        ? 'Voulez-vous vraiment modifier ce niveau ?'
+        : 'Voulez-vous vraiment créer ce niveau ?',
+      "Confirmation d'enregistrement"
     );
 
     if (!confirmed) return;
@@ -64,7 +67,7 @@ export class NiveauFormDialogComponent implements OnInit {
     this.loading = true;
     const request = this.form.value;
 
-    const obs$ = this.isEdit 
+    const obs$ = this.isEdit
       ? this.niveauService.update(this.data.uuid!, request)
       : this.niveauService.create(request);
 

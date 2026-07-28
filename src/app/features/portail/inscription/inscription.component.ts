@@ -23,11 +23,16 @@ import { MatStepperModule } from '@angular/material/stepper';
   selector: 'app-portal-inscription',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule,
-    MatButtonModule, MatCardModule,
-    MatInputModule, MatFormFieldModule,
-    MatSelectModule, MatIconModule,
-    MatProgressSpinnerModule, MatStepperModule,
+    CommonModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatStepperModule
   ],
   templateUrl: './inscription.component.html',
   styleUrl: './inscription.component.scss'
@@ -35,25 +40,25 @@ import { MatStepperModule } from '@angular/material/stepper';
 export class PortalInscriptionComponent implements OnInit {
   @ViewChild('stepper') stepper: any;
 
-  private inscriptionService  = inject(InscriptionService);
-  private periodeService      = inject(PeriodeInscriptionService);
-  private notification        = inject(NotificationService);
-  private router              = inject(Router);
-  private fb                  = inject(FormBuilder);
+  private inscriptionService = inject(InscriptionService);
+  private periodeService = inject(PeriodeInscriptionService);
+  private notification = inject(NotificationService);
+  private router = inject(Router);
+  private fb = inject(FormBuilder);
 
   firstForm!: FormGroup;
   secondForm!: FormGroup;
-  loading        = false;
-  stepIndex      = 0;
+  loading = false;
+  stepIndex = 0;
 
-  mesEnfants:  Eleve[]        = [];
-  classes:     Classe[]       = [];
-  annees:      AnneeScolaire[]= [];
+  mesEnfants: Eleve[] = [];
+  classes: Classe[] = [];
+  annees: AnneeScolaire[] = [];
   montantTotal = 0;
   periodeMessage: string | null = null;
   inscriptionOuverte = true;
 
-  private currentTuteur: any    = null;
+  private currentTuteur: any = null;
   private currentEleveId: number | null = null;
   private currentDossierId: number | null = null;
 
@@ -65,19 +70,19 @@ export class PortalInscriptionComponent implements OnInit {
 
   private initForms(): void {
     this.firstForm = this.fb.group({
-      nom:           ['', Validators.required],
-      prenom:        ['', Validators.required],
-      sexe:          ['M', Validators.required],
+      nom: ['', Validators.required],
+      prenom: ['', Validators.required],
+      sexe: ['M', Validators.required],
       dateNaissance: ['', Validators.required]
     });
 
     this.secondForm = this.fb.group({
-      classeId:          [null, Validators.required],
-      anneeScolaireId:   [null, Validators.required],
+      classeId: [null, Validators.required],
+      anneeScolaireId: [null, Validators.required],
       telephonePaiement: ['', [Validators.required, Validators.pattern(/^[0-9]{8,}$/)]]
     });
 
-    this.secondForm.valueChanges.subscribe(val => {
+    this.secondForm.valueChanges.subscribe((val) => {
       if (val.classeId && val.anneeScolaireId) {
         this.updateMontant(val.classeId, val.anneeScolaireId);
       }
@@ -100,8 +105,9 @@ export class PortalInscriptionComponent implements OnInit {
   }
 
   private loadReferentiels(): void {
-    this.inscriptionService.getClasses().subscribe((res: any) =>
-      this.classes = res?.data || (Array.isArray(res) ? res : []));
+    this.inscriptionService
+      .getClasses()
+      .subscribe((res: any) => (this.classes = res?.data || (Array.isArray(res) ? res : [])));
 
     this.inscriptionService.getAnneesScolaires().subscribe((res: any) => {
       this.annees = res?.data?.content || res?.data || (Array.isArray(res) ? res : []);
@@ -135,7 +141,7 @@ export class PortalInscriptionComponent implements OnInit {
 
   private updateMontant(classeId: number, anneeId: number): void {
     this.inscriptionService.getFrais(classeId, anneeId).subscribe((res: any) => {
-      const frais: any[] = Array.isArray(res) ? res : (res?.data || []);
+      const frais: any[] = Array.isArray(res) ? res : res?.data || [];
       this.montantTotal = frais.reduce((acc, f) => acc + (f.montant || 0), 0);
     });
   }
@@ -143,8 +149,10 @@ export class PortalInscriptionComponent implements OnInit {
   onEleveSelected(eleve: Eleve): void {
     this.currentEleveId = eleve.id || null;
     this.firstForm.patchValue({
-      nom: eleve.nom, prenom: eleve.prenom,
-      sexe: eleve.sexe, dateNaissance: eleve.dateNaissance
+      nom: eleve.nom,
+      prenom: eleve.prenom,
+      sexe: eleve.sexe,
+      dateNaissance: eleve.dateNaissance
     });
   }
 
@@ -157,11 +165,11 @@ export class PortalInscriptionComponent implements OnInit {
     this.loading = true;
 
     const payload = {
-      eleveId:         this.currentEleveId,
+      eleveId: this.currentEleveId,
       ...(!this.currentEleveId ? this.firstForm.value : {}),
-      classeId:        this.secondForm.value.classeId,
+      classeId: this.secondForm.value.classeId,
       anneeScolaireId: this.secondForm.value.anneeScolaireId,
-      tuteurId:        this.currentTuteur?.id || null
+      tuteurId: this.currentTuteur?.id || null
     };
 
     this.inscriptionService.soumettre(payload).subscribe({
@@ -173,7 +181,7 @@ export class PortalInscriptionComponent implements OnInit {
       },
       error: (err: any) => {
         console.error(err);
-        this.notification.error('Une erreur est survenue lors de l\'inscription');
+        this.notification.error("Une erreur est survenue lors de l'inscription");
         this.loading = false;
       }
     });

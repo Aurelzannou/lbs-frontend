@@ -30,8 +30,8 @@ export class UserService {
   }
 
   updateProfils(userId: number, profilCodes: string[]): Observable<void> {
-    return this.http.post<any>(`${this.apiUrl}/${userId}/profils`, profilCodes).pipe(
-      map(response => response.data)
-    );
+    return this.http
+      .post<any>(`${this.apiUrl}/${userId}/profils`, profilCodes)
+      .pipe(map((response) => response.data));
   }
 }

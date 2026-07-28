@@ -19,7 +19,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule
   ],
@@ -52,17 +53,20 @@ export class ModePaiementFormDialogComponent implements OnInit {
   async onSubmit(): Promise<void> {
     if (this.form.valid) {
       const confirmed = await this.notification.confirm(
-        this.isEdit ? 'Voulez-vous modifier ce mode de paiement ?' : 'Voulez-vous créer ce mode de paiement ?',
+        this.isEdit
+          ? 'Voulez-vous modifier ce mode de paiement ?'
+          : 'Voulez-vous créer ce mode de paiement ?',
         'Confirmation'
       );
       if (!confirmed) return;
 
       this.saving = true;
       const val = this.form.value;
-      
-      const obs = this.isEdit && this.data?.uuid
-        ? this.modePaiementService.update(this.data.uuid, val)
-        : this.modePaiementService.create(val);
+
+      const obs =
+        this.isEdit && this.data?.uuid
+          ? this.modePaiementService.update(this.data.uuid, val)
+          : this.modePaiementService.create(val);
 
       obs.subscribe({
         next: () => {

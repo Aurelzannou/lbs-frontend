@@ -1,10 +1,8 @@
 <div class="login-wrapper">
-
   <!-- ── Panneau gauche – illustration ── -->
   <div class="illustration-section">
     <div class="overlay"></div>
     <div class="content">
-
       <div class="logo-container">
         <h1>LBS</h1>
         <p>LEGAL BUSINESS SOLUTIONS</p>
@@ -29,16 +27,13 @@
           <span>Interface intuitive</span>
         </div>
       </div>
-
     </div>
   </div>
 
   <!-- ── Panneau droit – formulaire ── -->
   <div class="form-section">
     <div class="login-container">
-
       <mat-card class="login-card">
-
         <mat-card-header>
           <div class="card-logo">
             <mat-icon>admin_panel_settings</mat-icon>
@@ -48,7 +43,6 @@
         </mat-card-header>
 
         <mat-card-content>
-
           <!-- Message d'erreur -->
           @if (error) {
             <div class="alert-error">
@@ -61,14 +55,15 @@
           }
 
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Email ou identifiant</mat-label>
               <mat-icon matPrefix>person_outline</mat-icon>
-              <input matInput
-                     formControlName="username"
-                     placeholder="Ex: john.doe ou votre@email.com"
-                     autocomplete="username">
+              <input
+                matInput
+                formControlName="username"
+                placeholder="Ex: john.doe ou votre@email.com"
+                autocomplete="username"
+              />
               <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
                 Ce champ est requis
               </mat-error>
@@ -77,14 +72,20 @@
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Mot de passe</mat-label>
               <mat-icon matPrefix>lock_outline</mat-icon>
-              <input matInput
-                     [type]="showPassword ? 'text' : 'password'"
-                     formControlName="password"
-                     placeholder="••••••••"
-                     autocomplete="current-password">
-              <button mat-icon-button matSuffix type="button"
-                      (click)="togglePassword()"
-                      [attr.aria-label]="showPassword ? 'Cacher' : 'Afficher'">
+              <input
+                matInput
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="togglePassword()"
+                [attr.aria-label]="showPassword ? 'Cacher' : 'Afficher'"
+              >
                 <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
               <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
@@ -92,16 +93,34 @@
               </mat-error>
             </mat-form-field>
 
-            <button mat-flat-button
-                    class="submit-btn"
-                    color="primary"
-                    type="submit"
-                    [disabled]="loading || loginForm.invalid">
+            @if (otpRequired) {
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Code de vérification</mat-label>
+                <mat-icon matPrefix>verified_user</mat-icon>
+                <input
+                  matInput
+                  formControlName="otpCode"
+                  placeholder="123456"
+                  autocomplete="one-time-code"
+                  inputmode="numeric"
+                />
+                <mat-error *ngIf="loginForm.get('otpCode')?.hasError('required')">
+                  Le code de vérification est requis
+                </mat-error>
+              </mat-form-field>
+            }
+
+            <button
+              mat-flat-button
+              class="submit-btn"
+              color="primary"
+              type="submit"
+              [disabled]="loading || loginForm.invalid"
+            >
               <mat-spinner *ngIf="loading" diameter="20" class="btn-spinner"></mat-spinner>
               <span *ngIf="!loading">Se connecter</span>
               <span *ngIf="loading">Connexion en cours…</span>
             </button>
-
           </form>
         </mat-card-content>
 
@@ -112,7 +131,6 @@
           </p>
           <p class="copyright">© 2026 LBS. Tous droits réservés.</p>
         </mat-card-actions>
-
       </mat-card>
 
       <div class="back-home">
@@ -121,8 +139,6 @@
           Retour à l'accueil
         </a>
       </div>
-
     </div>
   </div>
-
 </div>

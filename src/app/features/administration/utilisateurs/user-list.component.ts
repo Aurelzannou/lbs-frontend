@@ -1,4 +1,12 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ViewChild,
+  ChangeDetectorRef,
+  inject
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort } from '@angular/material/sort';
@@ -30,7 +38,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatProgressSpinnerModule,
     MatDialogModule
   ],
@@ -54,13 +63,13 @@ export class UserListComponent implements OnInit, OnDestroy, AfterViewInit {
   displayedColumns: string[] = ['user', 'login', 'keycloak', 'actions'];
   dataSource = new MatTableDataSource<User>([]);
   loading = false;
-  
+
   // Pagination et recherche
   totalElements = 0;
   pageIndex = 0; // 0-based pour l'affichage interne
   pageSize = 10;
   searchTerm = '';
-  
+
   private searchSubject = new Subject<string>();
   private searchSub!: Subscription;
 
@@ -68,14 +77,13 @@ export class UserListComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
-    this.searchSub = this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(term => {
-      this.searchTerm = term;
-      this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
-      this.refresh();
-    });
+    this.searchSub = this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.searchTerm = term;
+        this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
+        this.refresh();
+      });
     this.refresh();
   }
 
@@ -156,17 +164,26 @@ export class UserListComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  isFirstPage(): boolean { return this.pageIndex === 0; }
-  isLastPage(): boolean { return this.pageIndex >= this.totalPages - 1; }
-  getEndIndex(): number { return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements); }
+  isFirstPage(): boolean {
+    return this.pageIndex === 0;
+  }
+  isLastPage(): boolean {
+    return this.pageIndex >= this.totalPages - 1;
+  }
+  getEndIndex(): number {
+    return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements);
+  }
 
   assignProfils(user: User): void {
-    this.dialog.open(UserProfilDialogComponent, {
-      width: '500px',
-      data: user,
-      panelClass: 'professional-dialog'
-    }).afterClosed().subscribe(result => {
-      if (result) this.refresh();
-    });
+    this.dialog
+      .open(UserProfilDialogComponent, {
+        width: '500px',
+        data: user,
+        panelClass: 'professional-dialog'
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) this.refresh();
+      });
   }
 }

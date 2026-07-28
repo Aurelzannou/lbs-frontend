@@ -1,6 +1,5 @@
 <div class="rfm-dialog">
   <div class="rfm-card">
-
     <div class="rfm-header">
       <div class="rfm-header-inner">
         <div class="rfm-title-group">
@@ -8,8 +7,14 @@
             <mat-icon>person</mat-icon>
           </div>
           <div>
-            <h3 class="rfm-title">{{ isEdit ? 'Modifier le Professeur' : 'Nouveau Professeur' }}</h3>
-            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour des informations' : 'Enregistrement d\'un nouveau professeur' }}</p>
+            <h3 class="rfm-title">
+              {{ isEdit ? 'Modifier le Professeur' : 'Nouveau Professeur' }}
+            </h3>
+            <p class="rfm-subtitle">
+              {{
+                isEdit ? 'Mise à jour des informations' : "Enregistrement d'un nouveau professeur"
+              }}
+            </p>
           </div>
         </div>
         <button mat-icon-button class="rfm-close" (click)="onCancel()">
@@ -20,13 +25,12 @@
 
     <div class="rfm-body">
       <form [formGroup]="form" class="rfm-form">
-
         <div class="rfm-row two-cols">
           <div class="rfm-field">
             <span class="rfm-label">Nom</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>person</mat-icon>
-              <input matInput formControlName="nom" placeholder="Nom de famille">
+              <input matInput formControlName="nom" placeholder="Nom de famille" />
             </mat-form-field>
             <div class="rfm-error" *ngIf="form.get('nom')?.invalid && form.get('nom')?.touched">
               Obligatoire
@@ -36,9 +40,12 @@
             <span class="rfm-label">Prénom</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>badge</mat-icon>
-              <input matInput formControlName="prenom" placeholder="Prénom">
+              <input matInput formControlName="prenom" placeholder="Prénom" />
             </mat-form-field>
-            <div class="rfm-error" *ngIf="form.get('prenom')?.invalid && form.get('prenom')?.touched">
+            <div
+              class="rfm-error"
+              *ngIf="form.get('prenom')?.invalid && form.get('prenom')?.touched"
+            >
               Obligatoire
             </div>
           </div>
@@ -49,14 +56,19 @@
             <span class="rfm-label">Téléphone</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>phone</mat-icon>
-              <input matInput formControlName="num" placeholder="+229 XX XX XX XX">
+              <input matInput formControlName="num" placeholder="+229 XX XX XX XX" />
             </mat-form-field>
           </div>
           <div class="rfm-field">
             <span class="rfm-label">Email</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>email</mat-icon>
-              <input matInput type="email" formControlName="email" placeholder="email@exemple.com">
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                placeholder="email@exemple.com"
+              />
             </mat-form-field>
           </div>
         </div>
@@ -66,11 +78,10 @@
             <span class="rfm-label">Matricule / Code</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>tag</mat-icon>
-              <input matInput formControlName="code" placeholder="Ex: PROF-001">
+              <input matInput formControlName="code" placeholder="Ex: PROF-001" />
             </mat-form-field>
           </div>
         </div>
-
       </form>
     </div>
 
@@ -79,12 +90,16 @@
         <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="saving">
           Annuler
         </button>
-        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || saving">
+        <button
+          mat-flat-button
+          class="rfm-submit"
+          (click)="onSubmit()"
+          [disabled]="form.invalid || saving"
+        >
           <mat-icon *ngIf="!saving">save</mat-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>
     </div>
-
   </div>
 </div>

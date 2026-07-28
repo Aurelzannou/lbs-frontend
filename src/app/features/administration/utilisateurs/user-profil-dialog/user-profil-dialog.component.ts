@@ -65,7 +65,7 @@ export class UserProfilDialogComponent implements OnInit {
   async onSubmit(): Promise<void> {
     const confirmed = await this.notification.confirm(
       'Voulez-vous vraiment modifier les profils de cet utilisateur ?',
-      'Confirmation d\'assignation'
+      "Confirmation d'assignation"
     );
 
     if (!confirmed) return;

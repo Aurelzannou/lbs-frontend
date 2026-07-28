@@ -19,22 +19,29 @@ import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
   selector: 'app-periode-inscription-form-dialog',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, MatDialogModule,
-    MatButtonModule, MatInputModule, MatFormFieldModule,
-    MatIconModule, MatProgressSpinnerModule, MatSelectModule, MatSlideToggleModule
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatSlideToggleModule
   ],
   templateUrl: './periode-inscription-form-dialog.component.html',
   styleUrl: './periode-inscription-form-dialog.component.scss'
 })
 export class PeriodeInscriptionFormDialogComponent implements OnInit {
-  private fb           = inject(FormBuilder);
-  private service      = inject(PeriodeInscriptionService);
+  private fb = inject(FormBuilder);
+  private service = inject(PeriodeInscriptionService);
   private anneeService = inject(AnneeScolaireService);
   private notification = inject(NotificationService);
 
   form!: FormGroup;
-  isEdit    = false;
-  loading   = false;
+  isEdit = false;
+  loading = false;
   annees: AnneeScolaire[] = [];
 
   constructor(
@@ -51,17 +58,23 @@ export class PeriodeInscriptionFormDialogComponent implements OnInit {
 
     this.form = this.fb.group({
       anneeScolaireId: [this.data?.anneeScolaireId || null, Validators.required],
-      libelle:         [this.data?.libelle || ''],
-      dateOuverture:   [this.data?.dateOuverture ? this.data.dateOuverture.substring(0, 10) : '', Validators.required],
-      dateCloture:     [this.data?.dateCloture   ? this.data.dateCloture.substring(0, 10)   : '', Validators.required],
-      actif:           [this.data?.actif ?? true]
+      libelle: [this.data?.libelle || ''],
+      dateOuverture: [
+        this.data?.dateOuverture ? this.data.dateOuverture.substring(0, 10) : '',
+        Validators.required
+      ],
+      dateCloture: [
+        this.data?.dateCloture ? this.data.dateCloture.substring(0, 10) : '',
+        Validators.required
+      ],
+      actif: [this.data?.actif ?? true]
     });
   }
 
   async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
     const ok = await this.notification.confirm(
-      this.isEdit ? 'Modifier cette période ?' : 'Créer cette période d\'inscription ?'
+      this.isEdit ? 'Modifier cette période ?' : "Créer cette période d'inscription ?"
     );
     if (!ok) return;
 
@@ -75,9 +88,14 @@ export class PeriodeInscriptionFormDialogComponent implements OnInit {
         this.notification.success(this.isEdit ? 'Période mise à jour' : 'Période créée');
         this.dialogRef.close(true);
       },
-      error: () => { this.notification.error('Erreur lors de l\'enregistrement'); this.loading = false; }
+      error: () => {
+        this.notification.error("Erreur lors de l'enregistrement");
+        this.loading = false;
+      }
     });
   }
 
-  onCancel(): void { this.dialogRef.close(false); }
+  onCancel(): void {
+    this.dialogRef.close(false);
+  }
 }

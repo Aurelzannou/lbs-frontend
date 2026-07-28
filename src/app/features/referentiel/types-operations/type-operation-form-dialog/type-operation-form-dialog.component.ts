@@ -19,7 +19,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule
   ],
@@ -52,25 +53,30 @@ export class TypeOperationFormDialogComponent implements OnInit {
   async onSubmit(): Promise<void> {
     if (this.form.valid) {
       const confirmed = await this.notification.confirm(
-        this.isEdit ? 'Voulez-vous modifier ce type d\'opération ?' : 'Voulez-vous créer ce type d\'opération ?',
+        this.isEdit
+          ? "Voulez-vous modifier ce type d'opération ?"
+          : "Voulez-vous créer ce type d'opération ?",
         'Confirmation'
       );
       if (!confirmed) return;
 
       this.saving = true;
       const val = this.form.value;
-      
-      const obs = this.isEdit && this.data?.uuid
-        ? this.typeOperationService.update(this.data.uuid, val)
-        : this.typeOperationService.create(val);
+
+      const obs =
+        this.isEdit && this.data?.uuid
+          ? this.typeOperationService.update(this.data.uuid, val)
+          : this.typeOperationService.create(val);
 
       obs.subscribe({
         next: () => {
-          this.notification.success(this.isEdit ? 'Type d\'opération mis à jour' : 'Type d\'opération créé');
+          this.notification.success(
+            this.isEdit ? "Type d'opération mis à jour" : "Type d'opération créé"
+          );
           this.dialogRef.close(true);
         },
         error: (err) => {
-          console.error('Erreur sauvegarde type d\'opération:', err);
+          console.error("Erreur sauvegarde type d'opération:", err);
           this.notification.error('Erreur lors de la sauvegarde');
           this.saving = false;
         }

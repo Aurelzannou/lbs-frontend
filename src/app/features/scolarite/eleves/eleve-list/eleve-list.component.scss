@@ -41,7 +41,9 @@
     color: #374151;
     width: 240px;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
 
     &::placeholder {
       color: #9ca3af;
@@ -96,7 +98,9 @@
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.18s, transform 0.15s;
+  transition:
+    background 0.18s,
+    transform 0.15s;
 
   &:hover {
     background: #15803d;
@@ -139,7 +143,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ---- TABLE ---- */
@@ -222,7 +228,8 @@
   }
 }
 
-.badge-sex, .badge-age {
+.badge-sex,
+.badge-age {
   display: inline-block;
   padding: 0.25rem 0.65rem;
   border-radius: 6px;
@@ -238,7 +245,6 @@
 }
 
 .badge-sex {
-
   &.male {
     background: #e0f2fe;
     color: #0369a1;
@@ -268,13 +274,17 @@
   &.active {
     background: #ecfdf5;
     color: #047857;
-    &::before { background: #10b981; }
+    &::before {
+      background: #10b981;
+    }
   }
 
   &.inactive {
     background: #f1f5f9;
     color: #475569;
-    &::before { background: #94a3b8; }
+    &::before {
+      background: #94a3b8;
+    }
   }
 }
 
@@ -307,7 +317,9 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.15s, opacity 0.15s;
+  transition:
+    transform 0.15s,
+    opacity 0.15s;
   opacity: 0.9;
 
   svg {
@@ -320,11 +332,26 @@
     transform: scale(1.12);
   }
 
-  &.detail  { background: #e0f2fe; color: #0369a1; }
-  &.view   { background: #dbeafe; color: #1d4ed8; }
-  &.edit   { background: #fef9c3; color: #92400e; }
-  &.delete { background: #fee2e2; color: #b91c1c; }
-  &.print  { background: #f3f4f6; color: #374151; }
+  &.detail {
+    background: #e0f2fe;
+    color: #0369a1;
+  }
+  &.view {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+  &.edit {
+    background: #fef9c3;
+    color: #92400e;
+  }
+  &.delete {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+  &.print {
+    background: #f3f4f6;
+    color: #374151;
+  }
 }
 
 /* ---- EMPTY STATE ---- */

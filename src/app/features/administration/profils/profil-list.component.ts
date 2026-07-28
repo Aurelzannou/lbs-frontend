@@ -1,4 +1,12 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ViewChild,
+  ChangeDetectorRef,
+  inject
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort } from '@angular/material/sort';
@@ -30,7 +38,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatProgressSpinnerModule,
     MatDialogModule
   ],
@@ -68,14 +77,13 @@ export class ProfilListComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
-    this.searchSub = this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(term => {
-      this.searchTerm = term;
-      this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
-      this.refresh();
-    });
+    this.searchSub = this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.searchTerm = term;
+        this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
+        this.refresh();
+      });
     this.refresh();
   }
 
@@ -156,31 +164,45 @@ export class ProfilListComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  isFirstPage(): boolean { return this.pageIndex === 0; }
-  isLastPage(): boolean { return this.pageIndex >= this.totalPages - 1; }
-  getEndIndex(): number { return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements); }
+  isFirstPage(): boolean {
+    return this.pageIndex === 0;
+  }
+  isLastPage(): boolean {
+    return this.pageIndex >= this.totalPages - 1;
+  }
+  getEndIndex(): number {
+    return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements);
+  }
 
   addProfil(): void {
-    this.dialog.open(ProfilFormDialogComponent, {
-      width: '450px',
-      panelClass: 'professional-dialog'
-    }).afterClosed().subscribe(result => {
-      if (result) this.refresh();
-    });
+    this.dialog
+      .open(ProfilFormDialogComponent, {
+        width: '450px',
+        panelClass: 'professional-dialog'
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) this.refresh();
+      });
   }
 
   editProfil(profil: Profil): void {
-    this.dialog.open(ProfilFormDialogComponent, {
-      width: '450px',
-      data: profil,
-      panelClass: 'professional-dialog'
-    }).afterClosed().subscribe(result => {
-      if (result) this.refresh();
-    });
+    this.dialog
+      .open(ProfilFormDialogComponent, {
+        width: '450px',
+        data: profil,
+        panelClass: 'professional-dialog'
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) this.refresh();
+      });
   }
 
   async deleteProfil(profil: Profil): Promise<void> {
-    const confirmed = await this.notification.confirm(`Êtes-vous sûr de vouloir supprimer le profil ${profil.code} ?`);
+    const confirmed = await this.notification.confirm(
+      `Êtes-vous sûr de vouloir supprimer le profil ${profil.code} ?`
+    );
     if (confirmed) {
       this.loading = true;
       this.profilService.delete(profil.id).subscribe({

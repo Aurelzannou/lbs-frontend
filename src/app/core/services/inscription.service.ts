@@ -13,14 +13,14 @@ export class InscriptionService {
 
   /** Soumet une inscription complète (élève + dossier) en un seul appel. */
   soumettre(data: {
-    eleveId?:        number | null;
-    nom?:            string;
-    prenom?:         string;
-    sexe?:           string;
-    dateNaissance?:  string;
-    classeId:        number;
+    eleveId?: number | null;
+    nom?: string;
+    prenom?: string;
+    sexe?: string;
+    dateNaissance?: string;
+    classeId: number;
     anneeScolaireId: number;
-    tuteurId?:       number | null;
+    tuteurId?: number | null;
   }): Observable<any> {
     return this.api.post<any>('/api/inscription/soumettre', data);
   }
@@ -33,7 +33,8 @@ export class InscriptionService {
   /** Charge les enfants déjà enregistrés pour ce tuteur. */
   getMesEnfants(tuteurId: number): Observable<any> {
     const params = new HttpParams()
-      .set('page', '0').set('size', '50')
+      .set('page', '0')
+      .set('size', '50')
       .set('tuteurId', tuteurId.toString());
     return this.api.get<any>('/api/eleves', params);
   }

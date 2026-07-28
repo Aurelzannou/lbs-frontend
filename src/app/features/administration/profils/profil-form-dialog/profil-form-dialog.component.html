@@ -1,6 +1,5 @@
 <div class="rfm-dialog">
   <div class="rfm-card">
-
     <div class="rfm-header">
       <div class="rfm-header-inner">
         <div class="rfm-title-group">
@@ -9,7 +8,13 @@
           </div>
           <div>
             <h3 class="rfm-title">{{ isEdit ? 'Modifier le Profil' : 'Nouveau Profil' }}</h3>
-            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour des informations' : 'Définition d\'un nouveau profil utilisateur' }}</p>
+            <p class="rfm-subtitle">
+              {{
+                isEdit
+                  ? 'Mise à jour des informations'
+                  : "Définition d'un nouveau profil utilisateur"
+              }}
+            </p>
           </div>
         </div>
         <button mat-icon-button class="rfm-close" (click)="onCancel()">
@@ -20,13 +25,17 @@
 
     <div class="rfm-body">
       <form [formGroup]="form" class="rfm-form">
-
         <div class="rfm-row">
           <div class="rfm-field">
             <span class="rfm-label">Code du Profil</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>tag</mat-icon>
-              <input matInput formControlName="code" placeholder="Ex: ADMIN, LECTEUR, GESTIONNAIRE..." style="text-transform: uppercase">
+              <input
+                matInput
+                formControlName="code"
+                placeholder="Ex: ADMIN, LECTEUR, GESTIONNAIRE..."
+                style="text-transform: uppercase"
+              />
             </mat-form-field>
             <div class="rfm-error" *ngIf="form.get('code')?.invalid && form.get('code')?.touched">
               <span *ngIf="form.get('code')?.errors?.['required']">Ce champ est obligatoire</span>
@@ -40,27 +49,41 @@
             <span class="rfm-label">Libellé Complet</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>notes</mat-icon>
-              <input matInput formControlName="libelle" placeholder="Ex: Administrateur du système">
+              <input
+                matInput
+                formControlName="libelle"
+                placeholder="Ex: Administrateur du système"
+              />
             </mat-form-field>
-            <div class="rfm-error" *ngIf="form.get('libelle')?.invalid && form.get('libelle')?.touched">
-              <span *ngIf="form.get('libelle')?.errors?.['required']">Ce champ est obligatoire</span>
+            <div
+              class="rfm-error"
+              *ngIf="form.get('libelle')?.invalid && form.get('libelle')?.touched"
+            >
+              <span *ngIf="form.get('libelle')?.errors?.['required']"
+                >Ce champ est obligatoire</span
+              >
               <span *ngIf="form.get('libelle')?.errors?.['maxlength']">Maximum 100 caractères</span>
             </div>
           </div>
         </div>
-
       </form>
     </div>
 
     <div class="rfm-footer">
       <div class="rfm-actions">
-        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="loading">Annuler</button>
-        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || loading">
+        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="loading">
+          Annuler
+        </button>
+        <button
+          mat-flat-button
+          class="rfm-submit"
+          (click)="onSubmit()"
+          [disabled]="form.invalid || loading"
+        >
           <mat-icon *ngIf="!loading">save</mat-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>
     </div>
-
   </div>
 </div>

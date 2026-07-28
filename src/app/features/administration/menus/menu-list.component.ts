@@ -1,4 +1,12 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ViewChild,
+  ChangeDetectorRef,
+  inject
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort } from '@angular/material/sort';
@@ -30,7 +38,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatProgressSpinnerModule,
     MatDialogModule
   ],
@@ -68,14 +77,13 @@ export class MenuListComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
-    this.searchSub = this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(term => {
-      this.searchTerm = term;
-      this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
-      this.refresh();
-    });
+    this.searchSub = this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.searchTerm = term;
+        this.pageIndex = 0; // Retour à la 1ère page à chaque nouvelle recherche
+        this.refresh();
+      });
     this.refresh();
   }
 
@@ -156,31 +164,43 @@ export class MenuListComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  isFirstPage(): boolean { return this.pageIndex === 0; }
-  isLastPage(): boolean { return this.pageIndex >= this.totalPages - 1; }
-  getEndIndex(): number { return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements); }
+  isFirstPage(): boolean {
+    return this.pageIndex === 0;
+  }
+  isLastPage(): boolean {
+    return this.pageIndex >= this.totalPages - 1;
+  }
+  getEndIndex(): number {
+    return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements);
+  }
 
   getIconFor(code: string): string {
     return this.menuService.getIconByCode(code);
   }
 
   addMenu(): void {
-    this.dialog.open(MenuFormDialogComponent, {
-      width: '480px',
-      panelClass: 'professional-dialog'
-    }).afterClosed().subscribe(result => {
-      if (result) this.refresh();
-    });
+    this.dialog
+      .open(MenuFormDialogComponent, {
+        width: '480px',
+        panelClass: 'professional-dialog'
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) this.refresh();
+      });
   }
 
   editMenu(menu: MenuResponse): void {
-    this.dialog.open(MenuFormDialogComponent, {
-      width: '480px',
-      data: menu,
-      panelClass: 'professional-dialog'
-    }).afterClosed().subscribe(result => {
-      if (result) this.refresh();
-    });
+    this.dialog
+      .open(MenuFormDialogComponent, {
+        width: '480px',
+        data: menu,
+        panelClass: 'professional-dialog'
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) this.refresh();
+      });
   }
 
   async deleteMenu(menu: MenuResponse): Promise<void> {

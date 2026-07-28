@@ -24,7 +24,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule,
     NgSelectModule
@@ -66,8 +67,8 @@ export class CoefficientFormDialogComponent implements OnInit {
   private loadData(): void {
     this.loading = true;
     // Load both niveaux and matieres
-    this.niveauService.getAll(1, 100).subscribe(res => this.niveaux = res.data || []);
-    this.matiereService.getAll(1, 100).subscribe(res => {
+    this.niveauService.getAll(1, 100).subscribe((res) => (this.niveaux = res.data || []));
+    this.matiereService.getAll(1, 100).subscribe((res) => {
       this.matieres = res.data || [];
       this.loading = false;
     });
@@ -76,17 +77,20 @@ export class CoefficientFormDialogComponent implements OnInit {
   async onSubmit(): Promise<void> {
     if (this.form.valid) {
       const confirmed = await this.notification.confirm(
-        this.isEdit ? 'Voulez-vous modifier ce coefficient ?' : 'Voulez-vous créer ce coefficient ?',
+        this.isEdit
+          ? 'Voulez-vous modifier ce coefficient ?'
+          : 'Voulez-vous créer ce coefficient ?',
         'Confirmation'
       );
       if (!confirmed) return;
 
       this.saving = true;
       const val = this.form.value;
-      
-      const obs = this.isEdit && this.data?.uuid
-        ? this.coefficientService.update(this.data.uuid, val)
-        : this.coefficientService.create(val);
+
+      const obs =
+        this.isEdit && this.data?.uuid
+          ? this.coefficientService.update(this.data.uuid, val)
+          : this.coefficientService.create(val);
 
       obs.subscribe({
         next: () => {

@@ -1,6 +1,5 @@
 <div class="rfm-dialog">
   <div class="rfm-card">
-
     <div class="rfm-header">
       <div class="rfm-header-inner">
         <div class="rfm-title-group">
@@ -8,8 +7,16 @@
             <mat-icon>calendar_today</mat-icon>
           </div>
           <div>
-            <h3 class="rfm-title">{{ isEdit ? 'Modifier l\'Année Scolaire' : 'Nouvelle Année Scolaire' }}</h3>
-            <p class="rfm-subtitle">{{ isEdit ? 'Mise à jour des informations' : 'Configuration de la nouvelle année scolaire' }}</p>
+            <h3 class="rfm-title">
+              {{ isEdit ? "Modifier l'Année Scolaire" : 'Nouvelle Année Scolaire' }}
+            </h3>
+            <p class="rfm-subtitle">
+              {{
+                isEdit
+                  ? 'Mise à jour des informations'
+                  : 'Configuration de la nouvelle année scolaire'
+              }}
+            </p>
           </div>
         </div>
         <button mat-icon-button class="rfm-close" (click)="onCancel()">
@@ -20,13 +27,12 @@
 
     <div class="rfm-body">
       <form [formGroup]="form" class="rfm-form">
-
         <div class="rfm-row">
           <div class="rfm-field">
             <span class="rfm-label">Code</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>tag</mat-icon>
-              <input matInput formControlName="code" placeholder="Ex: 2024-2025">
+              <input matInput formControlName="code" placeholder="Ex: 2024-2025" />
             </mat-form-field>
             <div class="rfm-error" *ngIf="form.get('code')?.invalid && form.get('code')?.touched">
               Ce champ est obligatoire
@@ -39,9 +45,16 @@
             <span class="rfm-label">Libellé</span>
             <mat-form-field appearance="outline">
               <mat-icon matPrefix>notes</mat-icon>
-              <input matInput formControlName="libelle" placeholder="Ex: Année Scolaire 2024-2025">
+              <input
+                matInput
+                formControlName="libelle"
+                placeholder="Ex: Année Scolaire 2024-2025"
+              />
             </mat-form-field>
-            <div class="rfm-error" *ngIf="form.get('libelle')?.invalid && form.get('libelle')?.touched">
+            <div
+              class="rfm-error"
+              *ngIf="form.get('libelle')?.invalid && form.get('libelle')?.touched"
+            >
               Ce champ est obligatoire
             </div>
           </div>
@@ -50,25 +63,30 @@
         <div class="rfm-row two-cols">
           <div class="rfm-date">
             <span class="rfm-label">Date Début</span>
-            <input type="date" formControlName="dateDebut">
-            <div class="rfm-error" *ngIf="form.get('dateDebut')?.invalid && form.get('dateDebut')?.touched">
+            <input type="date" formControlName="dateDebut" />
+            <div
+              class="rfm-error"
+              *ngIf="form.get('dateDebut')?.invalid && form.get('dateDebut')?.touched"
+            >
               Obligatoire
             </div>
           </div>
           <div class="rfm-date">
             <span class="rfm-label">Date Fin</span>
-            <input type="date" formControlName="dateFin">
-            <div class="rfm-error" *ngIf="form.get('dateFin')?.invalid && form.get('dateFin')?.touched">
+            <input type="date" formControlName="dateFin" />
+            <div
+              class="rfm-error"
+              *ngIf="form.get('dateFin')?.invalid && form.get('dateFin')?.touched"
+            >
               Obligatoire
             </div>
           </div>
         </div>
 
         <div class="rfm-toggle">
-          <span class="rfm-label" style="margin:0">Année active</span>
+          <span class="rfm-label" style="margin: 0">Année active</span>
           <mat-slide-toggle formControlName="actif" color="primary"></mat-slide-toggle>
         </div>
-
       </form>
     </div>
 
@@ -77,12 +95,16 @@
         <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="loading">
           Annuler
         </button>
-        <button mat-flat-button class="rfm-submit" (click)="onSubmit()" [disabled]="form.invalid || loading">
+        <button
+          mat-flat-button
+          class="rfm-submit"
+          (click)="onSubmit()"
+          [disabled]="form.invalid || loading"
+        >
           <mat-icon *ngIf="!loading">save</mat-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>
     </div>
-
   </div>
 </div>

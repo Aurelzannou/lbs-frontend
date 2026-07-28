@@ -19,11 +19,10 @@
 
 // install the framework and custom global styles
 @include nb-install() {
-
   // framework global styles
   @include nb-theme-global();
   @include nb-auth-global();
 
   @include ngx-layout();
   @include nb-overrides();
-};
+}

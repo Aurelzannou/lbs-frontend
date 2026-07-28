@@ -19,10 +19,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     RouterModule,
     MatButtonModule,
     MatCardModule,
-    MatInputModule, MatFormFieldModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatIconModule,
     MatProgressSpinnerModule
-    ],
+  ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
@@ -36,10 +37,10 @@ export class PortalLoginComponent implements OnInit {
     if (this.authService.isLoggingOut) {
       return;
     }
-    
+
     if (this.authService.isLoggedIn) {
       const storedToken = localStorage.getItem('access_token');
-      const roles = storedToken 
+      const roles = storedToken
         ? this.authService.getRolesFromToken(storedToken)
         : this.authService.getBusinessRoles();
       this.authService.redirectAfterLogin(roles);
@@ -59,7 +60,7 @@ export class PortalLoginComponent implements OnInit {
     if (this.loginForm.valid) {
       this.loading = true;
       this.error = null;
-      
+
       const { email, password } = this.loginForm.value;
 
       this.authService.loginWithCredentials(email!, password!).subscribe({

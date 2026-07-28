@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { KeycloakService } from 'keycloak-angular';
 import { KeycloakProfile } from 'keycloak-js';
-import { from, Observable, tap, switchMap } from 'rxjs';
+import { from, Observable, tap, switchMap, map } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
@@ -62,10 +62,12 @@ export class AuthService {
     if (!this.isLoggedIn) {
       return from(Promise.resolve(null));
     }
-    return from(this.keycloak.loadUserProfile().catch(err => {
-      console.error('Erreur lors de la récupération du profil:', err);
-      return null;
-    }));
+    return from(
+      this.keycloak.loadUserProfile().catch((err) => {
+        console.error('Erreur lors de la récupération du profil:', err);
+        return null;
+      })
+    );
   }
 
   public getToken(): Promise<string> {
@@ -83,17 +85,16 @@ export class AuthService {
   public getBusinessRoles(): string[] {
     const roles = this.getRoles();
     const technicalRoles = [
-      'offline_access', 
-      'uma_authorization', 
+      'offline_access',
+      'uma_authorization',
       'default-roles-lbs',
       'account',
       'manage-account',
       'view-profile',
       'manage-account-links'
     ];
-    return roles.filter(role => 
-      !technicalRoles.includes(role) && 
-      !role.startsWith('default-roles-')
+    return roles.filter(
+      (role) => !technicalRoles.includes(role) && !role.startsWith('default-roles-')
     );
   }
 
@@ -136,24 +137,35 @@ export class AuthService {
       'manage-account-links'
     ];
 
-    return allRoles.filter(role =>
-      !technicalRoles.includes(role) &&
-      !role.startsWith('default-roles-')
+    return allRoles.filter(
+      (role) => !technicalRoles.includes(role) && !role.startsWith('default-roles-')
     );
   }
 
   /**
    * Login avec identifiants (Direct Access Grant).
    * Émet le profil Keycloak et expose les rôles via getRolesFromToken() immédiatement.
+   *
+   * @param otpCode Code de vérification TOTP, requis uniquement si le compte a activé l'OTP
+   *                (voir isOtpRequired()) — transmis via le champ 'totp' attendu par l'exécution
+   *                "OTP Form" du flow Direct Grant de Keycloak.
    */
-  public loginWithCredentials(username: string, password: string): Observable<any> {
+  public loginWithCredentials(
+    username: string,
+    password: string,
+    otpCode?: string
+  ): Observable<any> {
     const url = `${environment.keycloak.url}/realms/${environment.keycloak.realm}/protocol/openid-connect/token`;
-    
-    const body = new HttpParams()
+
+    let body = new HttpParams()
       .set('client_id', environment.keycloak.clientId)
       .set('grant_type', 'password')
       .set('username', username)
       .set('password', password);
+
+    if (otpCode) {
+      body = body.set('totp', otpCode);
+    }
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -168,21 +180,23 @@ export class AuthService {
       }),
       switchMap((response: any) => {
         console.log('Login réussi via API, synchronisation Keycloak...');
-        
-        return from(this.keycloak.init({
-          config: {
-            url: environment.keycloak.url,
-            realm: environment.keycloak.realm,
-            clientId: environment.keycloak.clientId
-          },
-          initOptions: {
-            token: response.access_token,
-            refreshToken: response.refresh_token,
-            idToken: response.id_token,
-            onLoad: 'check-sso',
-            checkLoginIframe: false
-          }
-        })).pipe(
+
+        return from(
+          this.keycloak.init({
+            config: {
+              url: environment.keycloak.url,
+              realm: environment.keycloak.realm,
+              clientId: environment.keycloak.clientId
+            },
+            initOptions: {
+              token: response.access_token,
+              refreshToken: response.refresh_token,
+              idToken: response.id_token,
+              onLoad: 'check-sso',
+              checkLoginIframe: false
+            }
+          })
+        ).pipe(
           // On retourne la réponse originale pour que le composant puisse accéder à l'access_token
           switchMap(() => from(this.keycloak.loadUserProfile())),
           // On enrichit le résultat avec les rôles extraits du token brut
@@ -213,11 +227,22 @@ export class AuthService {
   }
 
   /**
+   * Indique si le compte a déjà activé l'OTP (TOTP) — sert à désambiguïser un échec de
+   * connexion ("mot de passe invalide" vs "code de vérification requis").
+   */
+  public isOtpRequired(username: string): Observable<boolean> {
+    const url = `${environment.apiUrl}/api/auth/otp-required`;
+    return this.http
+      .get<{ otpRequired: boolean }>(url, { params: { username } })
+      .pipe(map((res) => res.otpRequired));
+  }
+
+  /**
    * Centralise la logique de redirection après connexion selon les rôles
    */
   public redirectAfterLogin(roles: string[]): void {
     const isTuteur = roles.includes('TUTEUR');
-    const isAdmin  = roles.includes('ADMIN') || roles.includes('SECRETAIRE');
+    const isAdmin = roles.includes('ADMIN') || roles.includes('SECRETAIRE');
 
     // Si un profil est déjà sélectionné (ex: refresh), on l'utilise
     const selectedProfile = this.getSelectedProfile();
