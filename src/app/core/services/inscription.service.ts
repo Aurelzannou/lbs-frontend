@@ -18,6 +18,8 @@ export class InscriptionService {
     prenom?: string;
     sexe?: string;
     dateNaissance?: string;
+    souffrant?: boolean;
+    provenance?: string;
     classeId: number;
     anneeScolaireId: number;
     tuteurId?: number | null;

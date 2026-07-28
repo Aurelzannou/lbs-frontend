@@ -33,7 +33,12 @@
       "Bash(netstat -ano)",
       "Bash(taskkill //F //PID 18988)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:8090/actuator/health)",
-      "Bash(./mvnw.cmd -q -B compile)"
+      "Bash(./mvnw.cmd -q -B compile)",
+      "Bash(curl -s \"http://localhost:8080/actuator/health\")",
+      "Bash(powershell -Command \"Get-Process -Id 19916 | Select-Object Id,StartTime,Path\")",
+      "Bash(powershell -Command \"Get-Process -Id 22852 | Select-Object Id,ProcessName,StartTime,Path\")",
+      "Bash(powershell -Command \"Get-Process java -ErrorAction SilentlyContinue | Select-Object Id,StartTime,Path\")",
+      "Bash(powershell -Command \"Get-CimInstance Win32_Process -Filter \\\\\"ProcessId=11904 or ProcessId=12052\\\\\" | Select-Object ProcessId,CommandLine\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"

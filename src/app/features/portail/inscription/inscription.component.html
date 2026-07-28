@@ -128,6 +128,25 @@
         </mat-form-field>
       </div>
 
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Provenance / École d'origine</mat-label>
+          <mat-icon matPrefix>home</mat-icon>
+          <input
+            matInput
+            formControlName="provenance"
+            placeholder="Ex: École Primaire Publique de ..."
+          />
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <label class="eleve-check">
+          <input type="checkbox" formControlName="souffrant" />
+          <span>L'enfant présente-t-il des problèmes de santé ?</span>
+        </label>
+      </div>
+
       <div class="card-footer">
         <span></span>
         <button

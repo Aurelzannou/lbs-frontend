@@ -73,7 +73,9 @@ export class PortalInscriptionComponent implements OnInit {
       nom: ['', Validators.required],
       prenom: ['', Validators.required],
       sexe: ['M', Validators.required],
-      dateNaissance: ['', Validators.required]
+      dateNaissance: ['', Validators.required],
+      souffrant: [false],
+      provenance: ['']
     });
 
     this.secondForm = this.fb.group({
@@ -152,7 +154,9 @@ export class PortalInscriptionComponent implements OnInit {
       nom: eleve.nom,
       prenom: eleve.prenom,
       sexe: eleve.sexe,
-      dateNaissance: eleve.dateNaissance
+      dateNaissance: eleve.dateNaissance,
+      souffrant: eleve.souffrant || false,
+      provenance: eleve.provenance || ''
     });
   }
 
