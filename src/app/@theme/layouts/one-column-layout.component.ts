@@ -319,9 +319,29 @@ export class OneColumnLayoutComponent {
       'settings-2-outline': 'settings',
       'layers-outline': 'layers',
       'calendar-outline': 'calendar_today',
+      'calendar-check-outline': 'event_available',
       'book-open-outline': 'menu_book',
       'cube-outline': 'widgets',
-      'list-outline': 'list'
+      'list-outline': 'list',
+      'clock-outline': 'schedule',
+      'file-text-outline': 'description',
+      'checkmark-circle-outline': 'check_circle',
+      'clipboard-outline': 'fact_check',
+      'timer-outline': 'timelapse',
+      'grid-outline': 'grid_view',
+      'briefcase-outline': 'work',
+      'book-outline': 'book',
+      'calculator-outline': 'calculate',
+      'wallet-outline': 'account_balance_wallet',
+      'folder-outline': 'folder',
+      'cash-outline': 'payments',
+      'credit-card-outline': 'credit_card',
+      'pricetags-outline': 'sell',
+      'swap-outline': 'swap_horiz',
+      'flag-outline': 'flag',
+      'award-outline': 'military_tech',
+      'edit-2-outline': 'edit',
+      'checkmark-square-2-outline': 'fact_check'
     };
     return iconMap[evaName] || evaName;
   }

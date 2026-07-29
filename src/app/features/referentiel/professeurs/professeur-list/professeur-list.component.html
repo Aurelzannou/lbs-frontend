@@ -73,7 +73,6 @@
               <div class="user-avatar">{{ (row.nom || '?')[0] }}{{ (row.prenom || '?')[0] }}</div>
               <div class="user-details">
                 <span class="user-name">{{ row.nom }} {{ row.prenom }}</span>
-                <span class="user-sub">{{ row.code || 'Pas de matricule' }}</span>
               </div>
             </div>
           </td>
@@ -89,6 +88,28 @@
         <ng-container matColumnDef="email">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
           <td mat-cell *matCellDef="let row">{{ row.email || 'N/A' }}</td>
+        </ng-container>
+
+        <!-- Matières Column -->
+        <ng-container matColumnDef="matieres">
+          <th mat-header-cell *matHeaderCellDef>Matières</th>
+          <td mat-cell *matCellDef="let row">
+            <div class="matiere-badges" *ngIf="row.matiereLibelles?.length; else noMatiere">
+              <span class="matiere-badge" *ngFor="let m of row.matiereLibelles">{{ m }}</span>
+            </div>
+            <ng-template #noMatiere><span class="text-muted">—</span></ng-template>
+          </td>
+        </ng-container>
+
+        <!-- Statut Column -->
+        <ng-container matColumnDef="statut">
+          <th mat-header-cell *matHeaderCellDef>Statut</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="statut-badge" [class.actif]="row.actif !== false" [class.inactif]="row.actif === false">
+              <span class="statut-dot"></span>
+              {{ row.actif !== false ? 'Actif' : 'Inactif' }}
+            </span>
+          </td>
         </ng-container>
 
         <!-- Actions Column -->

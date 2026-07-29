@@ -1,0 +1,97 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="header-filters">
+      <ng-select
+        [items]="classes"
+        bindLabel="libelle"
+        bindValue="id"
+        [(ngModel)]="classeId"
+        (change)="onClasseChange()"
+        placeholder="Sélectionner une classe..."
+        [clearable]="false"
+        style="min-width: 260px"
+      >
+        <ng-template ng-option-tmp let-item="item">{{ item.libelle }} ({{ item.code }})</ng-template>
+        <ng-template ng-label-tmp let-item="item">{{ item.libelle }} ({{ item.code }})</ng-template>
+      </ng-select>
+      <ng-select
+        [items]="annees"
+        bindLabel="libelle"
+        bindValue="id"
+        [(ngModel)]="anneeScolaireId"
+        (change)="onAnneeChange()"
+        placeholder="Année scolaire"
+        [clearable]="false"
+        style="min-width: 200px"
+      >
+      </ng-select>
+    </div>
+    <div class="header-actions">
+      <button
+        class="btn-add"
+        (click)="openForm()"
+        [disabled]="!classeId || !anneeScolaireId || anneeVerrouillee"
+      >
+        <mat-icon>add</mat-icon>
+        Ajouter un cours
+      </button>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!classeId">
+    <mat-icon>calendar_month</mat-icon>
+    <p>Sélectionnez une classe pour afficher son emploi du temps.</p>
+  </div>
+
+  <div class="readonly-banner" *ngIf="classeId && anneeScolaireId && anneeVerrouillee">
+    <mat-icon>lock</mat-icon>
+    <span>Cette année scolaire est terminée : l'emploi du temps est en lecture seule.</span>
+  </div>
+
+  <div class="spinner-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+  <div class="planning-grid" *ngIf="classeId && anneeScolaireId && !loading">
+    <div class="day-column" *ngFor="let j of jours">
+      <div class="day-header">{{ j.label }}</div>
+
+      <div
+        class="day-dropzone"
+        cdkDropList
+        [id]="j.code"
+        [cdkDropListData]="seancesDuJour(j.code)"
+        [cdkDropListConnectedTo]="dropListIds"
+        [cdkDropListDisabled]="anneeVerrouillee"
+        (cdkDropListDropped)="onDrop($event)"
+      >
+        <div class="day-empty" *ngIf="seancesDuJour(j.code).length === 0">Aucun cours</div>
+
+        <div
+          class="seance-card"
+          [class.prof-inactif]="s.profActif === false"
+          *ngFor="let s of seancesDuJour(j.code)"
+          cdkDrag
+          [cdkDragData]="s"
+          [cdkDragDisabled]="anneeVerrouillee"
+        >
+          <div class="seance-heure">{{ s.heureDebut }}–{{ s.heureFin }}</div>
+          <div class="seance-matiere">{{ s.matiereLibelle }}</div>
+          <div class="seance-prof">
+            {{ s.profNomComplet }}
+            <span
+              class="prof-inactif-badge"
+              *ngIf="s.profActif === false"
+              matTooltip="Ce professeur est inactif"
+            >
+              <mat-icon>error_outline</mat-icon>
+              Inactif
+            </span>
+          </div>
+          <div class="seance-actions" *ngIf="!anneeVerrouillee">
+            <mat-icon class="icon-edit" matTooltip="Modifier" (click)="openForm(s)">edit</mat-icon>
+            <mat-icon class="icon-delete" matTooltip="Supprimer" (click)="supprimer(s)">delete</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

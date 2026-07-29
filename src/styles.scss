@@ -378,6 +378,13 @@ h4,
   animation: rfm-slide-in 0.2s ease-out;
 }
 
+.rfm-hint {
+  font-size: 0.72rem;
+  color: #b45309;
+  margin-top: 0.35rem;
+  padding-left: 0.25rem;
+}
+
 /* ng-select wrapper */
 .rfm-select {
   display: flex;
@@ -452,6 +459,13 @@ h4,
   .rfm-error {
     margin-top: 0.25rem;
   }
+}
+
+/* Force le rendu clair des contrôles natifs date/heure — sinon le curseur/segment
+   sélectionné devient quasi invisible quand le navigateur est en thème sombre. */
+input[type='date'],
+input[type='time'] {
+  color-scheme: light;
 }
 
 /* Date field */

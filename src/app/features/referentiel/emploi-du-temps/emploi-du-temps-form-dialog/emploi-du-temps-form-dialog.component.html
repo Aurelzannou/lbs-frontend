@@ -1,0 +1,144 @@
+<div class="rfm-dialog">
+  <div class="rfm-card">
+    <div class="rfm-header">
+      <div class="rfm-header-inner">
+        <div class="rfm-title-group">
+          <div class="rfm-icon-box" [ngClass]="isEdit ? 'edit' : 'create'">
+            <mat-icon>schedule</mat-icon>
+          </div>
+          <div>
+            <h3 class="rfm-title">{{ isEdit ? 'Modifier le Cours' : 'Nouveau Cours' }}</h3>
+            <p class="rfm-subtitle">
+              {{ isEdit ? 'Mise à jour du créneau' : "Ajout d'un cours à l'emploi du temps" }}
+            </p>
+          </div>
+        </div>
+        <button mat-icon-button class="rfm-close" (click)="onCancel()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="rfm-body">
+      <form [formGroup]="form" class="rfm-form">
+        <div class="rfm-row">
+          <div class="rfm-select">
+            <span class="rfm-label">Jour <span class="req">*</span></span>
+            <ng-select
+              [items]="jours"
+              bindLabel="label"
+              bindValue="code"
+              formControlName="jour"
+              placeholder="Sélectionner un jour"
+              appendTo="body"
+              class="ng-field"
+            >
+            </ng-select>
+            <div class="rfm-error" *ngIf="form.get('jour')?.invalid && form.get('jour')?.touched">
+              Obligatoire
+            </div>
+          </div>
+        </div>
+
+        <div class="rfm-row two-cols">
+          <div class="rfm-field">
+            <span class="rfm-label">Heure début <span class="req">*</span></span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>schedule</mat-icon>
+              <input matInput type="time" formControlName="heureDebut" />
+            </mat-form-field>
+            <div
+              class="rfm-error"
+              *ngIf="form.get('heureDebut')?.invalid && form.get('heureDebut')?.touched"
+            >
+              Obligatoire
+            </div>
+          </div>
+          <div class="rfm-field">
+            <span class="rfm-label">Heure fin <span class="req">*</span></span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>schedule</mat-icon>
+              <input matInput type="time" formControlName="heureFin" />
+            </mat-form-field>
+            <div
+              class="rfm-error"
+              *ngIf="form.get('heureFin')?.invalid && form.get('heureFin')?.touched"
+            >
+              Obligatoire
+            </div>
+          </div>
+        </div>
+
+        <div class="rfm-row">
+          <div class="rfm-select">
+            <span class="rfm-label">Matière <span class="req">*</span></span>
+            <ng-select
+              [items]="matieres"
+              bindLabel="libelle"
+              bindValue="id"
+              formControlName="matiereId"
+              placeholder="Sélectionner une matière"
+              [loading]="loading"
+              appendTo="body"
+              class="ng-field"
+            >
+            </ng-select>
+            <div
+              class="rfm-error"
+              *ngIf="form.get('matiereId')?.invalid && form.get('matiereId')?.touched"
+            >
+              Obligatoire
+            </div>
+          </div>
+        </div>
+
+        <div class="rfm-row">
+          <div class="rfm-select">
+            <span class="rfm-label">Professeur <span class="req">*</span></span>
+            <ng-select
+              [items]="professeursFiltres"
+              bindValue="id"
+              formControlName="profId"
+              placeholder="Sélectionner un professeur"
+              [loading]="loading"
+              appendTo="body"
+              class="ng-field"
+            >
+              <ng-template ng-option-tmp let-item="item">{{ item.nom }} {{ item.prenom }}</ng-template>
+              <ng-template ng-label-tmp let-item="item">{{ item.nom }} {{ item.prenom }}</ng-template>
+            </ng-select>
+            <div
+              class="rfm-error"
+              *ngIf="form.get('profId')?.invalid && form.get('profId')?.touched"
+            >
+              Obligatoire
+            </div>
+            <div
+              class="rfm-hint"
+              *ngIf="form.get('matiereId')?.value && professeursFiltres.length === 0"
+            >
+              Aucun professeur n'enseigne cette matière — renseigne-la sur sa fiche Professeur.
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="rfm-footer">
+      <div class="rfm-actions">
+        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="loading">
+          Annuler
+        </button>
+        <button
+          mat-flat-button
+          class="rfm-submit"
+          (click)="onSubmit()"
+          [disabled]="form.invalid || loading"
+        >
+          <mat-icon *ngIf="!loading">save</mat-icon>
+          {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

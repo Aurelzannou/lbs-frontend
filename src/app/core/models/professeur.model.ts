@@ -8,6 +8,10 @@ export interface Professeur {
   residence?: string;
   num?: string;
   actif?: boolean;
+  keycloakId?: string;
+  matiereIds?: number[];
+  matiereLibelles?: string[];
+  motDePasseGenere?: string;
 }
 
 export interface ProfesseurRequest {
@@ -18,4 +22,5 @@ export interface ProfesseurRequest {
   residence?: string;
   num?: string;
   actif?: boolean;
+  matiereIds?: number[];
 }

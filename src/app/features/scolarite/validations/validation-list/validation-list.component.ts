@@ -42,8 +42,8 @@ export class ValidationListComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
   dossiers: any[] = [];
-  annees: AnneeScolaire[] = [];
-  classes: Classe[] = [];
+  annees: (AnneeScolaire | { id: null; libelle: string })[] = [];
+  classes: (Classe | { id: null; libelle: string; code: string })[] = [];
   loading = false;
   activeTab = 'DEPOSE';
   searchTerm = '';
@@ -80,7 +80,8 @@ export class ValidationListComponent implements OnInit, OnDestroy {
 
   loadClasses(): void {
     this.classeService.getAll(1, 100).subscribe((res: any) => {
-      this.classes = res.data ?? (Array.isArray(res) ? res : []);
+      const list = res.data ?? (Array.isArray(res) ? res : []);
+      this.classes = [{ id: null, libelle: 'Toutes les classes', code: '' }, ...list];
     });
   }
 
@@ -93,11 +94,12 @@ export class ValidationListComponent implements OnInit, OnDestroy {
     this.anneeService.getAll(0, 50).subscribe({
       next: (res: any) => {
         const page = res.data ?? res;
-        this.annees = page.data ?? (Array.isArray(page) ? page : []);
-        const active = this.annees.find((a) => a.actif);
+        const list = page.data ?? (Array.isArray(page) ? page : []);
+        const active = list.find((a: any) => a.actif);
         if (active?.id) {
           this.anneeId = active.id;
         }
+        this.annees = [{ id: null, libelle: 'Toutes les années' }, ...list];
         this.refresh();
       },
       error: () => this.refresh()

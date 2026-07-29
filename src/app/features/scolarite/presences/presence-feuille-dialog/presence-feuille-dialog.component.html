@@ -1,0 +1,122 @@
+<div class="pf-dialog">
+  <div class="pf-header">
+    <mat-icon class="pf-icon">fact_check</mat-icon>
+    <div>
+      <h3>Feuille de présence</h3>
+      <p class="pf-sub" *ngIf="feuille">
+        {{ feuille.matiereLibelle }} · {{ feuille.heureDebut }}–{{ feuille.heureFin }} ·
+        {{ feuille.date | date: 'dd/MM/yyyy' }}
+      </p>
+    </div>
+    <button mat-icon-button (click)="onCancel()"><mat-icon>close</mat-icon></button>
+  </div>
+
+  <div class="pf-body">
+    <div *ngIf="loading" class="pf-loading">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+
+    <ng-container *ngIf="!loading && feuille">
+      <div class="pf-section">
+        <div class="pf-section-title">Professeur</div>
+        <div class="pf-row pf-prof-row">
+          <span class="pf-name">{{ feuille.profNomComplet }}</span>
+          <div class="pf-toggle">
+            <button
+              class="pf-btn present"
+              [class.active]="feuille.profStatut === 'PRESENT'"
+              (click)="setProfStatut('PRESENT')"
+            >
+              Présent
+            </button>
+            <button
+              class="pf-btn absent"
+              [class.active]="feuille.profStatut === 'ABSENT'"
+              (click)="setProfStatut('ABSENT')"
+            >
+              Absent
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pf-section">
+        <div class="pf-section-title">
+          Élèves ({{ feuille.eleves.length }})
+          <button class="pf-link" (click)="marquerTousPresents()">Tout marquer présent</button>
+        </div>
+
+        <div class="pf-tabs" *ngIf="feuille.eleves.length > 0">
+          <button
+            class="pf-tab present"
+            [class.active]="activeTab === 'PRESENT'"
+            (click)="selectTab('PRESENT')"
+          >
+            Présents
+            <span class="pf-tab-count">{{ presentsCount }}</span>
+          </button>
+          <button
+            class="pf-tab absent"
+            [class.active]="activeTab === 'ABSENT'"
+            (click)="selectTab('ABSENT')"
+          >
+            Absents
+            <span class="pf-tab-count">{{ absentsCount }}</span>
+          </button>
+        </div>
+
+        <div class="pf-search">
+          <mat-icon>search</mat-icon>
+          <input
+            type="text"
+            placeholder="Rechercher un élève par nom ou prénom..."
+            [(ngModel)]="rechercheEleve"
+          />
+        </div>
+        <div class="pf-roster">
+          <div class="pf-row" *ngFor="let e of elevesFiltres">
+            <span class="pf-name">{{ e.nom }} {{ e.prenom }}</span>
+            <div class="pf-toggle">
+              <button
+                class="pf-btn present"
+                [class.active]="e.statut === 'PRESENT'"
+                (click)="setEleveStatut(e.eleveId, 'PRESENT')"
+              >
+                Présent
+              </button>
+              <button
+                class="pf-btn absent"
+                [class.active]="e.statut === 'ABSENT'"
+                (click)="setEleveStatut(e.eleveId, 'ABSENT')"
+              >
+                Absent
+              </button>
+            </div>
+          </div>
+          <div class="pf-empty" *ngIf="feuille.eleves.length === 0">Aucun élève dans cette classe.</div>
+          <div
+            class="pf-empty"
+            *ngIf="feuille.eleves.length > 0 && elevesFiltres.length === 0 && rechercheEleve.trim()"
+          >
+            Aucun élève {{ activeTab === 'PRESENT' ? 'présent' : 'absent' }} ne correspond à «
+            {{ rechercheEleve }} ».
+          </div>
+          <div
+            class="pf-empty"
+            *ngIf="feuille.eleves.length > 0 && elevesFiltres.length === 0 && !rechercheEleve.trim()"
+          >
+            Aucun élève {{ activeTab === 'PRESENT' ? 'présent' : 'absent' }} pour l'instant.
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="pf-footer">
+    <button mat-button (click)="onCancel()" [disabled]="saving">Annuler</button>
+    <button mat-flat-button class="pf-save" (click)="enregistrer()" [disabled]="loading || saving || !feuille">
+      <mat-icon *ngIf="!saving">save</mat-icon>
+      Enregistrer
+    </button>
+  </div>
+</div>

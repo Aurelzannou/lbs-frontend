@@ -1,0 +1,60 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="header-filters">
+      <ng-select
+        [items]="classes"
+        bindLabel="libelle"
+        bindValue="id"
+        [(ngModel)]="classeId"
+        (change)="onClasseChange()"
+        placeholder="Sélectionner une classe..."
+        [clearable]="false"
+        style="min-width: 240px"
+      >
+        <ng-template ng-option-tmp let-item="item">{{ item.libelle }} ({{ item.code }})</ng-template>
+        <ng-template ng-label-tmp let-item="item">{{ item.libelle }} ({{ item.code }})</ng-template>
+      </ng-select>
+      <ng-select
+        [items]="annees"
+        bindLabel="libelle"
+        bindValue="id"
+        [(ngModel)]="anneeScolaireId"
+        (change)="onAnneeChange()"
+        placeholder="Année scolaire"
+        [clearable]="false"
+        style="min-width: 190px"
+      >
+      </ng-select>
+      <input type="date" class="date-input" [(ngModel)]="date" (change)="onDateChange()" />
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!classeId">
+    <mat-icon>fact_check</mat-icon>
+    <p>Sélectionnez une classe pour afficher les cours du jour choisi.</p>
+  </div>
+
+  <div class="spinner-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+  <div class="seances-list" *ngIf="classeId && anneeScolaireId && !loading">
+    <div class="no-seance" *ngIf="seances.length === 0">
+      Aucun cours prévu ce jour-là pour cette classe.
+    </div>
+
+    <div class="seance-row" *ngFor="let s of seances">
+      <div class="seance-heure">{{ s.heureDebut }}–{{ s.heureFin }}</div>
+      <div class="seance-info">
+        <span class="seance-matiere">{{ s.matiereLibelle }}</span>
+        <span class="seance-prof">{{ s.profNomComplet }}</span>
+      </div>
+      <span class="badge-prise" *ngIf="s.presenceEnregistree">
+        <mat-icon>check_circle</mat-icon>
+        Présence prise
+      </span>
+      <button class="btn-prendre" (click)="prendrePresence(s)">
+        <mat-icon>fact_check</mat-icon>
+        {{ s.presenceEnregistree ? 'Modifier la présence' : 'Prendre la présence' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div class="portal-wrapper">
+  <header class="portal-header">
+    <div class="user-welcome">
+      <div class="avatar-circle">{{ userInitial }}</div>
+      <div>
+        <h1>Bonjour, {{ userName }}</h1>
+        <p>Bienvenue sur votre espace professeur.</p>
+      </div>
+    </div>
+    <button mat-flat-button class="logout-btn" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      Déconnexion
+    </button>
+  </header>
+
+  <div class="section">
+    <h2>Mes classes à noter</h2>
+
+    <div class="spinner-wrapper" *ngIf="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && classes.length === 0">
+      <mat-icon>school</mat-icon>
+      <p>Aucune classe ne vous est actuellement attribuée dans l'emploi du temps.</p>
+    </div>
+
+    <div class="classes-grid" *ngIf="!loading && classes.length > 0">
+      <mat-card class="classe-card" *ngFor="let item of classes" (click)="ouvrirSaisie(item)">
+        <div class="icon-bg"><mat-icon>menu_book</mat-icon></div>
+        <div class="text-content">
+          <h3>{{ item.matiereLibelle }}</h3>
+          <p>{{ item.classeLibelle }}</p>
+        </div>
+        <mat-icon class="arrow">chevron_right</mat-icon>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -83,7 +83,7 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
   dataSource = new MatTableDataSource<Eleve>([]);
   loading = false;
 
-  classes: Classe[] = [];
+  classes: (Classe | { id: null; libelle: string; code: string })[] = [];
   classeId: number | null = null;
 
   // Pagination et recherche
@@ -112,7 +112,8 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loadClasses(): void {
     this.classeService.getAll(1, 100).subscribe((res: any) => {
-      this.classes = res.data ?? (Array.isArray(res) ? res : []);
+      const list = res.data ?? (Array.isArray(res) ? res : []);
+      this.classes = [{ id: null, libelle: 'Toutes les classes', code: '' }, ...list];
     });
   }
 

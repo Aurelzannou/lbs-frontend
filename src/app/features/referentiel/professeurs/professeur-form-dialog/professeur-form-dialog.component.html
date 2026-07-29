@@ -74,12 +74,30 @@
         </div>
 
         <div class="rfm-row">
-          <div class="rfm-field">
-            <span class="rfm-label">Matricule / Code</span>
-            <mat-form-field appearance="outline">
-              <mat-icon matPrefix>tag</mat-icon>
-              <input matInput formControlName="code" placeholder="Ex: PROF-001" />
-            </mat-form-field>
+          <div class="rfm-select">
+            <span class="rfm-label">Matières enseignées</span>
+            <ng-select
+              [items]="matieres"
+              bindLabel="libelle"
+              bindValue="id"
+              [multiple]="true"
+              formControlName="matiereIds"
+              placeholder="Sélectionner une ou plusieurs matières..."
+            >
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="rfm-row" *ngIf="isEdit">
+          <div class="rfm-toggle">
+            <span class="rfm-label" style="margin: 0">
+              {{
+                form.get('actif')?.value
+                  ? 'Professeur actif (peut être affecté à des cours)'
+                  : 'Professeur inactif (ne peut plus être affecté à de nouveaux cours)'
+              }}
+            </span>
+            <mat-slide-toggle formControlName="actif" color="primary"></mat-slide-toggle>
           </div>
         </div>
       </form>

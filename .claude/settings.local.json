@@ -38,7 +38,26 @@
       "Bash(powershell -Command \"Get-Process -Id 19916 | Select-Object Id,StartTime,Path\")",
       "Bash(powershell -Command \"Get-Process -Id 22852 | Select-Object Id,ProcessName,StartTime,Path\")",
       "Bash(powershell -Command \"Get-Process java -ErrorAction SilentlyContinue | Select-Object Id,StartTime,Path\")",
-      "Bash(powershell -Command \"Get-CimInstance Win32_Process -Filter \\\\\"ProcessId=11904 or ProcessId=12052\\\\\" | Select-Object ProcessId,CommandLine\")"
+      "Bash(powershell -Command \"Get-CimInstance Win32_Process -Filter \\\\\"ProcessId=11904 or ProcessId=12052\\\\\" | Select-Object ProcessId,CommandLine\")",
+      "mcp__visualize__read_me",
+      "mcp__visualize__show_widget",
+      "Bash(ls -la \"/c/Users/di/Downloads/\" | grep -i \"DETCHOU\")",
+      "Bash(python3 -c \"import xlrd\")",
+      "Bash(python3 -c \"import openpyxl\")",
+      "Bash(npm -v)",
+      "Bash(mkdir -p \"/c/Users/di/AppData/Local/Temp/claude/C--Users-di-Desktop-lbs-frontend/1821279d-48d3-4c27-ba21-6ef20546826a/scratchpad/xls\")",
+      "Read(//c/Users/di/AppData/Local/Temp/claude/C--Users-di-Desktop-lbs-frontend/1821279d-48d3-4c27-ba21-6ef20546826a/scratchpad/**)",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" https://registry.npmjs.org/xlsx --max-time 5)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" https://www.google.com --max-time 5)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" https://unpkg.com/xlsx --max-time 5)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" https://cdn.jsdelivr.net --max-time 5)",
+      "Bash(nslookup registry.npmjs.org)",
+      "PowerShell(try { $excel = New-Object -ComObject Excel.Application; Write-Output \"Excel COM available\"; $excel.Quit\\(\\) } catch { Write-Output \"No Excel COM: $\\($_.Exception.Message\\)\" })",
+      "Bash(find ~/.m2 -iname \"jasperreports*.jar\" 2>/dev/null)",
+      "Bash(jar tf *)",
+      "Bash(unzip -l /c/Users/di/.m2/repository/net/sf/jasperreports/jasperreports-pdf/7.0.1/jasperreports-pdf-7.0.1.jar)"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"

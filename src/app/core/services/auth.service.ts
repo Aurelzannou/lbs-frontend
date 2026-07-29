@@ -243,6 +243,8 @@ export class AuthService {
   public redirectAfterLogin(roles: string[]): void {
     const isTuteur = roles.includes('TUTEUR');
     const isAdmin = roles.includes('ADMIN') || roles.includes('SECRETAIRE');
+    const isProfesseur = roles.includes('PROFESSEUR');
+    const rolesCount = [isTuteur, isAdmin, isProfesseur].filter(Boolean).length;
 
     // Si un profil est déjà sélectionné (ex: refresh), on l'utilise
     const selectedProfile = this.getSelectedProfile();
@@ -251,14 +253,17 @@ export class AuthService {
       return;
     }
 
-    if (isTuteur && !isAdmin) {
-      this.setSelectedProfile('TUTEUR');
-      this.router.navigate(['/portail/dashboard']);
-    } else if (isAdmin && !isTuteur) {
+    if (rolesCount > 1) {
+      this.router.navigate(['/auth/select-profile']);
+    } else if (isAdmin) {
       this.setSelectedProfile('ADMIN');
       this.router.navigate(['/dashboard']);
-    } else if (isTuteur && isAdmin) {
-      this.router.navigate(['/auth/select-profile']);
+    } else if (isProfesseur) {
+      this.setSelectedProfile('PROFESSEUR');
+      this.router.navigate(['/professeur/dashboard']);
+    } else if (isTuteur) {
+      this.setSelectedProfile('TUTEUR');
+      this.router.navigate(['/portail/dashboard']);
     } else {
       // Par défaut si pas de rôle reconnu
       this.setSelectedProfile('TUTEUR');
@@ -277,6 +282,8 @@ export class AuthService {
   private navigateToProfile(profile: string): void {
     if (profile === 'TUTEUR') {
       this.router.navigate(['/portail/dashboard']);
+    } else if (profile === 'PROFESSEUR') {
+      this.router.navigate(['/professeur/dashboard']);
     } else {
       this.router.navigate(['/dashboard']);
     }

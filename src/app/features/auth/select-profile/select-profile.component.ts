@@ -62,6 +62,24 @@ import { AuthService } from '../../../core/services/auth.service';
               </div>
             </div>
           }
+
+          <!-- Carte Professeur -->
+          @if (hasRole('PROFESSEUR')) {
+            <div class="profile-card professeur-theme" (click)="selectProfile('PROFESSEUR')">
+              <div class="card-glass"></div>
+              <div class="icon-container">
+                <mat-icon>school</mat-icon>
+              </div>
+              <div class="card-body">
+                <h3>Portail Professeur</h3>
+                <p>Saisie des notes de vos classes et matières.</p>
+              </div>
+              <div class="card-action">
+                <span>Accéder</span>
+                <mat-icon>chevron_right</mat-icon>
+              </div>
+            </div>
+          }
         </div>
 
         <button mat-button class="logout-action" (click)="logout()">
@@ -271,6 +289,19 @@ import { AuthService } from '../../../core/services/auth.service';
             border-color: rgba(37, 99, 235, 0.3);
           }
         }
+
+        &.professeur-theme {
+          .icon-container {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+          }
+          .card-action {
+            color: #10b981;
+          }
+          &:hover {
+            border-color: rgba(16, 185, 129, 0.3);
+          }
+        }
       }
 
       .logout-action {
@@ -332,7 +363,8 @@ export class ProfileSelectionComponent implements OnInit {
 
     // Si un seul rôle métier après filtrage, on redirige directement
     if (this.roles.length === 1) {
-      this.selectProfile(this.roles[0] === 'TUTEUR' ? 'TUTEUR' : 'ADMIN');
+      const role = this.roles[0];
+      this.selectProfile(role === 'TUTEUR' ? 'TUTEUR' : role === 'PROFESSEUR' ? 'PROFESSEUR' : 'ADMIN');
     }
   }
 
@@ -340,11 +372,13 @@ export class ProfileSelectionComponent implements OnInit {
     return this.roles.includes(role);
   }
 
-  selectProfile(profile: 'TUTEUR' | 'ADMIN') {
+  selectProfile(profile: 'TUTEUR' | 'ADMIN' | 'PROFESSEUR') {
     this.authService.setSelectedProfile(profile);
 
     if (profile === 'TUTEUR') {
       this.router.navigate(['/portail/dashboard']);
+    } else if (profile === 'PROFESSEUR') {
+      this.router.navigate(['/professeur/dashboard']);
     } else {
       this.router.navigate(['/dashboard']);
     }

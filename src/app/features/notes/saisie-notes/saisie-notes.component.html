@@ -1,0 +1,64 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="header-filters">
+      <ng-select
+        [items]="classes"
+        bindLabel="libelle"
+        bindValue="id"
+        [(ngModel)]="classeId"
+        (change)="onSelectionChange()"
+        placeholder="Classe..."
+        [clearable]="false"
+        style="min-width: 200px"
+      ></ng-select>
+      <ng-select
+        [items]="matieres"
+        bindLabel="libelle"
+        bindValue="id"
+        [(ngModel)]="matiereId"
+        (change)="onSelectionChange()"
+        placeholder="Matière..."
+        [clearable]="false"
+        style="min-width: 200px"
+      ></ng-select>
+      <ng-select
+        [items]="periodes"
+        bindLabel="libelle"
+        bindValue="id"
+        [(ngModel)]="periodeId"
+        (change)="onSelectionChange()"
+        placeholder="Période..."
+        [clearable]="false"
+        style="min-width: 200px"
+      ></ng-select>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!feuille && !loading">
+    <mat-icon>edit_note</mat-icon>
+    <p>Sélectionnez une classe, une matière et une période pour saisir les notes.</p>
+  </div>
+
+  <div class="spinner-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+  <div class="feuille-card" *ngIf="feuille && !loading">
+    <div class="readonly-banner" *ngIf="feuille.valide">
+      <mat-icon>lock</mat-icon>
+      <span>Le bulletin de cette classe pour cette période est déjà validé : les notes sont en lecture seule.</span>
+    </div>
+
+    <div class="feuille-header">
+      <h3>{{ feuille.matiereLibelle }} — {{ feuille.classeLibelle }}</h3>
+      <span class="periode-badge">{{ feuille.periodeLibelle }}</span>
+    </div>
+
+    <app-notes-roster-table [eleves]="feuille.eleves" [readonly]="feuille.valide"></app-notes-roster-table>
+
+    <div class="feuille-actions" *ngIf="!feuille.valide">
+      <button class="btn-save" (click)="enregistrer()" [disabled]="saving">
+        <mat-icon>save</mat-icon>
+        {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
+</div>

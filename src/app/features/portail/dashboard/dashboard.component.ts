@@ -6,11 +6,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router, RouterModule } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
 import { TuteurAuthService } from '../../../core/services/tuteur-auth.service';
 import { ValidationService } from '../../../core/services/validation.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PortalEmploiDuTempsDialogComponent } from '../emploi-du-temps-dialog/emploi-du-temps-dialog.component';
+import { PresenceHistoriqueDialogComponent } from '../presence-historique-dialog/presence-historique-dialog.component';
+import { PresenceService } from '../../../core/services/presence.service';
+import { PresenceEnfant } from '../../../core/models/presence.model';
+import { BulletinDialogComponent } from '../bulletin-dialog/bulletin-dialog.component';
 
 @Component({
   selector: 'app-portal-dashboard',
@@ -24,7 +30,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     RouterModule,
     MatProgressSpinnerModule,
     MatInputModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatDialogModule
   ],
   template: `
     <div class="portal-wrapper">
@@ -127,6 +134,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
                 <th>N° Dossier</th>
                 <th>Date dépôt</th>
                 <th>Statut</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -150,6 +158,34 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
                   <span class="statut-badge" [ngClass]="getStatutClass(d.statutLibelle)">
                     {{ d.statutLibelle || 'Déposé' }}
                   </span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button
+                      class="edt-btn"
+                      *ngIf="canVoirEmploiDuTemps(d)"
+                      (click)="voirEmploiDuTemps(d)"
+                    >
+                      <mat-icon>calendar_month</mat-icon>
+                      Emploi du temps
+                    </button>
+                    <button
+                      class="edt-btn presence-btn"
+                      *ngIf="canVoirPresences(d)"
+                      (click)="voirPresences(d)"
+                    >
+                      <mat-icon>fact_check</mat-icon>
+                      Présences
+                    </button>
+                    <button
+                      class="edt-btn bulletin-btn"
+                      *ngIf="canVoirPresences(d)"
+                      (click)="voirBulletins(d)"
+                    >
+                      <mat-icon>description</mat-icon>
+                      Bulletins
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -192,6 +228,30 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
                 <span class="mc-label">Date dépôt</span
                 ><span>{{ d.dateDebut ? (d.dateDebut | date: 'dd/MM/yyyy') : '—' }}</span>
               </div>
+              <button
+                class="edt-btn edt-btn-block"
+                *ngIf="canVoirEmploiDuTemps(d)"
+                (click)="voirEmploiDuTemps(d)"
+              >
+                <mat-icon>calendar_month</mat-icon>
+                Emploi du temps
+              </button>
+              <button
+                class="edt-btn presence-btn edt-btn-block"
+                *ngIf="canVoirPresences(d)"
+                (click)="voirPresences(d)"
+              >
+                <mat-icon>fact_check</mat-icon>
+                Présences
+              </button>
+              <button
+                class="edt-btn bulletin-btn edt-btn-block"
+                *ngIf="canVoirPresences(d)"
+                (click)="voirBulletins(d)"
+              >
+                <mat-icon>description</mat-icon>
+                Bulletins
+              </button>
             </div>
           </div>
         </div>
@@ -605,6 +665,59 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         }
       }
 
+      .edt-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.4rem 0.75rem;
+        border: 1px solid #dbeafe;
+        border-radius: 8px;
+        background: #eff6ff;
+        color: #2563eb;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.15s;
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+        &:hover {
+          background: #dbeafe;
+        }
+      }
+      .edt-btn-block {
+        width: 100%;
+        justify-content: center;
+        margin-top: 0.5rem;
+      }
+
+      .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+
+      .presence-btn {
+        border-color: #ede9fe;
+        background: #f5f3ff;
+        color: #7c3aed;
+        &:hover {
+          background: #ede9fe;
+        }
+      }
+
+      .bulletin-btn {
+        border-color: #dbeafe;
+        background: #eff6ff;
+        color: #2563eb;
+        &:hover {
+          background: #dbeafe;
+        }
+      }
+
       .new-badge {
         font-size: 0.65rem;
         font-weight: 700;
@@ -709,11 +822,14 @@ export class PortalDashboardComponent implements OnInit {
   private keycloakService = inject(KeycloakService);
   private validationService = inject(ValidationService);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
+  private presenceService = inject(PresenceService);
 
   userName = 'Parent';
   userInitial = 'P';
   dossiers: any[] = [];
   dossiersFiltres: any[] = [];
+  presencesEnfants: PresenceEnfant[] = [];
   recherche = '';
   loadingDossiers = false;
   inscriptionSuccess = false;
@@ -737,6 +853,14 @@ export class PortalDashboardComponent implements OnInit {
     }
 
     this.loadDossiers();
+    this.presenceService.getMesEnfants().subscribe({
+      next: (res: any) => {
+        this.presencesEnfants = res.data ?? (Array.isArray(res) ? res : []);
+      },
+      error: () => {
+        // Silencieux : le bouton "Présences" restera juste masqué s'il n'y a pas de données.
+      }
+    });
   }
 
   loadDossiers(): void {
@@ -772,6 +896,51 @@ export class PortalDashboardComponent implements OnInit {
         statut.includes(q) ||
         numero.includes(q)
       );
+    });
+  }
+
+  canVoirEmploiDuTemps(d: any): boolean {
+    return ['ACCEPTE', 'INSCRIT'].includes(d.statutCode) && !!d.classeId && !!d.anneeScolaireId;
+  }
+
+  voirEmploiDuTemps(d: any): void {
+    this.dialog.open(PortalEmploiDuTempsDialogComponent, {
+      width: '720px',
+      data: {
+        classeId: d.classeId,
+        anneeScolaireId: d.anneeScolaireId,
+        classeLibelle: d.classeLibelle,
+        eleveNom: d.eleveNom,
+        elevePrenom: d.elevePrenom
+      },
+      panelClass: 'professional-dialog'
+    });
+  }
+
+  canVoirPresences(d: any): boolean {
+    return ['ACCEPTE', 'INSCRIT'].includes(d.statutCode) && !!d.eleveId;
+  }
+
+  voirPresences(d: any): void {
+    const enfant = this.presencesEnfants.find((e) => e.eleveId === d.eleveId);
+    this.dialog.open(PresenceHistoriqueDialogComponent, {
+      width: '600px',
+      data: {
+        eleveNomComplet: `${d.elevePrenom} ${d.eleveNom}`,
+        historique: enfant?.historique ?? []
+      },
+      panelClass: 'professional-dialog'
+    });
+  }
+
+  voirBulletins(d: any): void {
+    this.dialog.open(BulletinDialogComponent, {
+      width: '520px',
+      data: {
+        eleveId: d.eleveId,
+        eleveNomComplet: `${d.elevePrenom} ${d.eleveNom}`
+      },
+      panelClass: 'professional-dialog'
     });
   }
 

@@ -1,0 +1,185 @@
+.page-wrapper {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-height: 100%;
+}
+
+.page-header {
+  display: flex;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  color: #94a3b8;
+  gap: 0.5rem;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #cbd5e1;
+  }
+}
+
+.spinner-overlay {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.table-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    background: #1e293b;
+    color: white;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.9rem 1rem;
+    text-align: left;
+  }
+
+  td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.9rem;
+  }
+}
+
+.col-classe {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.col-details {
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.text-muted {
+  color: #cbd5e1;
+}
+
+.statut-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  .statut-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &.valide {
+    background: #dcfce7;
+    color: #15803d;
+    .statut-dot {
+      background: #22c55e;
+    }
+  }
+  &.non-valide {
+    background: #f1f5f9;
+    color: #64748b;
+    .statut-dot {
+      background: #94a3b8;
+    }
+  }
+}
+
+.col-actions {
+  white-space: nowrap;
+}
+
+.action-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-valider {
+  background: #dcfce7;
+  color: #15803d;
+  &:hover {
+    background: #bbf7d0;
+  }
+}
+
+.btn-devalider {
+  background: #fee2e2;
+  color: #b91c1c;
+  &:hover {
+    background: #fecaca;
+  }
+}
+
+.btn-pdf {
+  background: #eff6ff;
+  color: #2563eb;
+  &:hover:not(:disabled) {
+    background: #dbeafe;
+  }
+}
+
+.empty-row {
+  text-align: center;
+  color: #94a3b8;
+  padding: 2rem;
+}

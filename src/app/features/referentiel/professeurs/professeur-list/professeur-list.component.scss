@@ -8,6 +8,59 @@
   min-height: 100%;
 }
 
+.matiere-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  max-width: 260px;
+}
+
+.matiere-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #5b21b6;
+  background: #ede9fe;
+  border: 1px solid #e9d5ff;
+  border-radius: 20px;
+  padding: 0.15rem 0.55rem;
+  white-space: nowrap;
+}
+
+.text-muted {
+  color: #94a3b8;
+}
+
+.statut-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  .statut-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &.actif {
+    background: #dcfce7;
+    color: #15803d;
+    .statut-dot {
+      background: #22c55e;
+    }
+  }
+  &.inactif {
+    background: #fee2e2;
+    color: #b91c1c;
+    .statut-dot {
+      background: #ef4444;
+    }
+  }
+}
+
 .toolbar {
   display: flex;
   justify-content: space-between;

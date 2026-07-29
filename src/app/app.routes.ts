@@ -8,6 +8,7 @@ import { EtapeListComponent } from './features/referentiel/etapes/etape-list/eta
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { tuteurGuard } from './core/guards/tuteur.guard';
+import { professeurGuard } from './core/guards/professeur.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -133,6 +134,49 @@ export const routes: Routes = [
           import('./features/referentiel/periodes-inscription/periode-inscription-list/periode-inscription-list.component').then(
             (m) => m.PeriodeInscriptionListComponent
           )
+      },
+      {
+        path: 'periodes-academiques',
+        loadComponent: () =>
+          import('./features/referentiel/periodes-academiques/periode-academique-list/periode-academique-list.component').then(
+            (m) => m.PeriodeAcademiqueListComponent
+          )
+      }
+    ]
+  },
+  {
+    path: 'emploi-du-temps',
+    loadComponent: () =>
+      import('./features/referentiel/emploi-du-temps/emploi-du-temps-list/emploi-du-temps-list.component').then(
+        (m) => m.EmploiDuTempsListComponent
+      ),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'presences',
+    loadComponent: () =>
+      import('./features/scolarite/presences/presence-list/presence-list.component').then(
+        (m) => m.PresenceListComponent
+      ),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'notes',
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'saisie',
+        loadComponent: () =>
+          import('./features/notes/saisie-notes/saisie-notes.component').then(
+            (m) => m.SaisieNotesComponent
+          )
+      },
+      {
+        path: 'validation',
+        loadComponent: () =>
+          import('./features/notes/validation-bulletins/validation-bulletins.component').then(
+            (m) => m.ValidationBulletinsComponent
+          )
       }
     ]
   },
@@ -217,6 +261,28 @@ export const routes: Routes = [
             (m) => m.PortalInscriptionComponent
           ),
         canActivate: [tuteurGuard]
+      }
+    ]
+  },
+  {
+    path: 'professeur',
+    children: [
+      { path: '', redirectTo: '/login', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/professeur/dashboard/dashboard.component').then(
+            (m) => m.ProfesseurDashboardComponent
+          ),
+        canActivate: [professeurGuard]
+      },
+      {
+        path: 'saisie',
+        loadComponent: () =>
+          import('./features/professeur/saisie/saisie.component').then(
+            (m) => m.ProfesseurSaisieComponent
+          ),
+        canActivate: [professeurGuard]
       }
     ]
   },

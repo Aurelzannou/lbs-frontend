@@ -36,8 +36,12 @@
       [clearable]="true"
       style="min-width: 220px"
     >
-      <ng-template ng-option-tmp let-item="item">{{ item.libelle }} ({{ item.code }})</ng-template>
-      <ng-template ng-label-tmp let-item="item">{{ item.libelle }} ({{ item.code }})</ng-template>
+      <ng-template ng-option-tmp let-item="item"
+        >{{ item.libelle }}<ng-container *ngIf="item.code"> ({{ item.code }})</ng-container></ng-template
+      >
+      <ng-template ng-label-tmp let-item="item"
+        >{{ item.libelle }}<ng-container *ngIf="item.code"> ({{ item.code }})</ng-container></ng-template
+      >
     </ng-select>
 
     <!-- Boutons droite -->
