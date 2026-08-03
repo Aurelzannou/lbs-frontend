@@ -11,7 +11,7 @@ export interface Professeur {
   keycloakId?: string;
   matiereIds?: number[];
   matiereLibelles?: string[];
-  motDePasseGenere?: string;
+  compteProvisionneMaintenant?: boolean;
 }
 
 export interface ProfesseurRequest {

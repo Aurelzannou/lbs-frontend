@@ -32,4 +32,8 @@ export class ProfesseurService {
   delete(uuid: string): Observable<void> {
     return this.api.delete<void>(`${this.endpoint}/${uuid}`);
   }
+
+  reinitialiserMotDePasse(uuid: string): Observable<void> {
+    return this.api.put<void>(`${this.endpoint}/${uuid}/reinitialiser-mot-de-passe`, {});
+  }
 }

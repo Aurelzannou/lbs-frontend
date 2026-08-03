@@ -184,6 +184,21 @@ export class ProfesseurListComponent implements OnInit, OnDestroy, AfterViewInit
       });
   }
 
+  async reinitialiserMotDePasse(professeur: Professeur): Promise<void> {
+    const confirmed = await this.notification.confirm(
+      `Envoyer un nouveau lien d'activation à ${professeur.nom} ${professeur.prenom} (${professeur.email}) pour qu'il redéfinisse son mot de passe ?`,
+      "Réinitialiser l'accès"
+    );
+    if (!confirmed) return;
+
+    this.professeurService.reinitialiserMotDePasse(professeur.uuid!).subscribe({
+      next: () => {
+        this.notification.success(`Lien d'activation envoyé par email à ${professeur.email}`);
+      },
+      error: (err) => this.notification.error(err)
+    });
+  }
+
   async deleteProfesseur(professeur: Professeur): Promise<void> {
     const confirmed = await this.notification.confirm(
       `Souhaitez-vous vraiment supprimer le professeur ${professeur.nom} ${professeur.prenom} ?`

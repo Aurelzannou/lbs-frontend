@@ -57,7 +57,16 @@
       "PowerShell(try { $excel = New-Object -ComObject Excel.Application; Write-Output \"Excel COM available\"; $excel.Quit\\(\\) } catch { Write-Output \"No Excel COM: $\\($_.Exception.Message\\)\" })",
       "Bash(find ~/.m2 -iname \"jasperreports*.jar\" 2>/dev/null)",
       "Bash(jar tf *)",
-      "Bash(unzip -l /c/Users/di/.m2/repository/net/sf/jasperreports/jasperreports-pdf/7.0.1/jasperreports-pdf-7.0.1.jar)"
+      "Bash(unzip -l /c/Users/di/.m2/repository/net/sf/jasperreports/jasperreports-pdf/7.0.1/jasperreports-pdf-7.0.1.jar)",
+      "Bash(ls -la '/c/Users/di/.claude/projects/C--Users-di-Desktop-lbs-frontend/memory/')",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:15672 --max-time 3)",
+      "Bash(curl -s -u lbs_user:lbs_password http://localhost:15672/api/queues --max-time 5)",
+      "Bash(curl -s -u guest:guest http://localhost:15672/api/queues --max-time 5)",
+      "Bash(curl -s -u lbs_user:lbs_password http://localhost:15673/api/queues --max-time 5)",
+      "Bash(curl -s http://localhost:1081/email --max-time 5)",
+      "Bash(xargs grep -l \"MAIL_PASSWORD\")",
+      "Bash(env)",
+      "Bash(curl -s -u lbs_user:lbs_password \"http://localhost:15673/api/queues/%2F/lbs.professeur.credentials.queue\" --max-time 5)"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"

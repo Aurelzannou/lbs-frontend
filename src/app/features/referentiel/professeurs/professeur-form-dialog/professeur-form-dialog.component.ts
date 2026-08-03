@@ -104,10 +104,13 @@ export class ProfesseurFormDialogComponent implements OnInit {
           : this.professeurService.create(val);
 
       obs.subscribe({
-        next: async (professeur) => {
+        next: (professeur) => {
           this.notification.success(this.isEdit ? 'Professeur mis à jour' : 'Professeur créé');
-          if (professeur?.motDePasseGenere && professeur.email) {
-            await this.notification.showCredentials(professeur.email, professeur.motDePasseGenere);
+          if (professeur?.compteProvisionneMaintenant && professeur.email) {
+            this.notification.success(
+              `Un email d'activation a été envoyé à ${professeur.email} pour qu'il choisisse son mot de passe.`,
+              'Compte professeur créé'
+            );
           }
           this.dialogRef.close(true);
         },

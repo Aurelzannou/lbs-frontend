@@ -16,6 +16,13 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   {
+    path: 'activer-compte',
+    loadComponent: () =>
+      import('./features/auth/activer-compte/activer-compte.component').then(
+        (m) => m.ActiverCompteComponent
+      )
+  },
+  {
     path: 'auth/select-profile',
     loadComponent: () =>
       import('./features/auth/select-profile/select-profile.component').then(
