@@ -8,13 +8,17 @@ import {
   inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { PeriodeAcademiqueService } from '../../../../core/services/periode-academique.service';
+import { AnneeScolaireService } from '../../../../core/services/annee-scolaire.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { PeriodeAcademique } from '../../../../core/models/periode-academique.model';
+import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
 import { PeriodeAcademiqueFormDialogComponent } from '../periode-academique-form-dialog/periode-academique-form-dialog.component';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -32,6 +36,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
@@ -42,7 +47,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatInputModule,
     MatFormFieldModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
+    NgSelectModule
   ],
   animations: [
     trigger('rowsAnimation', [
@@ -57,13 +63,17 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class PeriodeAcademiqueListComponent implements OnInit, OnDestroy, AfterViewInit {
   private periodeService = inject(PeriodeAcademiqueService);
+  private anneeService = inject(AnneeScolaireService);
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns: string[] = ['anneeScolaire', 'code', 'libelle', 'dates', 'actions'];
+  displayedColumns: string[] = ['anneeScolaire', 'code', 'libelle', 'dates', 'statut', 'actions'];
   dataSource = new MatTableDataSource<PeriodeAcademique>([]);
   loading = false;
+
+  annees: AnneeScolaire[] = [];
+  anneeScolaireId: number | null = null;
 
   totalElements = 0;
   pageIndex = 0;
@@ -84,6 +94,20 @@ export class PeriodeAcademiqueListComponent implements OnInit, OnDestroy, AfterV
         this.pageIndex = 0;
         this.refresh();
       });
+
+    // L'année scolaire active est sélectionnée par défaut ; l'utilisateur reste libre
+    // de basculer sur une autre année ou de choisir "Toutes les années".
+    this.anneeService.getAll(0, 100).subscribe((res: any) => {
+      const page = res.data ?? res;
+      this.annees = page.data ?? (Array.isArray(page) ? page : []);
+      const active = this.annees.find((a) => a.actif);
+      this.anneeScolaireId = active?.id ?? null;
+      this.refresh();
+    });
+  }
+
+  onAnneeChange(): void {
+    this.pageIndex = 0;
     this.refresh();
   }
 
@@ -109,7 +133,9 @@ export class PeriodeAcademiqueListComponent implements OnInit, OnDestroy, AfterV
 
   refresh(): void {
     this.loading = true;
-    this.periodeService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
+    this.periodeService
+      .getAll(this.pageIndex + 1, this.pageSize, this.searchTerm, this.anneeScolaireId)
+      .subscribe({
       next: (response: any) => {
         const items = response.data || (Array.isArray(response) ? response : []);
         const meta = response.meta || {};
@@ -170,10 +196,23 @@ export class PeriodeAcademiqueListComponent implements OnInit, OnDestroy, AfterV
     return this.pageIndex >= this.totalPages - 1;
   }
 
+  statutLabel(statut?: string): string {
+    switch (statut) {
+      case 'EN_COURS':
+        return 'En cours';
+      case 'TERMINEE':
+        return 'Terminée';
+      case 'A_VENIR':
+        return 'À venir';
+      default:
+        return '—';
+    }
+  }
+
   openForm(periode?: PeriodeAcademique): void {
     this.dialog
       .open(PeriodeAcademiqueFormDialogComponent, {
-        width: '500px',
+        width: '600px',
         maxWidth: '95vw',
         data: periode,
         panelClass: 'professional-dialog'

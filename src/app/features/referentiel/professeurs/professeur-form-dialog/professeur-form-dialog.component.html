@@ -88,6 +88,24 @@
           </div>
         </div>
 
+        <div class="rfm-row">
+          <div class="rfm-select">
+            <span class="rfm-label">Classes affectées</span>
+            <ng-select
+              [items]="classes"
+              bindLabel="libelle"
+              bindValue="id"
+              [multiple]="true"
+              formControlName="classeIds"
+              placeholder="Sélectionner une ou plusieurs classes..."
+            >
+            </ng-select>
+            <div class="rfm-hint">
+              Le professeur pourra saisir les notes de ses matières dans ces classes, à tout moment.
+            </div>
+          </div>
+        </div>
+
         <div class="rfm-row" *ngIf="isEdit">
           <div class="rfm-toggle">
             <span class="rfm-label" style="margin: 0">

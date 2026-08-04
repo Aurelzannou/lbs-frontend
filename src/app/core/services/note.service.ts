@@ -27,8 +27,7 @@ export class NoteService {
     return this.api.put<FeuilleSaisieNotes>(`${this.endpoint}/feuille`, payload);
   }
 
-  getMesClasses(anneeScolaireId: number): Observable<ClasseMatiereANoter[]> {
-    const params = new HttpParams().set('anneeScolaireId', anneeScolaireId.toString());
-    return this.api.get<ClasseMatiereANoter[]>(`${this.endpoint}/mes-classes`, params);
+  getMesClasses(): Observable<ClasseMatiereANoter[]> {
+    return this.api.get<ClasseMatiereANoter[]>(`${this.endpoint}/mes-classes`);
   }
 }

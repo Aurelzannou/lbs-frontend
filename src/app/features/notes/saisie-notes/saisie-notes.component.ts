@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,7 +21,7 @@ import { NotesRosterTableComponent } from '../notes-roster-table/notes-roster-ta
   templateUrl: './saisie-notes.component.html',
   styleUrl: './saisie-notes.component.scss'
 })
-export class SaisieNotesComponent implements OnInit {
+export class SaisieNotesComponent implements OnInit, OnDestroy {
   private noteService = inject(NoteService);
   private classeService = inject(ClasseService);
   private matiereService = inject(MatiereService);
@@ -74,6 +74,20 @@ export class SaisieNotesComponent implements OnInit {
     });
   }
 
+  private construirePayload(): any {
+    return {
+      classeId: this.classeId,
+      matiereId: this.matiereId,
+      periodeId: this.periodeId,
+      eleves: this.feuille!.eleves.map((el) => ({
+        eleveId: el.eleveId,
+        interrogations: el.interrogations ?? [],
+        devoir1: el.devoir1 ?? null,
+        devoir2: el.devoir2 ?? null
+      }))
+    };
+  }
+
   async enregistrer(): Promise<void> {
     if (!this.feuille || !this.classeId || !this.matiereId || !this.periodeId) return;
 
@@ -84,19 +98,7 @@ export class SaisieNotesComponent implements OnInit {
     if (!confirmed) return;
 
     this.saving = true;
-    const payload = {
-      classeId: this.classeId,
-      matiereId: this.matiereId,
-      periodeId: this.periodeId,
-      eleves: this.feuille.eleves.map((el) => ({
-        eleveId: el.eleveId,
-        interrogation: el.interrogation ?? null,
-        devoir1: el.devoir1 ?? null,
-        devoir2: el.devoir2 ?? null
-      }))
-    };
-
-    this.noteService.enregistrerFeuille(payload).subscribe({
+    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe({
       next: (res: any) => {
         this.feuille = res.data ?? res;
         this.notification.success('Notes enregistrées');
@@ -107,5 +109,10 @@ export class SaisieNotesComponent implements OnInit {
         this.saving = false;
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (!this.feuille || this.feuille.valide || !this.classeId || !this.matiereId || !this.periodeId) return;
+    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe();
   }
 }

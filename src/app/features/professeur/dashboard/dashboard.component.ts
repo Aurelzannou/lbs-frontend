@@ -6,7 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
 import { AuthService } from '../../../core/services/auth.service';
-import { AnneeScolaireService } from '../../../core/services/annee-scolaire.service';
 import { NoteService } from '../../../core/services/note.service';
 import { ClasseMatiereANoter } from '../../../core/models/note.model';
 
@@ -20,7 +19,6 @@ import { ClasseMatiereANoter } from '../../../core/models/note.model';
 export class ProfesseurDashboardComponent implements OnInit {
   private authService = inject(AuthService);
   private keycloakService = inject(KeycloakService);
-  private anneeService = inject(AnneeScolaireService);
   private noteService = inject(NoteService);
   private router = inject(Router);
 
@@ -41,20 +39,10 @@ export class ProfesseurDashboardComponent implements OnInit {
     }
 
     this.loading = true;
-    this.anneeService.getAnneeCourante().subscribe({
-      next: (res: any) => {
-        const annee = res?.data ?? res;
-        if (annee?.id) {
-          this.noteService.getMesClasses(annee.id).subscribe({
-            next: (r: any) => {
-              this.classes = r.data ?? (Array.isArray(r) ? r : []);
-              this.loading = false;
-            },
-            error: () => (this.loading = false)
-          });
-        } else {
-          this.loading = false;
-        }
+    this.noteService.getMesClasses().subscribe({
+      next: (r: any) => {
+        this.classes = r.data ?? (Array.isArray(r) ? r : []);
+        this.loading = false;
       },
       error: () => (this.loading = false)
     });

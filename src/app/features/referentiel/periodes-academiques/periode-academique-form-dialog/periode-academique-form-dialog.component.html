@@ -50,17 +50,7 @@
           </div>
         </div>
 
-        <div class="rfm-row two-cols">
-          <div class="rfm-field">
-            <span class="rfm-label">Code</span>
-            <mat-form-field appearance="outline">
-              <mat-icon matPrefix>tag</mat-icon>
-              <input matInput formControlName="code" placeholder="Ex: TRIM1" />
-            </mat-form-field>
-            <div class="rfm-error" *ngIf="form.get('code')?.invalid && form.get('code')?.touched">
-              Obligatoire
-            </div>
-          </div>
+        <div class="rfm-row">
           <div class="rfm-field">
             <span class="rfm-label">Libellé</span>
             <mat-form-field appearance="outline">

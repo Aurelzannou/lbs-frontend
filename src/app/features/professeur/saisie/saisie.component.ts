@@ -1,10 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { NgSelectModule } from '@ng-select/ng-select';
 import { NoteService } from '../../../core/services/note.service';
 import { PeriodeAcademiqueService } from '../../../core/services/periode-academique.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -20,13 +19,12 @@ import { NotesRosterTableComponent } from '../../notes/notes-roster-table/notes-
     FormsModule,
     MatIconModule,
     MatButtonModule,
-    NgSelectModule,
     NotesRosterTableComponent
   ],
   templateUrl: './saisie.component.html',
   styleUrl: './saisie.component.scss'
 })
-export class ProfesseurSaisieComponent implements OnInit {
+export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private noteService = inject(NoteService);
@@ -51,13 +49,16 @@ export class ProfesseurSaisieComponent implements OnInit {
       return;
     }
 
+    // Le professeur ne peut saisir que la période en cours (l'admin, lui, garde accès à
+    // toutes les périodes depuis son propre écran).
     this.periodeService.getAll(1, 50).subscribe((res: any) => {
-      this.periodes = res.data ?? (Array.isArray(res) ? res : []);
+      const toutes = res.data ?? (Array.isArray(res) ? res : []);
+      this.periodes = toutes.filter((p: PeriodeAcademique) => p.statut === 'EN_COURS');
+      if (this.periodes.length === 1) {
+        this.periodeId = this.periodes[0].id!;
+        this.refresh();
+      }
     });
-  }
-
-  onPeriodeChange(): void {
-    this.refresh();
   }
 
   refresh(): void {
@@ -78,6 +79,20 @@ export class ProfesseurSaisieComponent implements OnInit {
     });
   }
 
+  private construirePayload(): any {
+    return {
+      classeId: this.classeId,
+      matiereId: this.matiereId,
+      periodeId: this.periodeId,
+      eleves: this.feuille!.eleves.map((el) => ({
+        eleveId: el.eleveId,
+        interrogations: el.interrogations ?? [],
+        devoir1: el.devoir1 ?? null,
+        devoir2: el.devoir2 ?? null
+      }))
+    };
+  }
+
   async enregistrer(): Promise<void> {
     if (!this.feuille || !this.periodeId) return;
 
@@ -88,19 +103,7 @@ export class ProfesseurSaisieComponent implements OnInit {
     if (!confirmed) return;
 
     this.saving = true;
-    const payload = {
-      classeId: this.classeId,
-      matiereId: this.matiereId,
-      periodeId: this.periodeId,
-      eleves: this.feuille.eleves.map((el) => ({
-        eleveId: el.eleveId,
-        interrogation: el.interrogation ?? null,
-        devoir1: el.devoir1 ?? null,
-        devoir2: el.devoir2 ?? null
-      }))
-    };
-
-    this.noteService.enregistrerFeuille(payload).subscribe({
+    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe({
       next: (res: any) => {
         this.feuille = res.data ?? res;
         this.notification.success('Notes enregistrées');
@@ -115,5 +118,10 @@ export class ProfesseurSaisieComponent implements OnInit {
 
   retour(): void {
     this.router.navigate(['/professeur/dashboard']);
+  }
+
+  ngOnDestroy(): void {
+    if (!this.feuille || this.feuille.valide || !this.periodeId) return;
+    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe();
   }
 }

@@ -3,21 +3,18 @@
     <button mat-icon-button (click)="retour()">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <ng-select
-      [items]="periodes"
-      bindLabel="libelle"
-      bindValue="id"
-      [(ngModel)]="periodeId"
-      (change)="onPeriodeChange()"
-      placeholder="Sélectionner une période..."
-      [clearable]="false"
-      style="min-width: 240px"
-    ></ng-select>
+    <div class="periode-actuelle" *ngIf="periodes.length > 0">
+      <mat-icon>event_available</mat-icon>
+      <span>{{ periodes[0].libelle }} <em>— période en cours</em></span>
+    </div>
   </header>
 
-  <div class="empty-state" *ngIf="!feuille && !loading">
-    <mat-icon>edit_note</mat-icon>
-    <p>Sélectionnez une période pour saisir les notes.</p>
+  <div class="empty-state" *ngIf="periodes.length === 0 && !loading">
+    <mat-icon>event_busy</mat-icon>
+    <p>
+      Aucune période n'est en cours actuellement.<br />
+      La saisie des notes n'est possible que pendant une période active.
+    </p>
   </div>
 
   <div class="spinner-overlay" *ngIf="loading"><div class="spinner"></div></div>
@@ -33,7 +30,11 @@
       <span class="periode-badge">{{ feuille.periodeLibelle }}</span>
     </div>
 
-    <app-notes-roster-table [eleves]="feuille.eleves" [readonly]="feuille.valide"></app-notes-roster-table>
+    <app-notes-roster-table
+      [eleves]="feuille.eleves"
+      [(nombreInterrogations)]="feuille.nombreInterrogations"
+      [readonly]="feuille.valide"
+    ></app-notes-roster-table>
 
     <div class="feuille-actions" *ngIf="!feuille.valide">
       <button class="btn-save" (click)="enregistrer()" [disabled]="saving">

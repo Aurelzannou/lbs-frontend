@@ -1,12 +1,36 @@
 <div class="roster-wrapper">
-  <div class="roster-search">
-    <mat-icon>search</mat-icon>
-    <input
-      type="text"
-      [(ngModel)]="recherche"
-      placeholder="Rechercher un élève..."
-      [disabled]="eleves.length === 0"
-    />
+  <div class="roster-toolbar">
+    <div class="roster-search">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        [(ngModel)]="recherche"
+        placeholder="Rechercher un élève..."
+        [disabled]="eleves.length === 0"
+      />
+    </div>
+
+    <div class="interro-actions" *ngIf="!readonly">
+      <button
+        type="button"
+        class="btn-interro"
+        (click)="ajouterInterrogation()"
+        [disabled]="nombreInterrogations >= maxInterrogations"
+        matTooltip="Maximum {{ maxInterrogations }} interrogations"
+      >
+        <mat-icon>add</mat-icon>
+        Ajouter une interrogation
+      </button>
+      <button
+        type="button"
+        class="btn-interro btn-remove"
+        (click)="supprimerDerniereInterrogation()"
+        [disabled]="nombreInterrogations <= 1"
+        matTooltip="Retirer la dernière colonne d'interrogation"
+      >
+        <mat-icon>remove</mat-icon>
+      </button>
+    </div>
   </div>
 
   <div class="roster-table-wrapper">
@@ -14,7 +38,7 @@
       <thead>
         <tr>
           <th class="col-eleve">Élève</th>
-          <th class="col-note">Interrogation</th>
+          <th class="col-note" *ngFor="let i of interrogationIndices">Interrogation {{ i + 1 }}</th>
           <th class="col-note">1er Devoir</th>
           <th class="col-note">2e Devoir</th>
           <th class="col-moyenne">Moyenne</th>
@@ -23,13 +47,13 @@
       <tbody>
         <tr *ngFor="let el of elevesFiltres">
           <td class="col-eleve">{{ el.nom }} {{ el.prenom }}</td>
-          <td class="col-note">
+          <td class="col-note" *ngFor="let i of interrogationIndices">
             <input
               type="number"
               min="0"
               max="20"
               step="0.25"
-              [(ngModel)]="el.interrogation"
+              [(ngModel)]="el.interrogations[i]"
               (ngModelChange)="onValeurChange(el)"
               [disabled]="readonly"
             />
@@ -64,7 +88,7 @@
           </td>
         </tr>
         <tr *ngIf="eleves.length === 0">
-          <td colspan="5" class="empty-row">Aucun élève dans cette classe.</td>
+          <td [attr.colspan]="4 + nombreInterrogations" class="empty-row">Aucun élève dans cette classe.</td>
         </tr>
       </tbody>
     </table>

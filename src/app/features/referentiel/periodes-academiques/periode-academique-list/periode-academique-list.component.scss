@@ -47,6 +47,10 @@
   }
 }
 
+.annee-filter {
+  min-width: 220px;
+}
+
 .toolbar-actions {
   display: flex;
   gap: 0.75rem;
@@ -138,6 +142,28 @@
   font-weight: 600;
   font-size: 0.75rem;
   font-family: 'JetBrains Mono', monospace;
+}
+
+.statut-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &.en_cours {
+    background: #ecfdf5;
+    color: #059669;
+  }
+  &.a_venir {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+  &.terminee {
+    background: #f1f5f9;
+    color: #64748b;
+  }
 }
 
 .date-range {

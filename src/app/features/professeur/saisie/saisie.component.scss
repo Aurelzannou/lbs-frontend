@@ -17,6 +17,28 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
+.periode-actuelle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #059669;
+  font-weight: 600;
+  font-size: 0.95rem;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  em {
+    color: #64748b;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 0.85rem;
+  }
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -127,5 +149,34 @@
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+}
+
+@media (max-width: 640px) {
+  .portal-wrapper {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .portal-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .feuille-card {
+    padding: 1rem 0.75rem;
+  }
+
+  .feuille-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    h3 {
+      font-size: 1rem;
+    }
+  }
+
+  .btn-save {
+    width: 100%;
+    justify-content: center;
   }
 }

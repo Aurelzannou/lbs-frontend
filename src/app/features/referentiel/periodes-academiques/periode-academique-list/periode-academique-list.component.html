@@ -23,6 +23,19 @@
       />
     </div>
 
+    <div class="rfm-select annee-filter">
+      <ng-select
+        [items]="annees"
+        bindLabel="code"
+        bindValue="id"
+        [(ngModel)]="anneeScolaireId"
+        (change)="onAnneeChange()"
+        placeholder="Toutes les années"
+        [clearable]="true"
+        appendTo="body"
+      ></ng-select>
+    </div>
+
     <div class="toolbar-actions">
       <button class="btn-refresh" (click)="refresh()" title="Actualiser">
         <svg
@@ -91,6 +104,15 @@
               <span class="date-separator">→</span>
               <span class="date-tag end">{{ row.dateFin | date: 'dd/MM/yyyy' }}</span>
             </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="statut">
+          <th mat-header-cell *matHeaderCellDef>Statut</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="statut-badge" [ngClass]="row.statut?.toLowerCase()">
+              {{ statutLabel(row.statut) }}
+            </span>
           </td>
         </ng-container>
 

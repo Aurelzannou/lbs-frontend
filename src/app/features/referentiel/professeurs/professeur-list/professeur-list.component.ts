@@ -61,7 +61,7 @@ export class ProfesseurListComponent implements OnInit, OnDestroy, AfterViewInit
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns: string[] = ['identite', 'telephone', 'email', 'matieres', 'statut', 'actions'];
+  displayedColumns: string[] = ['identite', 'telephone', 'email', 'matieres', 'classes', 'statut', 'actions'];
   dataSource = new MatTableDataSource<Professeur>([]);
   loading = false;
 

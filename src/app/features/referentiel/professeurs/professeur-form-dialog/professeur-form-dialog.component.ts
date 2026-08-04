@@ -4,10 +4,12 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { ProfesseurService } from '../../../../core/services/professeur.service';
 import { MatiereService } from '../../../../core/services/matiere.service';
+import { ClasseService } from '../../../../core/services/classe.service';
 import { EmploiDuTempsService } from '../../../../core/services/emploi-du-temps.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Professeur } from '../../../../core/models/professeur.model';
 import { Matiere } from '../../../../core/models/matiere.model';
+import { Classe } from '../../../../core/models/classe.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -40,6 +42,7 @@ export class ProfesseurFormDialogComponent implements OnInit {
   public data = inject<Professeur | undefined>(MAT_DIALOG_DATA);
   private professeurService = inject(ProfesseurService);
   private matiereService = inject(MatiereService);
+  private classeService = inject(ClasseService);
   private emploiDuTempsService = inject(EmploiDuTempsService);
   private notification = inject(NotificationService);
 
@@ -47,12 +50,16 @@ export class ProfesseurFormDialogComponent implements OnInit {
   saving = false;
   isEdit = false;
   matieres: Matiere[] = [];
+  classes: Classe[] = [];
 
   ngOnInit(): void {
     this.isEdit = !!this.data;
     this.initForm();
     this.matiereService.getAll(1, 100).subscribe((res: any) => {
       this.matieres = res.data ?? (Array.isArray(res) ? res : []);
+    });
+    this.classeService.getAll(1, 100).subscribe((res: any) => {
+      this.classes = res.data ?? (Array.isArray(res) ? res : []);
     });
   }
 
@@ -63,7 +70,8 @@ export class ProfesseurFormDialogComponent implements OnInit {
       num: [this.data?.num || ''],
       email: [this.data?.email || '', [Validators.email]],
       actif: [this.data?.actif ?? true],
-      matiereIds: [this.data?.matiereIds || []]
+      matiereIds: [this.data?.matiereIds || []],
+      classeIds: [this.data?.classeIds || []]
     });
   }
 

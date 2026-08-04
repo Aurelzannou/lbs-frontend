@@ -2,9 +2,10 @@ export interface EleveNoteDto {
   eleveId: number;
   nom: string;
   prenom: string;
-  interrogation?: number | null;
+  interrogations: (number | null)[];
   devoir1?: number | null;
   devoir2?: number | null;
+  moyenneInterrogations?: number | null;
   moyenne?: number | null;
 }
 
@@ -16,12 +17,13 @@ export interface FeuilleSaisieNotes {
   periodeId: number;
   periodeLibelle: string;
   valide: boolean;
+  nombreInterrogations: number;
   eleves: EleveNoteDto[];
 }
 
 export interface EleveNoteEntry {
   eleveId: number;
-  interrogation?: number | null;
+  interrogations?: (number | null)[];
   devoir1?: number | null;
   devoir2?: number | null;
 }

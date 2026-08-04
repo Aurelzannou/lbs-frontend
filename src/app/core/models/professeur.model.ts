@@ -11,6 +11,8 @@ export interface Professeur {
   keycloakId?: string;
   matiereIds?: number[];
   matiereLibelles?: string[];
+  classeIds?: number[];
+  classeLibelles?: string[];
   compteProvisionneMaintenant?: boolean;
 }
 
@@ -23,4 +25,5 @@ export interface ProfesseurRequest {
   num?: string;
   actif?: boolean;
   matiereIds?: number[];
+  classeIds?: number[];
 }

@@ -2,6 +2,7 @@
   <div class="page-header">
     <div class="header-filters">
       <ng-select
+        class="filter-select"
         [items]="classes"
         bindLabel="libelle"
         bindValue="id"
@@ -9,9 +10,9 @@
         (change)="onSelectionChange()"
         placeholder="Classe..."
         [clearable]="false"
-        style="min-width: 200px"
       ></ng-select>
       <ng-select
+        class="filter-select"
         [items]="matieres"
         bindLabel="libelle"
         bindValue="id"
@@ -19,9 +20,9 @@
         (change)="onSelectionChange()"
         placeholder="Matière..."
         [clearable]="false"
-        style="min-width: 200px"
       ></ng-select>
       <ng-select
+        class="filter-select"
         [items]="periodes"
         bindLabel="libelle"
         bindValue="id"
@@ -29,7 +30,6 @@
         (change)="onSelectionChange()"
         placeholder="Période..."
         [clearable]="false"
-        style="min-width: 200px"
       ></ng-select>
     </div>
   </div>
@@ -52,7 +52,11 @@
       <span class="periode-badge">{{ feuille.periodeLibelle }}</span>
     </div>
 
-    <app-notes-roster-table [eleves]="feuille.eleves" [readonly]="feuille.valide"></app-notes-roster-table>
+    <app-notes-roster-table
+      [eleves]="feuille.eleves"
+      [(nombreInterrogations)]="feuille.nombreInterrogations"
+      [readonly]="feuille.valide"
+    ></app-notes-roster-table>
 
     <div class="feuille-actions" *ngIf="!feuille.valide">
       <button class="btn-save" (click)="enregistrer()" [disabled]="saving">

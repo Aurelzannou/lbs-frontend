@@ -101,6 +101,17 @@
           </td>
         </ng-container>
 
+        <!-- Classes Column -->
+        <ng-container matColumnDef="classes">
+          <th mat-header-cell *matHeaderCellDef>Classes</th>
+          <td mat-cell *matCellDef="let row">
+            <div class="classe-badges" *ngIf="row.classeLibelles?.length; else noClasse">
+              <span class="classe-badge" *ngFor="let c of row.classeLibelles">{{ c }}</span>
+            </div>
+            <ng-template #noClasse><span class="text-muted">—</span></ng-template>
+          </td>
+        </ng-container>
+
         <!-- Statut Column -->
         <ng-container matColumnDef="statut">
           <th mat-header-cell *matHeaderCellDef>Statut</th>

@@ -58,7 +58,6 @@ export class PeriodeAcademiqueFormDialogComponent implements OnInit {
         this.data?.anneeScolaireId || this.data?.anneeScolaire?.id || null,
         [Validators.required]
       ],
-      code: [this.data?.code || '', [Validators.required, Validators.maxLength(20)]],
       libelle: [this.data?.libelle || '', [Validators.required]],
       dateDebut: [
         this.data?.dateDebut ? new Date(this.data.dateDebut) : null,

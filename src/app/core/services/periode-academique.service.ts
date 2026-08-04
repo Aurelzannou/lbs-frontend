@@ -11,9 +11,15 @@ export class PeriodeAcademiqueService {
   private api = inject(ApiService);
   private readonly endpoint = '/api/periodes-academiques';
 
-  getAll(page: number = 0, size: number = 25, filter: string = ''): Observable<any> {
+  getAll(
+    page: number = 0,
+    size: number = 25,
+    filter: string = '',
+    anneeScolaireId?: number | null
+  ): Observable<any> {
     let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
     if (filter) params = params.set('filter', filter);
+    if (anneeScolaireId) params = params.set('anneeScolaireId', anneeScolaireId.toString());
     return this.api.get<any>(this.endpoint, params);
   }
 

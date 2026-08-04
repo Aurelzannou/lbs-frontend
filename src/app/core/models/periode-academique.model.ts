@@ -10,6 +10,7 @@ export interface PeriodeAcademique {
   dateDebut?: string;
   dateFin?: string;
   verrouille?: boolean;
+  statut?: 'A_VENIR' | 'EN_COURS' | 'TERMINEE';
 }
 
 export interface PeriodeAcademiqueRequest {

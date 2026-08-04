@@ -26,6 +26,24 @@
   white-space: nowrap;
 }
 
+.classe-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  max-width: 220px;
+}
+
+.classe-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #0e7490;
+  background: #cffafe;
+  border: 1px solid #a5f3fc;
+  border-radius: 20px;
+  padding: 0.15rem 0.55rem;
+  white-space: nowrap;
+}
+
 .text-muted {
   color: #94a3b8;
 }
