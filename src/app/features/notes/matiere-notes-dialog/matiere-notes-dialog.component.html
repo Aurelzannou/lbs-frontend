@@ -1,0 +1,48 @@
+<div class="rfm-dialog">
+  <div class="rfm-card matiere-dialog-card">
+    <div class="rfm-header">
+      <div class="rfm-header-inner">
+        <div class="rfm-title-group">
+          <div class="rfm-icon-box edit">
+            <mat-icon>edit_note</mat-icon>
+          </div>
+          <div>
+            <h3 class="rfm-title">{{ data.matiereLibelle }} — {{ data.classeLibelle }}</h3>
+            <p class="rfm-subtitle">{{ data.periodeLibelle }}</p>
+          </div>
+        </div>
+        <button mat-icon-button class="rfm-close" (click)="fermer()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="rfm-body">
+      <div class="spinner-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+      <app-notes-roster-table
+        *ngIf="feuille && !loading"
+        [eleves]="feuille.eleves"
+        [(nombreInterrogations)]="feuille.nombreInterrogations"
+        [readonly]="data.readonly"
+        [allowAddInterrogation]="false"
+      ></app-notes-roster-table>
+    </div>
+
+    <div class="rfm-footer">
+      <div class="rfm-actions">
+        <button mat-button class="rfm-cancel" (click)="fermer()">Fermer</button>
+        <button
+          *ngIf="!data.readonly"
+          mat-flat-button
+          class="rfm-submit"
+          (click)="enregistrer()"
+          [disabled]="saving || loading"
+        >
+          <mat-icon *ngIf="!saving">save</mat-icon>
+          {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

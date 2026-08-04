@@ -66,7 +66,27 @@
       "Bash(curl -s http://localhost:1081/email --max-time 5)",
       "Bash(xargs grep -l \"MAIL_PASSWORD\")",
       "Bash(env)",
-      "Bash(curl -s -u lbs_user:lbs_password \"http://localhost:15673/api/queues/%2F/lbs.professeur.credentials.queue\" --max-time 5)"
+      "Bash(curl -s -u lbs_user:lbs_password \"http://localhost:15673/api/queues/%2F/lbs.professeur.credentials.queue\" --max-time 5)",
+      "Bash(./mvnw.cmd -q dependency:build-classpath -Dmdep.outputFile=/tmp/cp.txt)",
+      "Bash(java -cp '.;__TRACKED_VAR__' JasperTest)",
+      "Bash(javac XmlCheck.java)",
+      "Bash(java XmlCheck)",
+      "Bash(unzip -l /c/Users/di/.m2/repository/net/sf/jasperreports/jasperreports/7.0.1/jasperreports-7.0.1.jar)",
+      "Bash(\"/c/Program Files/Java/jdk-21/bin/javap.exe\" -p -c \"C:\\\\Users\\\\di\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-di-Desktop-lbs-frontend\\\\1821279d-48d3-4c27-ba21-6ef20546826a\\\\scratchpad\\\\extracted\\\\net\\\\sf\\\\jasperreports\\\\engine\\\\xml\\\\JRXmlLoader.class\")",
+      "Bash(java -cp '.;__TRACKED_VAR__' JacksonTest)",
+      "Bash(xargs grep -l \"jackson\")",
+      "Bash(\"/c/Program Files/Java/jdk-21/bin/javap.exe\" -v net/sf/jasperreports/engine/design/JRDesignBand.class)",
+      "Bash(\"/c/Program Files/Java/jdk-21/bin/javap.exe\" -v net/sf/jasperreports/jackson/util/JacksonUtil.class)",
+      "Bash(git log --oneline -- src/main/resources/reports/bulletin.jrxml | head -5 *)",
+      "Bash(./mvnw.cmd -q dependency:get -Dartifact=com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.17.1)",
+      "Bash(./mvnw.cmd -q dependency:get -Dartifact=com.fasterxml.jackson.core:jackson-core:2.17.1)",
+      "Bash(./mvnw.cmd -q dependency:get -Dartifact=com.fasterxml.jackson.core:jackson-annotations:2.17.1)",
+      "Bash(unzip -l /c/Users/di/.m2/repository/net/sf/jasperreports/jasperreports/6.20.0/jasperreports-6.20.0.jar)",
+      "Bash(git checkout *)",
+      "Bash(./mvnw.cmd -q dependency:build-classpath -Dmdep.outputFile=/tmp/cp620.txt)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(java -cp '.;__TRACKED_VAR__' Jasper620Test 'C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\resources\\\\reports\\\\bulletin.jrxml')",
+      "Bash(java -cp '.;__TRACKED_VAR__' Jasper620Test 'C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\resources\\\\reports\\\\fiche-inscription.jrxml')"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"

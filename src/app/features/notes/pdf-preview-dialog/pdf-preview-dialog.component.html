@@ -1,0 +1,18 @@
+<div class="pdf-dialog">
+  <div class="pdf-dialog-header">
+    <h3>{{ data.title }}</h3>
+    <div class="pdf-dialog-actions">
+      <button type="button" class="btn-telecharger" (click)="telecharger()">
+        <mat-icon>download</mat-icon>
+        Télécharger
+      </button>
+      <button mat-icon-button (click)="fermer()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="pdf-dialog-body">
+    <iframe [src]="safeUrl" title="Aperçu PDF"></iframe>
+  </div>
+</div>

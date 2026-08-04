@@ -16,6 +16,7 @@ export class NotesRosterTableComponent implements OnChanges {
   @Input() eleves: EleveNoteDto[] = [];
   @Input() nombreInterrogations = 1;
   @Input() readonly = false;
+  @Input() allowAddInterrogation = true;
   @Output() nombreInterrogationsChange = new EventEmitter<number>();
 
   recherche = '';

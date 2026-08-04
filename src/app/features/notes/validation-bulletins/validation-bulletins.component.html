@@ -1,86 +1,214 @@
 <div class="page-wrapper">
-  <div class="page-header">
-    <ng-select
-      [items]="periodes"
-      bindLabel="libelle"
-      bindValue="id"
-      [(ngModel)]="periodeId"
-      (change)="onPeriodeChange()"
-      placeholder="Sélectionner une période..."
-      [clearable]="false"
-      style="min-width: 260px"
-    ></ng-select>
-  </div>
+  <!-- ── Vue liste ─────────────────────────────────────────────────────── -->
+  <ng-container *ngIf="!classeSelectionnee">
+    <div class="page-header">
+      <ng-select
+        [items]="periodes"
+        bindLabel="libelle"
+        bindValue="id"
+        [(ngModel)]="periodeId"
+        (change)="onPeriodeChange()"
+        placeholder="Sélectionner une période..."
+        [clearable]="false"
+        style="min-width: 260px"
+      ></ng-select>
+    </div>
 
-  <div class="empty-state" *ngIf="!periodeId && !loading">
-    <mat-icon>fact_check</mat-icon>
-    <p>Sélectionnez une période pour voir le statut de validation des classes.</p>
-  </div>
+    <div class="empty-state" *ngIf="!periodeId && !loading">
+      <mat-icon>fact_check</mat-icon>
+      <p>Sélectionnez une période pour voir le statut de validation des classes.</p>
+    </div>
 
-  <div class="spinner-overlay" *ngIf="loading"><div class="spinner"></div></div>
+    <div class="spinner-overlay" *ngIf="loading"><div class="spinner"></div></div>
 
-  <div class="table-card" *ngIf="periodeId && !loading">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Classe</th>
-          <th>Statut</th>
-          <th>Détails</th>
-          <th class="col-actions">Opérations</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of liste">
-          <td class="col-classe">{{ item.classeLibelle }}</td>
-          <td>
-            <span class="statut-badge" [class.valide]="item.valide" [class.non-valide]="!item.valide">
-              <span class="statut-dot"></span>
-              {{ item.valide ? 'Validé' : 'Non validé' }}
-            </span>
-          </td>
-          <td class="col-details">
-            <span *ngIf="item.valide">
-              le {{ item.dateValidation | date: 'dd/MM/yyyy HH:mm' }}
-              <span *ngIf="item.valideParEmail"> par {{ item.valideParEmail }}</span>
-            </span>
-            <span *ngIf="!item.valide" class="text-muted">—</span>
-          </td>
-          <td class="col-actions">
-            <div class="action-group">
-              <button
-                *ngIf="!item.valide"
-                class="btn-action btn-valider"
-                (click)="valider(item)"
-                matTooltip="Valider les bulletins de cette classe"
+    <ng-container *ngIf="periodeId && !loading">
+      <div class="tabs">
+        <button
+          type="button"
+          class="tab-btn"
+          [class.active]="onglet === 'NON_VALIDE'"
+          (click)="onglet = 'NON_VALIDE'"
+        >
+          Non validés <span class="tab-count">{{ nombreNonValides }}</span>
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          [class.active]="onglet === 'VALIDE'"
+          (click)="onglet = 'VALIDE'"
+        >
+          Validés <span class="tab-count">{{ nombreValides }}</span>
+        </button>
+      </div>
+
+      <div class="table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Classe</th>
+              <th>Statut</th>
+              <th>Détails</th>
+              <th class="col-actions">Opérations</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of listeFiltree" class="clickable-row" (click)="ouvrirClasse(item)">
+              <td class="col-classe">{{ item.classeLibelle }}</td>
+              <td>
+                <span class="statut-badge" [class.valide]="item.valide" [class.non-valide]="!item.valide">
+                  <span class="statut-dot"></span>
+                  {{ item.valide ? 'Validé' : 'Non validé' }}
+                </span>
+              </td>
+              <td class="col-details">
+                <span *ngIf="item.valide">
+                  le {{ item.dateValidation | date: 'dd/MM/yyyy HH:mm' }}
+                  <span *ngIf="item.valideParEmail"> par {{ item.valideParEmail }}</span>
+                </span>
+                <span *ngIf="!item.valide" class="text-muted">—</span>
+              </td>
+              <td class="col-actions" (click)="$event.stopPropagation()">
+                <div class="action-group">
+                  <button
+                    *ngIf="!item.valide"
+                    class="btn-action btn-valider"
+                    (click)="valider(item)"
+                    matTooltip="Valider les bulletins de cette classe"
+                  >
+                    <mat-icon>check_circle</mat-icon>
+                    Valider
+                  </button>
+                  <button
+                    *ngIf="item.valide"
+                    class="btn-action btn-devalider"
+                    (click)="devalider(item)"
+                    matTooltip="Annuler la validation"
+                  >
+                    <mat-icon>undo</mat-icon>
+                    Dévalider
+                  </button>
+                  <button
+                    class="btn-action btn-pdf"
+                    (click)="telechargerPdf(item)"
+                    [disabled]="telechargementEnCours === item.classeId"
+                    matTooltip="Télécharger les bulletins PDF de la classe"
+                  >
+                    <mat-icon>picture_as_pdf</mat-icon>
+                    {{ telechargementEnCours === item.classeId ? '...' : 'PDF' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="listeFiltree.length === 0">
+              <td colspan="4" class="empty-row">
+                {{ onglet === 'VALIDE' ? 'Aucune classe validée.' : 'Aucune classe en attente de validation.' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <!-- ── Vue détail classe (grille élèves × matières) ─────────────────── -->
+  <ng-container *ngIf="classeSelectionnee as item">
+    <div class="detail-header">
+      <button type="button" class="btn-back" (click)="fermerClasse()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="detail-title">
+        <h3>{{ item.classeLibelle }}</h3>
+        <span class="periode-badge">{{ periodeSelectionnee?.libelle }}</span>
+      </div>
+      <div class="detail-actions">
+        <button
+          *ngIf="!item.valide"
+          class="btn-action btn-valider"
+          (click)="valider(item)"
+        >
+          <mat-icon>check_circle</mat-icon>
+          Valider
+        </button>
+        <button *ngIf="item.valide" class="btn-action btn-devalider" (click)="devalider(item)">
+          <mat-icon>undo</mat-icon>
+          Dévalider
+        </button>
+        <button
+          class="btn-action btn-pdf"
+          (click)="telechargerPdf(item)"
+          [disabled]="telechargementEnCours === item.classeId"
+        >
+          <mat-icon>picture_as_pdf</mat-icon>
+          {{ telechargementEnCours === item.classeId ? '...' : 'PDF' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="readonly-banner" *ngIf="item.valide">
+      <mat-icon>lock</mat-icon>
+      <span>
+        Cette classe est validée pour cette période : les notes sont en lecture seule. Cliquez
+        "Dévalider" pour pouvoir les modifier à nouveau.
+      </span>
+    </div>
+
+    <div class="spinner-overlay" *ngIf="loadingDetail"><div class="spinner"></div></div>
+
+    <div class="grid-card" *ngIf="!loadingDetail">
+      <div class="grid-table-wrapper">
+        <table class="grid-table">
+          <thead>
+            <tr>
+              <th class="col-eleve">Élève</th>
+              <th *ngFor="let m of matieres" class="col-matiere" (click)="!item.valide && ouvrirMatiere(m.id, m.libelle)">
+                {{ m.libelle }}
+              </th>
+              <th class="col-moyenne">Moyenne</th>
+              <th class="col-bulletin">Bulletin</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of bulletins">
+              <td class="col-eleve">{{ b.eleveNomComplet }}</td>
+              <td
+                *ngFor="let m of matieres"
+                class="col-matiere"
+                [class.clickable]="!item.valide"
+                (click)="!item.valide && ouvrirMatiere(m.id, m.libelle)"
               >
-                <mat-icon>check_circle</mat-icon>
-                Valider
-              </button>
-              <button
-                *ngIf="item.valide"
-                class="btn-action btn-devalider"
-                (click)="devalider(item)"
-                matTooltip="Annuler la validation"
-              >
-                <mat-icon>undo</mat-icon>
-                Dévalider
-              </button>
-              <button
-                class="btn-action btn-pdf"
-                (click)="telechargerPdf(item)"
-                [disabled]="telechargementEnCours === item.classeId"
-                matTooltip="Télécharger les bulletins PDF de la classe"
-              >
-                <mat-icon>picture_as_pdf</mat-icon>
-                {{ telechargementEnCours === item.classeId ? '...' : 'PDF' }}
-              </button>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="liste.length === 0">
-          <td colspan="4" class="empty-row">Aucune classe trouvée.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+                <span *ngIf="moyenneMatiere(b, m.id) !== null; else pasDeNote">
+                  {{ moyenneMatiere(b, m.id) | number: '1.2-2' }}
+                </span>
+                <ng-template #pasDeNote><span class="text-muted">—</span></ng-template>
+              </td>
+              <td class="col-moyenne">
+                <span *ngIf="b.moyennePonderee !== null && b.moyennePonderee !== undefined; else pasDeMoy">
+                  {{ b.moyennePonderee | number: '1.2-2' }}
+                </span>
+                <ng-template #pasDeMoy><span class="text-muted">—</span></ng-template>
+              </td>
+              <td class="col-bulletin">
+                <button
+                  type="button"
+                  class="btn-voir-bulletin"
+                  (click)="telechargerPdfEleve(b)"
+                  [disabled]="telechargementEleveEnCours === b.eleveId"
+                  matTooltip="Voir le bulletin de cet élève"
+                >
+                  <mat-icon>description</mat-icon>
+                  {{ telechargementEleveEnCours === b.eleveId ? '...' : 'Voir' }}
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="bulletins.length === 0">
+              <td [attr.colspan]="matieres.length + 3" class="empty-row">Aucun élève dans cette classe.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="grid-hint" *ngIf="!item.valide">
+        Cliquez sur une note de matière pour voir/modifier le détail (interrogations, devoirs).
+      </p>
+    </div>
+  </ng-container>
 </div>

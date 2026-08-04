@@ -48,6 +48,59 @@
   }
 }
 
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.7rem 0.25rem;
+  margin-bottom: -1px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    color: #1e293b;
+  }
+
+  &.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+  }
+}
+
+.tab-count {
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+
+.tab-btn.active .tab-count {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover {
+    background: #f8fafc;
+  }
+}
+
 .table-card {
   background: white;
   border: 1px solid #e2e8f0;
@@ -182,4 +235,195 @@
   text-align: center;
   color: #94a3b8;
   padding: 2rem;
+}
+
+// ── Vue détail classe ────────────────────────────────────────────────────
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.9rem 1.25rem;
+  flex-wrap: wrap;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover {
+    background: #f8fafc;
+  }
+}
+
+.detail-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1e293b;
+  }
+}
+
+.periode-badge {
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.7rem;
+  border-radius: 20px;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.readonly-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+}
+
+.grid-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.grid-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.grid-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.6rem 0.9rem;
+    text-align: center;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  th {
+    background: #1e293b;
+    color: white;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  td {
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .col-eleve {
+    text-align: left;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.06);
+  }
+
+  th.col-eleve {
+    z-index: 2;
+    background: #1e293b;
+  }
+
+  td.col-eleve {
+    background: white;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .col-matiere.clickable {
+    cursor: pointer;
+    color: #2563eb;
+    font-weight: 600;
+    &:hover {
+      background: #eff6ff;
+    }
+  }
+
+  .col-moyenne {
+    font-weight: 700;
+    color: #2563eb;
+  }
+
+  .col-bulletin {
+    text-align: center;
+  }
+}
+
+.btn-voir-bulletin {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #bfdbfe;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.grid-hint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #94a3b8;
 }

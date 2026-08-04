@@ -56,6 +56,7 @@
       [eleves]="feuille.eleves"
       [(nombreInterrogations)]="feuille.nombreInterrogations"
       [readonly]="feuille.valide"
+      [allowAddInterrogation]="false"
     ></app-notes-roster-table>
 
     <div class="feuille-actions" *ngIf="!feuille.valide">

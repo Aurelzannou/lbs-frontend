@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { PeriodeAcademiqueService } from '../../../core/services/periode-academique.service';
 import { ValidationBulletinService } from '../../../core/services/validation-bulletin.service';
@@ -10,11 +11,23 @@ import { BulletinService } from '../../../core/services/bulletin.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PeriodeAcademique } from '../../../core/models/periode-academique.model';
 import { ValidationBulletin } from '../../../core/models/validation-bulletin.model';
+import { Bulletin } from '../../../core/models/bulletin.model';
+import { MatiereNotesDialogComponent } from '../matiere-notes-dialog/matiere-notes-dialog.component';
+import { PdfPreviewDialogComponent } from '../pdf-preview-dialog/pdf-preview-dialog.component';
+
+type Onglet = 'NON_VALIDE' | 'VALIDE';
 
 @Component({
   selector: 'app-validation-bulletins',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, MatTooltipModule, NgSelectModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatDialogModule,
+    NgSelectModule
+  ],
   templateUrl: './validation-bulletins.component.html',
   styleUrl: './validation-bulletins.component.scss'
 })
@@ -23,12 +36,22 @@ export class ValidationBulletinsComponent implements OnInit {
   private validationBulletinService = inject(ValidationBulletinService);
   private bulletinService = inject(BulletinService);
   private notification = inject(NotificationService);
+  private dialog = inject(MatDialog);
 
   periodes: PeriodeAcademique[] = [];
   periodeId: number | null = null;
   liste: ValidationBulletin[] = [];
   loading = false;
   telechargementEnCours: number | null = null;
+
+  onglet: Onglet = 'NON_VALIDE';
+
+  // Vue détaillée d'une classe (grille élèves × matières)
+  classeSelectionnee: ValidationBulletin | null = null;
+  bulletins: Bulletin[] = [];
+  matieres: { id: number; libelle: string }[] = [];
+  loadingDetail = false;
+  telechargementEleveEnCours: number | null = null;
 
   ngOnInit(): void {
     this.periodeService.getAll(1, 50).subscribe((res: any) => {
@@ -38,6 +61,18 @@ export class ValidationBulletinsComponent implements OnInit {
 
   get periodeSelectionnee(): PeriodeAcademique | undefined {
     return this.periodes.find((p) => p.id === this.periodeId);
+  }
+
+  get listeFiltree(): ValidationBulletin[] {
+    return this.liste.filter((i) => (this.onglet === 'VALIDE' ? i.valide : !i.valide));
+  }
+
+  get nombreNonValides(): number {
+    return this.liste.filter((i) => !i.valide).length;
+  }
+
+  get nombreValides(): number {
+    return this.liste.filter((i) => i.valide).length;
   }
 
   onPeriodeChange(): void {
@@ -63,6 +98,75 @@ export class ValidationBulletinsComponent implements OnInit {
     });
   }
 
+  // ── Vue détaillée classe ─────────────────────────────────────────────
+
+  ouvrirClasse(item: ValidationBulletin): void {
+    this.classeSelectionnee = item;
+    this.chargerDetailClasse();
+  }
+
+  fermerClasse(): void {
+    this.classeSelectionnee = null;
+    this.bulletins = [];
+    this.matieres = [];
+  }
+
+  private chargerDetailClasse(): void {
+    if (!this.classeSelectionnee) return;
+    this.loadingDetail = true;
+    this.bulletinService.genererClasse(this.classeSelectionnee.classeId, this.classeSelectionnee.periodeId).subscribe({
+      next: (bulletins) => {
+        this.bulletins = bulletins ?? [];
+        const parId = new Map<number, string>();
+        for (const b of this.bulletins) {
+          for (const m of b.matieres ?? []) {
+            parId.set(m.matiereId, m.matiereLibelle);
+          }
+        }
+        this.matieres = Array.from(parId, ([id, libelle]) => ({ id, libelle })).sort((a, b) =>
+          a.libelle.localeCompare(b.libelle)
+        );
+        this.loadingDetail = false;
+      },
+      error: () => {
+        this.notification.error('Impossible de charger les notes de la classe');
+        this.loadingDetail = false;
+      }
+    });
+  }
+
+  moyenneMatiere(bulletin: Bulletin, matiereId: number): number | null {
+    return bulletin.matieres?.find((m) => m.matiereId === matiereId)?.moyenne ?? null;
+  }
+
+  ouvrirMatiere(matiereId: number, matiereLibelle: string): void {
+    if (!this.classeSelectionnee) return;
+    const item = this.classeSelectionnee;
+    const periode = this.periodeSelectionnee;
+
+    this.dialog
+      .open(MatiereNotesDialogComponent, {
+        width: '900px',
+        maxWidth: '95vw',
+        panelClass: 'professional-dialog',
+        data: {
+          classeId: item.classeId,
+          matiereId,
+          periodeId: item.periodeId,
+          classeLibelle: item.classeLibelle,
+          matiereLibelle,
+          periodeLibelle: periode?.libelle ?? '',
+          readonly: item.valide
+        }
+      })
+      .afterClosed()
+      .subscribe((modifie) => {
+        if (modifie) this.chargerDetailClasse();
+      });
+  }
+
+  // ── Actions valider / dévalider / pdf ────────────────────────────────
+
   async valider(item: ValidationBulletin): Promise<void> {
     const periode = this.periodeSelectionnee;
     if (!periode?.anneeScolaireId) return;
@@ -78,6 +182,9 @@ export class ValidationBulletinsComponent implements OnInit {
       next: () => {
         this.notification.success('Bulletins validés');
         this.refresh();
+        if (this.classeSelectionnee?.classeId === item.classeId) {
+          this.classeSelectionnee = { ...this.classeSelectionnee, valide: true };
+        }
       },
       error: (err) => this.notification.error(err)
     });
@@ -94,8 +201,38 @@ export class ValidationBulletinsComponent implements OnInit {
       next: () => {
         this.notification.success('Validation annulée');
         this.refresh();
+        if (this.classeSelectionnee?.classeId === item.classeId) {
+          this.classeSelectionnee = { ...this.classeSelectionnee, valide: false };
+        }
       },
       error: (err) => this.notification.error(err)
+    });
+  }
+
+  telechargerPdfEleve(b: Bulletin): void {
+    this.telechargementEleveEnCours = b.eleveId;
+    this.bulletinService.telechargerPdfEleve(b.eleveId, b.periodeId).subscribe({
+      next: (blob) => {
+        this.ouvrirApercuPdf(blob, `bulletin-${b.eleveNomComplet}-${b.periodeId}.pdf`, b.eleveNomComplet);
+        this.telechargementEleveEnCours = null;
+      },
+      error: () => {
+        this.notification.error('Impossible de générer le bulletin de cet élève');
+        this.telechargementEleveEnCours = null;
+      }
+    });
+  }
+
+  /** Ouvre le PDF dans un aperçu intégré à l'application (pas d'onglet externe) — un bouton
+      "Télécharger" dans le dialogue permet de l'enregistrer à tout moment. */
+  private ouvrirApercuPdf(blob: Blob, filename: string, title: string): void {
+    this.dialog.open(PdfPreviewDialogComponent, {
+      width: '700px',
+      maxWidth: '95vw',
+      height: '860px',
+      maxHeight: '92vh',
+      panelClass: 'professional-dialog',
+      data: { blob, filename, title }
     });
   }
 
@@ -103,12 +240,7 @@ export class ValidationBulletinsComponent implements OnInit {
     this.telechargementEnCours = item.classeId;
     this.bulletinService.telechargerPdfClasse(item.classeId, item.periodeId).subscribe({
       next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `bulletins-${item.classeLibelle}-${item.periodeId}.pdf`;
-        a.click();
-        window.URL.revokeObjectURL(url);
+        this.ouvrirApercuPdf(blob, `bulletins-${item.classeLibelle}-${item.periodeId}.pdf`, item.classeLibelle ?? 'Bulletins');
         this.telechargementEnCours = null;
       },
       error: () => {
