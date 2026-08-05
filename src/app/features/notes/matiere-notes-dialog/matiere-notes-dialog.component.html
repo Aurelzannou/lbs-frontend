@@ -18,13 +18,71 @@
     </div>
 
     <div class="rfm-body">
+      <div class="progression-bar" *ngIf="progression">
+        <div class="progression-item etape-badge" [ngClass]="'etape-' + progression.etape.toLowerCase()">
+          <mat-icon>{{ progression.etape === 'VALIDEE' ? 'verified' : (progression.etape === 'SOUMISE' ? 'hourglass_top' : 'edit_note') }}</mat-icon>
+          <span>{{ progression.etape === 'VALIDEE' ? 'Validée' : (progression.etape === 'SOUMISE' ? 'Soumise pour validation' : 'Brouillon') }}</span>
+          <button
+            *ngIf="progression.etape === 'SOUMISE'"
+            type="button"
+            class="btn-valider"
+            [disabled]="validationEnCours"
+            (click)="validerMatiere()"
+          >
+            <mat-icon>check_circle</mat-icon>
+            Valider
+          </button>
+          <button
+            *ngIf="progression.etape === 'VALIDEE'"
+            type="button"
+            class="btn-deverrouiller"
+            [disabled]="validationEnCours"
+            (click)="devaliderMatiere()"
+            matTooltip="Annuler la validation pour pouvoir modifier à nouveau"
+          >
+            <mat-icon>undo</mat-icon>
+            Dévalider
+          </button>
+        </div>
+        <div class="progression-item">
+          <mat-icon>lock</mat-icon>
+          <span>Interrogations verrouillées : {{ progression.interrogationsVerroueesJusqua }}</span>
+          <button
+            *ngIf="progression.interrogationsVerroueesJusqua > 0"
+            type="button"
+            class="btn-deverrouiller"
+            [disabled]="deverrouillageEnCours"
+            (click)="deverrouillerInterrogations()"
+            matTooltip="Déverrouiller la dernière interrogation verrouillée"
+          >
+            <mat-icon>lock_open</mat-icon>
+            Déverrouiller
+          </button>
+        </div>
+        <div class="progression-item">
+          <mat-icon>lock</mat-icon>
+          <span>Devoirs verrouillés : {{ progression.devoirsVerrouesJusqua }}/2</span>
+          <button
+            *ngIf="progression.devoirsVerrouesJusqua > 0"
+            type="button"
+            class="btn-deverrouiller"
+            [disabled]="deverrouillageEnCours"
+            (click)="deverrouillerDevoirs()"
+            matTooltip="Déverrouiller le dernier devoir verrouillé"
+          >
+            <mat-icon>lock_open</mat-icon>
+            Déverrouiller
+          </button>
+        </div>
+      </div>
+
       <div class="spinner-overlay" *ngIf="loading"><div class="spinner"></div></div>
 
       <app-notes-roster-table
         *ngIf="feuille && !loading"
         [eleves]="feuille.eleves"
         [(nombreInterrogations)]="feuille.nombreInterrogations"
-        [readonly]="data.readonly"
+        [readonly]="data.readonly || etapeReadonly"
         [allowAddInterrogation]="false"
       ></app-notes-roster-table>
     </div>
@@ -33,7 +91,7 @@
       <div class="rfm-actions">
         <button mat-button class="rfm-cancel" (click)="fermer()">Fermer</button>
         <button
-          *ngIf="!data.readonly"
+          *ngIf="!data.readonly && !etapeReadonly"
           mat-flat-button
           class="rfm-submit"
           (click)="enregistrer()"

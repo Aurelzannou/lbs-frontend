@@ -25,8 +25,18 @@
         type="button"
         class="btn-interro btn-remove"
         (click)="supprimerDerniereInterrogation()"
-        [disabled]="nombreInterrogations <= 1"
-        matTooltip="Retirer la dernière colonne d'interrogation"
+        [disabled]="
+          nombreInterrogations <= 1 ||
+          derniereInterrogationRemplie ||
+          interrogationVerrouillee(nombreInterrogations)
+        "
+        [matTooltip]="
+          interrogationVerrouillee(nombreInterrogations)
+            ? 'Impossible : cette colonne est verrouillée'
+            : derniereInterrogationRemplie
+              ? 'Impossible : des notes existent déjà dans cette colonne'
+              : 'Retirer la dernière colonne d\'interrogation'
+        "
       >
         <mat-icon>remove</mat-icon>
       </button>
@@ -38,16 +48,71 @@
       <thead>
         <tr>
           <th class="col-eleve">Élève</th>
-          <th class="col-note" *ngFor="let i of interrogationIndices">Interrogation {{ i + 1 }}</th>
-          <th class="col-note">1er Devoir</th>
-          <th class="col-note">2e Devoir</th>
+          <th class="col-note" *ngFor="let i of interrogationIndices">
+            <div class="col-header-lock">
+              <span>Interrogation {{ i + 1 }}</span>
+              <mat-icon *ngIf="interrogationVerrouillee(i + 1)" class="icon-lock" matTooltip="Verrouillée">
+                lock
+              </mat-icon>
+              <button
+                *ngIf="!readonly && progressionActive && interrogationEditable(i + 1)"
+                type="button"
+                class="btn-terminer"
+                [disabled]="verrouillageEnCours"
+                (click)="onVerrouillerInterrogation(i + 1)"
+                matTooltip="Verrouiller cette colonne : plus aucune modification possible ensuite"
+              >
+                <mat-icon>lock_open</mat-icon>
+                Terminer
+              </button>
+            </div>
+          </th>
+          <th class="col-note">
+            <div class="col-header-lock">
+              <span>1er Devoir</span>
+              <mat-icon *ngIf="devoirVerrouille(1)" class="icon-lock" matTooltip="Verrouillé">lock</mat-icon>
+              <button
+                *ngIf="!readonly && progressionDevoirs !== null && devoirEditable(1)"
+                type="button"
+                class="btn-terminer"
+                [disabled]="verrouillageEnCours"
+                (click)="onVerrouillerDevoir(1)"
+                matTooltip="Verrouiller ce devoir : plus aucune modification possible ensuite"
+              >
+                <mat-icon>lock_open</mat-icon>
+                Terminer
+              </button>
+            </div>
+          </th>
+          <th class="col-note">
+            <div class="col-header-lock">
+              <span>2e Devoir</span>
+              <mat-icon *ngIf="devoirVerrouille(2)" class="icon-lock" matTooltip="Verrouillé">lock</mat-icon>
+              <button
+                *ngIf="!readonly && progressionDevoirs !== null && devoirEditable(2)"
+                type="button"
+                class="btn-terminer"
+                [disabled]="verrouillageEnCours"
+                (click)="onVerrouillerDevoir(2)"
+                matTooltip="Verrouiller ce devoir : plus aucune modification possible ensuite"
+              >
+                <mat-icon>lock_open</mat-icon>
+                Terminer
+              </button>
+            </div>
+          </th>
           <th class="col-moyenne">Moyenne</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let el of elevesFiltres">
           <td class="col-eleve">{{ el.nom }} {{ el.prenom }}</td>
-          <td class="col-note" *ngFor="let i of interrogationIndices">
+          <td
+            class="col-note"
+            *ngFor="let i of interrogationIndices"
+            [class.col-verrouillee]="interrogationVerrouillee(i + 1)"
+            [class.col-en-attente]="interrogationEnAttente(i + 1)"
+          >
             <input
               type="number"
               min="0"
@@ -55,10 +120,10 @@
               step="0.25"
               [(ngModel)]="el.interrogations[i]"
               (ngModelChange)="onValeurChange(el)"
-              [disabled]="readonly"
+              [disabled]="readonly || !interrogationEditable(i + 1)"
             />
           </td>
-          <td class="col-note">
+          <td class="col-note" [class.col-verrouillee]="devoirVerrouille(1)" [class.col-en-attente]="devoirEnAttente(1)">
             <input
               type="number"
               min="0"
@@ -66,10 +131,10 @@
               step="0.25"
               [(ngModel)]="el.devoir1"
               (ngModelChange)="onValeurChange(el)"
-              [disabled]="readonly"
+              [disabled]="readonly || !devoirEditable(1)"
             />
           </td>
-          <td class="col-note">
+          <td class="col-note" [class.col-verrouillee]="devoirVerrouille(2)" [class.col-en-attente]="devoirEnAttente(2)">
             <input
               type="number"
               min="0"
@@ -77,7 +142,7 @@
               step="0.25"
               [(ngModel)]="el.devoir2"
               (ngModelChange)="onValeurChange(el)"
-              [disabled]="readonly"
+              [disabled]="readonly || !devoirEditable(2)"
             />
           </td>
           <td class="col-moyenne">

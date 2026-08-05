@@ -5,7 +5,10 @@ import { HttpParams } from '@angular/common/http';
 import {
   ClasseMatiereANoter,
   FeuilleSaisieNotes,
-  FeuilleSaisieNotesRequest
+  FeuilleSaisieNotesRequest,
+  ProgressionMatiereRequest,
+  ProgressionSaisieNotes,
+  VerrouProgressionRequest
 } from '../models/note.model';
 
 @Injectable({
@@ -29,5 +32,33 @@ export class NoteService {
 
   getMesClasses(): Observable<ClasseMatiereANoter[]> {
     return this.api.get<ClasseMatiereANoter[]>(`${this.endpoint}/mes-classes`);
+  }
+
+  getProgression(classeId: number, matiereId: number, periodeId: number): Observable<ProgressionSaisieNotes> {
+    const params = new HttpParams()
+      .set('classeId', classeId.toString())
+      .set('matiereId', matiereId.toString())
+      .set('periodeId', periodeId.toString());
+    return this.api.get<ProgressionSaisieNotes>(`${this.endpoint}/progression`, params);
+  }
+
+  verrouillerColonne(payload: VerrouProgressionRequest): Observable<ProgressionSaisieNotes> {
+    return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/verrouiller`, payload);
+  }
+
+  deverrouillerColonne(payload: VerrouProgressionRequest): Observable<ProgressionSaisieNotes> {
+    return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/deverrouiller`, payload);
+  }
+
+  soumettreMatiere(payload: ProgressionMatiereRequest): Observable<ProgressionSaisieNotes> {
+    return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/soumettre`, payload);
+  }
+
+  validerMatiere(payload: ProgressionMatiereRequest): Observable<ProgressionSaisieNotes> {
+    return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/valider`, payload);
+  }
+
+  devaliderMatiere(payload: ProgressionMatiereRequest): Observable<ProgressionSaisieNotes> {
+    return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/devalider-matiere`, payload);
   }
 }

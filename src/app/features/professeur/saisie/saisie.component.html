@@ -25,6 +25,16 @@
       <span>Le bulletin de cette classe pour cette période est déjà validé : les notes sont en lecture seule.</span>
     </div>
 
+    <div class="readonly-banner etape-soumise" *ngIf="!feuille.valide && progression?.etape === 'SOUMISE'">
+      <mat-icon>hourglass_top</mat-icon>
+      <span>Matière soumise pour validation, en attente de la décision de l'administration.</span>
+    </div>
+
+    <div class="readonly-banner etape-validee" *ngIf="!feuille.valide && progression?.etape === 'VALIDEE'">
+      <mat-icon>verified</mat-icon>
+      <span>Matière validée par l'administration.</span>
+    </div>
+
     <div class="feuille-header">
       <h3>{{ feuille.matiereLibelle }} — {{ feuille.classeLibelle }}</h3>
       <span class="periode-badge">{{ feuille.periodeLibelle }}</span>
@@ -33,13 +43,27 @@
     <app-notes-roster-table
       [eleves]="feuille.eleves"
       [(nombreInterrogations)]="feuille.nombreInterrogations"
-      [readonly]="feuille.valide"
+      [readonly]="feuille.valide || etapeReadonly"
+      [progressionInterrogations]="progression?.interrogationsVerroueesJusqua ?? 0"
+      [progressionDevoirs]="progression?.devoirsVerrouesJusqua ?? 0"
+      [verrouillageEnCours]="verrouillageEnCours"
+      (verrouillerInterrogation)="verrouillerInterrogation($event)"
+      (verrouillerDevoir)="verrouillerDevoir($event)"
     ></app-notes-roster-table>
 
-    <div class="feuille-actions" *ngIf="!feuille.valide">
+    <div class="feuille-actions" *ngIf="!feuille.valide && !etapeReadonly">
       <button class="btn-save" (click)="enregistrer()" [disabled]="saving">
         <mat-icon>save</mat-icon>
         {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+      </button>
+      <button
+        class="btn-soumettre"
+        (click)="soumettre()"
+        [disabled]="!peutSoumettre || soumission"
+        [title]="peutSoumettre ? '' : 'Verrouillez toutes les colonnes (interrogations et devoirs) avant de soumettre'"
+      >
+        <mat-icon>send</mat-icon>
+        {{ soumission ? 'Envoi...' : 'Soumettre pour validation' }}
       </button>
     </div>
   </div>

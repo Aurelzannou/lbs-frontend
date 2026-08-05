@@ -86,7 +86,8 @@
       "Bash(./mvnw.cmd -q dependency:build-classpath -Dmdep.outputFile=/tmp/cp620.txt)",
       "Bash(echo \"EXIT:$?\")",
       "Bash(java -cp '.;__TRACKED_VAR__' Jasper620Test 'C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\resources\\\\reports\\\\bulletin.jrxml')",
-      "Bash(java -cp '.;__TRACKED_VAR__' Jasper620Test 'C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\resources\\\\reports\\\\fiche-inscription.jrxml')"
+      "Bash(java -cp '.;__TRACKED_VAR__' Jasper620Test 'C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend\\\\src\\\\main\\\\resources\\\\reports\\\\fiche-inscription.jrxml')",
+      "Bash(powershell -Command \"Get-Process -Name java -ErrorAction SilentlyContinue | Select-Object Id,StartTime,Path\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"

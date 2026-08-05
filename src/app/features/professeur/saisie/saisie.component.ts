@@ -8,7 +8,7 @@ import { NoteService } from '../../../core/services/note.service';
 import { PeriodeAcademiqueService } from '../../../core/services/periode-academique.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PeriodeAcademique } from '../../../core/models/periode-academique.model';
-import { FeuilleSaisieNotes } from '../../../core/models/note.model';
+import { FeuilleSaisieNotes, ProgressionSaisieNotes } from '../../../core/models/note.model';
 import { NotesRosterTableComponent } from '../../notes/notes-roster-table/notes-roster-table.component';
 
 @Component({
@@ -37,8 +37,22 @@ export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
   periodeId: number | null = null;
 
   feuille: FeuilleSaisieNotes | null = null;
+  progression: ProgressionSaisieNotes | null = null;
   loading = false;
   saving = false;
+  verrouillageEnCours = false;
+  soumission = false;
+
+  get peutSoumettre(): boolean {
+    return !!this.progression
+      && this.progression.etape === 'BROUILLON'
+      && this.progression.interrogationsVerroueesJusqua >= 1
+      && this.progression.devoirsVerrouesJusqua >= 2;
+  }
+
+  get etapeReadonly(): boolean {
+    return !!this.progression && this.progression.etape !== 'BROUILLON';
+  }
 
   ngOnInit(): void {
     this.classeId = Number(this.route.snapshot.queryParamMap.get('classeId'));
@@ -64,6 +78,7 @@ export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
   refresh(): void {
     if (!this.periodeId) {
       this.feuille = null;
+      this.progression = null;
       return;
     }
     this.loading = true;
@@ -75,6 +90,63 @@ export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
       error: () => {
         this.notification.error('Impossible de charger la feuille de notes');
         this.loading = false;
+      }
+    });
+    this.chargerProgression();
+  }
+
+  private chargerProgression(): void {
+    if (!this.periodeId) return;
+    this.noteService.getProgression(this.classeId, this.matiereId, this.periodeId).subscribe({
+      next: (res: any) => (this.progression = res.data ?? res),
+      error: () => (this.progression = null)
+    });
+  }
+
+  async verrouillerInterrogation(numero: number): Promise<void> {
+    const confirmed = await this.notification.confirm(
+      `Verrouiller l'interrogation ${numero} ? Vous ne pourrez plus la modifier ensuite (seul un admin pourra la déverrouiller).`,
+      'Verrouiller cette colonne'
+    );
+    if (!confirmed) return;
+    this.verrouillerColonne('INTERROGATION', numero);
+  }
+
+  async verrouillerDevoir(numero: number): Promise<void> {
+    const label = numero === 1 ? 'le 1er devoir' : 'le 2e devoir';
+    const confirmed = await this.notification.confirm(
+      `Verrouiller ${label} ? Vous ne pourrez plus le modifier ensuite (seul un admin pourra le déverrouiller).`,
+      'Verrouiller cette colonne'
+    );
+    if (!confirmed) return;
+    this.verrouillerColonne('DEVOIR', numero);
+  }
+
+  private verrouillerColonne(typeEvaluation: 'INTERROGATION' | 'DEVOIR', numero: number): void {
+    if (!this.feuille || !this.periodeId) return;
+    this.verrouillageEnCours = true;
+    // On enregistre d'abord les valeurs en cours (l'utilisateur peut avoir modifié cette colonne
+    // juste avant de cliquer "Terminer") pour ne jamais verrouiller des données non sauvegardées.
+    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe({
+      next: (res: any) => {
+        this.feuille = res.data ?? res;
+        this.noteService
+          .verrouillerColonne({ classeId: this.classeId, matiereId: this.matiereId, periodeId: this.periodeId!, typeEvaluation, numero })
+          .subscribe({
+            next: (prog: any) => {
+              this.progression = prog.data ?? prog;
+              this.notification.success('Colonne verrouillée');
+              this.verrouillageEnCours = false;
+            },
+            error: (err) => {
+              this.notification.error(err);
+              this.verrouillageEnCours = false;
+            }
+          });
+      },
+      error: (err) => {
+        this.notification.error(err);
+        this.verrouillageEnCours = false;
       }
     });
   }
@@ -114,6 +186,29 @@ export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
         this.saving = false;
       }
     });
+  }
+
+  async soumettre(): Promise<void> {
+    if (!this.periodeId || !this.peutSoumettre) return;
+    const confirmed = await this.notification.confirm(
+      "Soumettre cette matière pour validation ? Vous ne pourrez plus modifier les notes tant que l'administration n'aura pas répondu.",
+      'Soumettre pour validation'
+    );
+    if (!confirmed) return;
+    this.soumission = true;
+    this.noteService
+      .soumettreMatiere({ classeId: this.classeId, matiereId: this.matiereId, periodeId: this.periodeId })
+      .subscribe({
+        next: (res: any) => {
+          this.progression = res.data ?? res;
+          this.notification.success('Matière soumise pour validation');
+          this.soumission = false;
+        },
+        error: (err) => {
+          this.notification.error(err);
+          this.soumission = false;
+        }
+      });
   }
 
   retour(): void {

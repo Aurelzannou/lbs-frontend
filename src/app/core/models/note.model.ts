@@ -42,3 +42,31 @@ export interface ClasseMatiereANoter {
   matiereId: number;
   matiereLibelle: string;
 }
+
+export type EtapeSaisieNotes = 'BROUILLON' | 'SOUMISE' | 'VALIDEE';
+
+export interface ProgressionSaisieNotes {
+  classeId: number;
+  matiereId: number;
+  periodeId: number;
+  interrogationsVerroueesJusqua: number;
+  devoirsVerrouesJusqua: number;
+  etape: EtapeSaisieNotes;
+  dateSoumission: string | null;
+  dateValidation: string | null;
+  valideParEmail: string | null;
+}
+
+export interface VerrouProgressionRequest {
+  classeId: number;
+  matiereId: number;
+  periodeId: number;
+  typeEvaluation: 'INTERROGATION' | 'DEVOIR';
+  numero: number;
+}
+
+export interface ProgressionMatiereRequest {
+  classeId: number;
+  matiereId: number;
+  periodeId: number;
+}
