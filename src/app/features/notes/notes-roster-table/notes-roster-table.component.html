@@ -161,10 +161,7 @@
             />
           </td>
           <td class="col-moyenne">
-            <span *ngIf="calculerMoyenne(el) !== null; else pasDeNote" class="moyenne-value">
-              {{ calculerMoyenne(el) | number: '1.2-2' }}
-            </span>
-            <ng-template #pasDeNote><span class="text-muted">—</span></ng-template>
+            <span class="moyenne-value">{{ calculerMoyenne(el) | number: '1.2-2' }}</span>
           </td>
         </tr>
         <tr *ngIf="eleves.length === 0">

@@ -72,6 +72,25 @@
             </div>
           </div>
         </div>
+
+        <div class="rfm-row">
+          <div class="rfm-select">
+            <span class="rfm-label">Matières enseignées</span>
+            <ng-select
+              [items]="matieres"
+              bindLabel="libelle"
+              bindValue="id"
+              [multiple]="true"
+              formControlName="matiereIds"
+              placeholder="Sélectionner une ou plusieurs matières..."
+              appendTo="body"
+            >
+            </ng-select>
+            <div class="rfm-hint">
+              Ces matières apparaîtront pour la saisie des notes et le bulletin de cette classe.
+            </div>
+          </div>
+        </div>
       </form>
     </div>
 

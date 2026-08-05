@@ -10,6 +10,9 @@ export interface Classe {
   profId?: number;
   capaciteMax?: number;
   actif?: boolean;
+  /** Matières enseignées dans cette classe — source de vérité pour la saisie des notes et le
+      bulletin (indépendant du niveau ou de l'emploi du temps). */
+  matiereIds?: number[];
 }
 
 export interface ClasseRequest {
@@ -19,4 +22,5 @@ export interface ClasseRequest {
   profId?: number;
   capaciteMax?: number;
   actif?: boolean;
+  matiereIds?: number[];
 }

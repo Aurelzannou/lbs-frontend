@@ -4,9 +4,11 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { ClasseService } from '../../../../core/services/classe.service';
 import { NiveauService } from '../../../../core/services/niveau.service';
+import { MatiereService } from '../../../../core/services/matiere.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Classe } from '../../../../core/models/classe.model';
 import { Niveau } from '../../../../core/models/niveau.model';
+import { Matiere } from '../../../../core/models/matiere.model';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -39,25 +41,29 @@ export class ClasseFormDialogComponent implements OnInit {
   public data = inject<Classe | undefined>(MAT_DIALOG_DATA);
   private classeService = inject(ClasseService);
   private niveauService = inject(NiveauService);
+  private matiereService = inject(MatiereService);
   private notification = inject(NotificationService);
 
   form!: FormGroup;
   loading = false;
   saving = false;
   niveaux: Niveau[] = [];
+  matieres: Matiere[] = [];
   isEdit = false;
 
   ngOnInit(): void {
     this.isEdit = !!this.data;
     this.initForm();
     this.loadNiveaux();
+    this.loadMatieres();
   }
 
   private initForm(): void {
     this.form = this.fb.group({
       code: [this.data?.code || '', [Validators.required, Validators.maxLength(20)]],
       libelle: [this.data?.libelle || '', [Validators.required]],
-      niveauId: [this.data?.niveau?.id || null, [Validators.required]]
+      niveauId: [this.data?.niveau?.id || null, [Validators.required]],
+      matiereIds: [this.data?.matiereIds || []]
     });
   }
 
@@ -72,6 +78,12 @@ export class ClasseFormDialogComponent implements OnInit {
         this.notification.error('Erreur lors du chargement des niveaux');
         this.loading = false;
       }
+    });
+  }
+
+  private loadMatieres(): void {
+    this.matiereService.getAll(1, 100).subscribe((res: any) => {
+      this.matieres = res.data ?? (Array.isArray(res) ? res : []);
     });
   }
 

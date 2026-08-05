@@ -17,6 +17,9 @@ export class NotesRosterTableComponent implements OnChanges {
   @Input() nombreInterrogations = 1;
   @Input() readonly = false;
   @Input() allowAddInterrogation = true;
+  // Matière "Conduite" — sa moyenne est la valeur unique saisie (colonne Interrogation 1), jamais
+  // divisée par 3 comme les autres matières (interro + devoir1 + devoir2).
+  @Input() estConduite = false;
   @Output() nombreInterrogationsChange = new EventEmitter<number>();
 
   // Verrouillage colonne par colonne (professeur uniquement) — laisser à `null` désactive
@@ -107,13 +110,13 @@ export class NotesRosterTableComponent implements OnChanges {
     return valeurs.reduce((a, b) => a + b, 0) / valeurs.length;
   }
 
-  calculerMoyenne(el: EleveNoteDto): number | null {
+  /** Moyenne sur 3 de {moyenne des interrogations, devoir1, devoir2} — toute composante jamais
+      saisie compte pour 0, y compris quand rien n'a encore été saisi du tout (une matière jamais
+      évaluée compte 0, elle n'est jamais simplement ignorée dans le calcul). */
+  calculerMoyenne(el: EleveNoteDto): number {
     const moyInterro = this.calculerMoyenneInterrogations(el);
-    const valeurs = [moyInterro, el.devoir1, el.devoir2].filter(
-      (v): v is number => v !== null && v !== undefined
-    );
-    if (valeurs.length === 0) return null;
-    return valeurs.reduce((a, b) => a + b, 0) / valeurs.length;
+    if (this.estConduite) return moyInterro ?? 0;
+    return ((moyInterro ?? 0) + (el.devoir1 ?? 0) + (el.devoir2 ?? 0)) / 3;
   }
 
   private clamp(valeur: number | null | undefined): number | null {

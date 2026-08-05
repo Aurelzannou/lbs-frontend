@@ -74,6 +74,7 @@ export class MatiereNotesDialogComponent implements OnInit, OnDestroy {
       classeId: this.data.classeId,
       matiereId: this.data.matiereId,
       periodeId: this.data.periodeId,
+      contexteValidation: true,
       eleves: this.feuille!.eleves.map((el) => ({
         eleveId: el.eleveId,
         interrogations: el.interrogations ?? [],

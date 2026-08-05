@@ -54,6 +54,7 @@
         [(nombreInterrogations)]="feuille.nombreInterrogations"
         [readonly]="data.readonly || etapeReadonly"
         [allowAddInterrogation]="false"
+        [estConduite]="feuille.estConduite ?? false"
         [progressionInterrogations]="progression?.interrogationsVerroueesJusqua ?? null"
         [progressionDevoirs]="progression?.devoirsVerrouesJusqua ?? null"
         [progressionInterrogationsValidees]="progression?.interrogationsValideesJusqua ?? 0"

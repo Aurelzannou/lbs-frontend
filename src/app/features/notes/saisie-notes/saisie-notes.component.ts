@@ -39,6 +39,14 @@ export class SaisieNotesComponent implements OnInit, OnDestroy {
   matiereId: number | null = null;
   periodeId: number | null = null;
 
+  /** Les matières proposées dépendent de la classe choisie (référentiel Classes) — si la classe
+      n'a encore aucune matière assignée, on retombe sur la liste complète pour ne pas bloquer. */
+  get matieresDisponibles(): Matiere[] {
+    const classe = this.classes.find((c) => c.id === this.classeId);
+    if (!classe?.matiereIds || classe.matiereIds.length === 0) return this.matieres;
+    return this.matieres.filter((m) => classe.matiereIds!.includes(m.id!));
+  }
+
   feuille: FeuilleSaisieNotes | null = null;
   progression: ProgressionSaisieNotes | null = null;
   historique: ProgressionEtapeHistorique[] = [];
@@ -63,14 +71,25 @@ export class SaisieNotesComponent implements OnInit, OnDestroy {
     this.matiereService.getAll(1, 100).subscribe((res: any) => {
       this.matieres = res.data ?? (Array.isArray(res) ? res : []);
     });
+    // Cet écran de saisie directe se limite à l'année scolaire active — la consultation/modification
+    // des périodes d'une année inactive reste possible, mais uniquement depuis l'écran "Validation
+    // des bulletins" (qui garde volontairement un accès à tout l'historique).
     this.periodeService.getAll(1, 50).subscribe((res: any) => {
-      this.periodes = res.data ?? (Array.isArray(res) ? res : []);
+      const toutes = res.data ?? (Array.isArray(res) ? res : []);
+      this.periodes = toutes.filter((p: PeriodeAcademique) => !!p.anneeScolaire?.actif);
     });
 
     this.modificationSub = this.modificationSubject.pipe(debounceTime(1500)).subscribe(() => this.enregistrerAuto());
   }
 
   onSelectionChange(): void {
+    this.refresh();
+  }
+
+  onClasseChange(): void {
+    if (this.matiereId && !this.matieresDisponibles.some((m) => m.id === this.matiereId)) {
+      this.matiereId = null;
+    }
     this.refresh();
   }
 

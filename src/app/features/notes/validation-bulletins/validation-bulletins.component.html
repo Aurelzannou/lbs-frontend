@@ -176,13 +176,16 @@
                 [class.clickable]="!item.valide"
                 (click)="!item.valide && ouvrirMatiere(m.id, m.libelle)"
               >
-                <span *ngIf="moyenneMatiere(b, m.id) !== null; else pasDeNote">
+                <span *ngIf="moyenneMatiere(b, m.id) !== null; else pasDeNote" [class.valeur-zero]="moyenneMatiere(b, m.id) === 0">
                   {{ moyenneMatiere(b, m.id) | number: '1.2-2' }}
                 </span>
                 <ng-template #pasDeNote><span class="text-muted">—</span></ng-template>
               </td>
               <td class="col-moyenne">
-                <span *ngIf="b.moyennePonderee !== null && b.moyennePonderee !== undefined; else pasDeMoy">
+                <span
+                  *ngIf="b.moyennePonderee !== null && b.moyennePonderee !== undefined; else pasDeMoy"
+                  [class.valeur-zero]="b.moyennePonderee === 0"
+                >
                   {{ b.moyennePonderee | number: '1.2-2' }}
                 </span>
                 <ng-template #pasDeMoy><span class="text-muted">—</span></ng-template>
