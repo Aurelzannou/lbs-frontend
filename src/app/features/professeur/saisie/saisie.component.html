@@ -46,12 +46,21 @@
       [readonly]="feuille.valide || etapeReadonly"
       [progressionInterrogations]="progression?.interrogationsVerroueesJusqua ?? 0"
       [progressionDevoirs]="progression?.devoirsVerrouesJusqua ?? 0"
+      [progressionInterrogationsValidees]="progression?.interrogationsValideesJusqua ?? 0"
+      [progressionDevoirsValidees]="progression?.devoirsValideesJusqua ?? 0"
       [verrouillageEnCours]="verrouillageEnCours"
       (verrouillerInterrogation)="verrouillerInterrogation($event)"
       (verrouillerDevoir)="verrouillerDevoir($event)"
+      (valeurModifiee)="onValeurModifiee()"
     ></app-notes-roster-table>
 
     <div class="feuille-actions" *ngIf="!feuille.valide && !etapeReadonly">
+      <span class="auto-save-statut" *ngIf="autoSaveStatut === 'saving'">
+        <mat-icon>sync</mat-icon> Enregistrement automatique...
+      </span>
+      <span class="auto-save-statut saved" *ngIf="autoSaveStatut === 'saved'">
+        <mat-icon>check_circle</mat-icon> Enregistré automatiquement
+      </span>
       <button class="btn-save" (click)="enregistrer()" [disabled]="saving">
         <mat-icon>save</mat-icon>
         {{ saving ? 'Enregistrement...' : 'Enregistrer' }}

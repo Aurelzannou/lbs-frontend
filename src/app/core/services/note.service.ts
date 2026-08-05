@@ -6,6 +6,7 @@ import {
   ClasseMatiereANoter,
   FeuilleSaisieNotes,
   FeuilleSaisieNotesRequest,
+  ProgressionEtapeHistorique,
   ProgressionMatiereRequest,
   ProgressionSaisieNotes,
   VerrouProgressionRequest
@@ -50,6 +51,10 @@ export class NoteService {
     return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/deverrouiller`, payload);
   }
 
+  validerColonne(payload: VerrouProgressionRequest): Observable<ProgressionSaisieNotes> {
+    return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/valider-colonne`, payload);
+  }
+
   soumettreMatiere(payload: ProgressionMatiereRequest): Observable<ProgressionSaisieNotes> {
     return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/soumettre`, payload);
   }
@@ -60,5 +65,13 @@ export class NoteService {
 
   devaliderMatiere(payload: ProgressionMatiereRequest): Observable<ProgressionSaisieNotes> {
     return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/devalider-matiere`, payload);
+  }
+
+  getHistorique(classeId: number, matiereId: number, periodeId: number): Observable<ProgressionEtapeHistorique[]> {
+    const params = new HttpParams()
+      .set('classeId', classeId.toString())
+      .set('matiereId', matiereId.toString())
+      .set('periodeId', periodeId.toString());
+    return this.api.get<ProgressionEtapeHistorique[]>(`${this.endpoint}/progression/historique`, params);
   }
 }

@@ -51,16 +51,31 @@
           <th class="col-note" *ngFor="let i of interrogationIndices">
             <div class="col-header-lock">
               <span>Interrogation {{ i + 1 }}</span>
-              <mat-icon *ngIf="interrogationVerrouillee(i + 1)" class="icon-lock" matTooltip="Verrouillée">
-                lock
+              <mat-icon
+                *ngIf="interrogationValidee(i + 1)"
+                class="icon-lock icon-validee"
+                matTooltip="Validée par l'administration"
+              >
+                check_circle
+              </mat-icon>
+              <mat-icon
+                *ngIf="interrogationEnAttenteValidation(i + 1)"
+                class="icon-lock icon-attente"
+                matTooltip="Verrouillée, en attente de validation admin"
+              >
+                hourglass_top
               </mat-icon>
               <button
-                *ngIf="!readonly && progressionActive && interrogationEditable(i + 1)"
+                *ngIf="!readonly && verrouillageActifPourEdition && interrogationEstProchaine(i + 1)"
                 type="button"
                 class="btn-terminer"
-                [disabled]="verrouillageEnCours"
+                [disabled]="verrouillageEnCours || !peutVerrouillerInterrogation(i + 1)"
                 (click)="onVerrouillerInterrogation(i + 1)"
-                matTooltip="Verrouiller cette colonne : plus aucune modification possible ensuite"
+                [matTooltip]="
+                  peutVerrouillerInterrogation(i + 1)
+                    ? 'Verrouiller cette colonne : plus aucune modification possible ensuite'
+                    : 'L\'interrogation ' + i + ' doit d\'abord être validée par l\'administration'
+                "
               >
                 <mat-icon>lock_open</mat-icon>
                 Terminer
@@ -70,12 +85,13 @@
           <th class="col-note">
             <div class="col-header-lock">
               <span>1er Devoir</span>
-              <mat-icon *ngIf="devoirVerrouille(1)" class="icon-lock" matTooltip="Verrouillé">lock</mat-icon>
+              <mat-icon *ngIf="devoirValide(1)" class="icon-lock icon-validee" matTooltip="Validé par l'administration">check_circle</mat-icon>
+              <mat-icon *ngIf="devoirEnAttenteValidation(1)" class="icon-lock icon-attente" matTooltip="Verrouillé, en attente de validation admin">hourglass_top</mat-icon>
               <button
-                *ngIf="!readonly && progressionDevoirs !== null && devoirEditable(1)"
+                *ngIf="!readonly && verrouillageActifPourEdition && devoirEstProchain(1)"
                 type="button"
                 class="btn-terminer"
-                [disabled]="verrouillageEnCours"
+                [disabled]="verrouillageEnCours || !peutVerrouillerDevoir(1)"
                 (click)="onVerrouillerDevoir(1)"
                 matTooltip="Verrouiller ce devoir : plus aucune modification possible ensuite"
               >
@@ -87,14 +103,19 @@
           <th class="col-note">
             <div class="col-header-lock">
               <span>2e Devoir</span>
-              <mat-icon *ngIf="devoirVerrouille(2)" class="icon-lock" matTooltip="Verrouillé">lock</mat-icon>
+              <mat-icon *ngIf="devoirValide(2)" class="icon-lock icon-validee" matTooltip="Validé par l'administration">check_circle</mat-icon>
+              <mat-icon *ngIf="devoirEnAttenteValidation(2)" class="icon-lock icon-attente" matTooltip="Verrouillé, en attente de validation admin">hourglass_top</mat-icon>
               <button
-                *ngIf="!readonly && progressionDevoirs !== null && devoirEditable(2)"
+                *ngIf="!readonly && verrouillageActifPourEdition && devoirEstProchain(2)"
                 type="button"
                 class="btn-terminer"
-                [disabled]="verrouillageEnCours"
+                [disabled]="verrouillageEnCours || !peutVerrouillerDevoir(2)"
                 (click)="onVerrouillerDevoir(2)"
-                matTooltip="Verrouiller ce devoir : plus aucune modification possible ensuite"
+                [matTooltip]="
+                  peutVerrouillerDevoir(2)
+                    ? 'Verrouiller ce devoir : plus aucune modification possible ensuite'
+                    : 'Le 1er devoir doit d\'abord être validé par l\'administration'
+                "
               >
                 <mat-icon>lock_open</mat-icon>
                 Terminer
@@ -114,34 +135,28 @@
             [class.col-en-attente]="interrogationEnAttente(i + 1)"
           >
             <input
-              type="number"
-              min="0"
-              max="20"
-              step="0.25"
-              [(ngModel)]="el.interrogations[i]"
-              (ngModelChange)="onValeurChange(el)"
+              type="text"
+              inputmode="decimal"
+              [value]="el.interrogations[i]"
+              (input)="onSaisieInterrogation(el, i, $event)"
               [disabled]="readonly || !interrogationEditable(i + 1)"
             />
           </td>
           <td class="col-note" [class.col-verrouillee]="devoirVerrouille(1)" [class.col-en-attente]="devoirEnAttente(1)">
             <input
-              type="number"
-              min="0"
-              max="20"
-              step="0.25"
-              [(ngModel)]="el.devoir1"
-              (ngModelChange)="onValeurChange(el)"
+              type="text"
+              inputmode="decimal"
+              [value]="el.devoir1"
+              (input)="onSaisieDevoir(el, 1, $event)"
               [disabled]="readonly || !devoirEditable(1)"
             />
           </td>
           <td class="col-note" [class.col-verrouillee]="devoirVerrouille(2)" [class.col-en-attente]="devoirEnAttente(2)">
             <input
-              type="number"
-              min="0"
-              max="20"
-              step="0.25"
-              [(ngModel)]="el.devoir2"
-              (ngModelChange)="onValeurChange(el)"
+              type="text"
+              inputmode="decimal"
+              [value]="el.devoir2"
+              (input)="onSaisieDevoir(el, 2, $event)"
               [disabled]="readonly || !devoirEditable(2)"
             />
           </td>

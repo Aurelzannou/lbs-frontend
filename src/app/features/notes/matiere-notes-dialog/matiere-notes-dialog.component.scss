@@ -51,63 +51,113 @@
   }
 }
 
-.btn-valider {
+.rfm-footer {
   display: flex;
   align-items: center;
-  gap: 3px;
-  padding: 3px 9px;
-  border-radius: 12px;
-  border: 1px solid #86efac;
-  background: #f0fdf4;
-  color: #15803d;
-  font-size: 0.72rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.rfm-actions {
+  flex-wrap: wrap;
+  row-gap: 0.5rem;
+}
+
+.auto-save-statut {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: #94a3b8;
 
   mat-icon {
-    font-size: 13px;
-    width: 13px;
-    height: 13px;
-    color: #15803d;
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
   }
 
-  &:hover:not(:disabled) {
-    background: #dcfce7;
-  }
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  &.saved {
+    color: #059669;
   }
 }
 
-.btn-deverrouiller {
+.btn-action-valider {
+  --mdc-filled-button-container-color: #16a34a;
+}
+
+.btn-action-devalider {
+  --mdc-filled-button-container-color: #d97706;
+}
+
+.btn-action-deverrouiller {
+  --mdc-filled-button-container-color: #dc2626;
+}
+
+.historique-toggle {
   display: flex;
   align-items: center;
-  gap: 3px;
-  padding: 3px 9px;
-  border-radius: 12px;
-  border: 1px solid #fecaca;
-  background: #fef2f2;
-  color: #b91c1c;
-  font-size: 0.72rem;
-  font-weight: 700;
+  gap: 6px;
   cursor: pointer;
-  transition: all 0.2s;
+  padding: 0.4rem 0.2rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 600;
+  user-select: none;
 
   mat-icon {
-    font-size: 13px;
-    width: 13px;
-    height: 13px;
-    color: #b91c1c;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
   }
 
-  &:hover:not(:disabled) {
-    background: #fee2e2;
+  .chevron {
+    margin-left: auto;
   }
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+
+  &:hover {
+    color: #334155;
+  }
+}
+
+.historique-list {
+  list-style: none;
+  margin: 0 0 1rem 0;
+  padding: 0.4rem 0.75rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.78rem;
+    padding: 0.25rem 0;
+    border-bottom: 1px dashed #e2e8f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .historique-etape {
+    font-weight: 700;
+    color: #334155;
+    min-width: 140px;
+  }
+
+  .historique-date {
+    color: #64748b;
+  }
+
+  .historique-auteur {
+    color: #94a3b8;
+    margin-left: auto;
   }
 }
 

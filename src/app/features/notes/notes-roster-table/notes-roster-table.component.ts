@@ -23,9 +23,20 @@ export class NotesRosterTableComponent implements OnChanges {
   // complètement cette restriction (utilisé par les écrans admin, qui gardent l'édition libre).
   @Input() progressionInterrogations: number | null = null;
   @Input() progressionDevoirs: number | null = null;
+  // Validation admin par colonne — la colonne N+1 ne peut être verrouillée par le professeur que
+  // si la colonne N a déjà été validée par l'admin (sauf pour la toute première colonne).
+  @Input() progressionInterrogationsValidees = 0;
+  @Input() progressionDevoirsValidees = 0;
   @Input() verrouillageEnCours = false;
+  // Côté admin, on veut afficher les couleurs/icônes de verrouillage sans jamais bloquer l'édition
+  // ni proposer le bouton "Terminer" (réservé au professeur) — mettre à false désactive ces deux
+  // effets tout en gardant les getters *Verrouillee/*Valide/*EnAttente actifs pour le style visuel.
+  @Input() verrouillageActifPourEdition = true;
   @Output() verrouillerInterrogation = new EventEmitter<number>();
   @Output() verrouillerDevoir = new EventEmitter<number>();
+  // Émis à chaque valeur saisie (débounce/auto-save gérés par l'écran parent) — pour ne jamais
+  // perdre une note en cas de coupure avant que l'utilisateur ne pense à cliquer "Enregistrer".
+  @Output() valeurModifiee = new EventEmitter<void>();
 
   recherche = '';
 
@@ -110,14 +121,45 @@ export class NotesRosterTableComponent implements OnChanges {
     return Math.min(20, Math.max(0, valeur));
   }
 
-  onValeurChange(el: EleveNoteDto): void {
-    el.devoir1 = this.clamp(el.devoir1);
-    el.devoir2 = this.clamp(el.devoir2);
-    if (el.interrogations) {
-      el.interrogations = el.interrogations.map((v) => this.clamp(v));
+  /** Lit la valeur brute tapée par l'utilisateur, accepte la virgule comme séparateur décimal
+      (usage français — un <input type="number"> natif la rejette selon la locale du navigateur, ce
+      qui cassait la saisie de valeurs comme "3,50" : la virgule était ignorée et les chiffres se
+      concaténaient en "350", plafonné à tort à 20) et plafonne la valeur à 20 (barème d'une note).
+      On écrit directement dans le modèle et, si la saisie a été filtrée/corrigée, on resynchronise
+      aussi le DOM (input en <input type="text"> + contrôle manuel plutôt que ngModel, pour garder
+      une maîtrise totale et instantanée sur ce qui est accepté). */
+  private parserEtClamper(input: HTMLInputElement): number | null {
+    let brut = input.value.replace(/[^0-9.,]/g, '');
+    const premierSeparateur = brut.search(/[.,]/);
+    if (premierSeparateur !== -1) {
+      brut = brut.slice(0, premierSeparateur + 1) + brut.slice(premierSeparateur + 1).replace(/[.,]/g, '');
     }
+    if (brut !== input.value) input.value = brut;
+
+    if (brut.trim() === '' || brut === '.' || brut === ',') return null;
+    const valeur = parseFloat(brut.replace(',', '.'));
+    if (isNaN(valeur)) return null;
+    const clampee = this.clamp(valeur);
+    if (clampee !== valeur) {
+      input.value = clampee === null ? '' : String(clampee);
+    }
+    return clampee;
+  }
+
+  onSaisieInterrogation(el: EleveNoteDto, index: number, event: Event): void {
+    el.interrogations[index] = this.parserEtClamper(event.target as HTMLInputElement);
     el.moyenneInterrogations = this.calculerMoyenneInterrogations(el);
     el.moyenne = this.calculerMoyenne(el);
+    this.valeurModifiee.emit();
+  }
+
+  onSaisieDevoir(el: EleveNoteDto, numero: 1 | 2, event: Event): void {
+    const valeur = this.parserEtClamper(event.target as HTMLInputElement);
+    if (numero === 1) el.devoir1 = valeur;
+    else el.devoir2 = valeur;
+    el.moyenneInterrogations = this.calculerMoyenneInterrogations(el);
+    el.moyenne = this.calculerMoyenne(el);
+    this.valeurModifiee.emit();
   }
 
   // ── Verrouillage colonne par colonne ──────────────────────────────────
@@ -126,11 +168,22 @@ export class NotesRosterTableComponent implements OnChanges {
     return this.progressionInterrogations !== null;
   }
 
-  /** Seule la colonne immédiatement suivante à celle déjà verrouillée est éditable — les
-      précédentes sont figées, les suivantes pas encore accessibles. */
+  /** Professeur : seule la colonne immédiatement suivante à celle déjà verrouillée est éditable,
+      et seulement si la précédente est validée par l'admin. Admin : toute colonne non encore
+      validée reste modifiable (même verrouillée par le professeur, pour pouvoir la corriger avant
+      de la valider) — une fois validée, même l'admin doit d'abord "Déverrouiller" pour y retoucher. */
   interrogationEditable(numero: number): boolean {
     if (!this.progressionActive) return true;
-    return numero === (this.progressionInterrogations as number) + 1;
+    if (this.verrouillageActifPourEdition) {
+      return numero === (this.progressionInterrogations as number) + 1 && this.peutVerrouillerInterrogation(numero);
+    }
+    return !this.interrogationValidee(numero);
+  }
+
+  /** Position seule (sans tenir compte de la validation admin) — sert à décider si le bouton
+      "Terminer" doit apparaître (même désactivé, avec une infobulle expliquant pourquoi). */
+  interrogationEstProchaine(numero: number): boolean {
+    return this.progressionActive && numero === (this.progressionInterrogations as number) + 1;
   }
 
   interrogationVerrouillee(numero: number): boolean {
@@ -141,9 +194,32 @@ export class NotesRosterTableComponent implements OnChanges {
     return this.progressionActive && numero > (this.progressionInterrogations as number) + 1;
   }
 
+  interrogationValidee(numero: number): boolean {
+    return numero <= this.progressionInterrogationsValidees;
+  }
+
+  /** Verrouillée par le professeur mais pas encore validée par l'admin — bloque la colonne
+      suivante. */
+  interrogationEnAttenteValidation(numero: number): boolean {
+    return this.interrogationVerrouillee(numero) && !this.interrogationValidee(numero);
+  }
+
+  /** La colonne active peut être verrouillée seulement si la précédente est déjà validée par
+      l'admin (ou si c'est la toute première colonne). */
+  peutVerrouillerInterrogation(numero: number): boolean {
+    return numero === 1 || this.progressionInterrogationsValidees >= numero - 1;
+  }
+
   devoirEditable(numero: number): boolean {
     if (this.progressionDevoirs === null) return true;
-    return numero === this.progressionDevoirs + 1;
+    if (this.verrouillageActifPourEdition) {
+      return numero === this.progressionDevoirs + 1 && this.peutVerrouillerDevoir(numero);
+    }
+    return !this.devoirValide(numero);
+  }
+
+  devoirEstProchain(numero: number): boolean {
+    return this.progressionDevoirs !== null && numero === this.progressionDevoirs + 1;
   }
 
   devoirVerrouille(numero: number): boolean {
@@ -152,6 +228,18 @@ export class NotesRosterTableComponent implements OnChanges {
 
   devoirEnAttente(numero: number): boolean {
     return this.progressionDevoirs !== null && numero > this.progressionDevoirs + 1;
+  }
+
+  devoirValide(numero: number): boolean {
+    return numero <= this.progressionDevoirsValidees;
+  }
+
+  devoirEnAttenteValidation(numero: number): boolean {
+    return this.devoirVerrouille(numero) && !this.devoirValide(numero);
+  }
+
+  peutVerrouillerDevoir(numero: number): boolean {
+    return numero === 1 || this.progressionDevoirsValidees >= numero - 1;
   }
 
   onVerrouillerInterrogation(numero: number): void {

@@ -110,9 +110,204 @@
   border-radius: 20px;
 }
 
+.progression-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.6rem 0.9rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.progression-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #475569;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #94a3b8;
+  }
+}
+
+.etape-badge {
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+
+  &.etape-brouillon {
+    background: #f1f5f9;
+    color: #475569;
+    mat-icon { color: #94a3b8; }
+  }
+  &.etape-soumise {
+    background: #dbeafe;
+    color: #1e40af;
+    mat-icon { color: #1e40af; }
+  }
+  &.etape-validee {
+    background: #d1fae5;
+    color: #065f46;
+    mat-icon { color: #065f46; }
+  }
+}
+
+.btn-valider {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 9px;
+  border-radius: 12px;
+  border: 1px solid #86efac;
+  background: #f0fdf4;
+  color: #15803d;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  mat-icon {
+    font-size: 13px;
+    width: 13px;
+    height: 13px;
+    color: #15803d;
+  }
+
+  &:hover:not(:disabled) {
+    background: #dcfce7;
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-deverrouiller {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 9px;
+  border-radius: 12px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  mat-icon {
+    font-size: 13px;
+    width: 13px;
+    height: 13px;
+    color: #b91c1c;
+  }
+
+  &:hover:not(:disabled) {
+    background: #fee2e2;
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.historique-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 0.4rem 0.2rem;
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 600;
+  user-select: none;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .chevron {
+    margin-left: auto;
+  }
+
+  &:hover {
+    color: #334155;
+  }
+}
+
+.historique-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem 0.75rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.78rem;
+    padding: 0.25rem 0;
+    border-bottom: 1px dashed #e2e8f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .historique-etape {
+    font-weight: 700;
+    color: #334155;
+    min-width: 140px;
+  }
+
+  .historique-date {
+    color: #64748b;
+  }
+
+  .historique-auteur {
+    color: #94a3b8;
+    margin-left: auto;
+  }
+}
+
 .feuille-actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.auto-save-statut {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin-right: auto;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+  }
+
+  &.saved {
+    color: #059669;
+  }
 }
 
 .btn-save {
@@ -134,6 +329,27 @@
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+}
+
+.btn-action-valider {
+  background: #16a34a;
+  &:hover:not(:disabled) {
+    background: #15803d;
+  }
+}
+
+.btn-action-devalider {
+  background: #d97706;
+  &:hover:not(:disabled) {
+    background: #b45309;
+  }
+}
+
+.btn-action-deverrouiller {
+  background: #dc2626;
+  &:hover:not(:disabled) {
+    background: #b91c1c;
   }
 }
 

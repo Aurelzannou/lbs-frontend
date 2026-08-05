@@ -137,8 +137,29 @@
 
 .feuille-actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.auto-save-statut {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin-right: auto;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+  }
+
+  &.saved {
+    color: #059669;
+  }
 }
 
 .btn-soumettre {

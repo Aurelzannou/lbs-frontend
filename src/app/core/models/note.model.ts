@@ -51,6 +51,8 @@ export interface ProgressionSaisieNotes {
   periodeId: number;
   interrogationsVerroueesJusqua: number;
   devoirsVerrouesJusqua: number;
+  interrogationsValideesJusqua: number;
+  devoirsValideesJusqua: number;
   etape: EtapeSaisieNotes;
   dateSoumission: string | null;
   dateValidation: string | null;
@@ -69,4 +71,11 @@ export interface ProgressionMatiereRequest {
   classeId: number;
   matiereId: number;
   periodeId: number;
+}
+
+export interface ProgressionEtapeHistorique {
+  etape: EtapeSaisieNotes;
+  etapeLibelle: string;
+  dateTransition: string;
+  auteurEmail: string | null;
 }

@@ -1,11 +1,13 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { NoteService } from '../../../core/services/note.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { FeuilleSaisieNotes, ProgressionSaisieNotes } from '../../../core/models/note.model';
+import { FeuilleSaisieNotes, ProgressionEtapeHistorique, ProgressionSaisieNotes } from '../../../core/models/note.model';
 import { NotesRosterTableComponent } from '../notes-roster-table/notes-roster-table.component';
 
 export interface MatiereNotesDialogData {
@@ -25,7 +27,7 @@ export interface MatiereNotesDialogData {
   templateUrl: './matiere-notes-dialog.component.html',
   styleUrl: './matiere-notes-dialog.component.scss'
 })
-export class MatiereNotesDialogComponent implements OnInit {
+export class MatiereNotesDialogComponent implements OnInit, OnDestroy {
   private dialogRef = inject(MatDialogRef<MatiereNotesDialogComponent>);
   public data = inject<MatiereNotesDialogData>(MAT_DIALOG_DATA);
   private noteService = inject(NoteService);
@@ -38,6 +40,12 @@ export class MatiereNotesDialogComponent implements OnInit {
   modifie = false;
   deverrouillageEnCours = false;
   validationEnCours = false;
+  historique: ProgressionEtapeHistorique[] = [];
+  afficherHistorique = false;
+
+  autoSaveStatut: 'idle' | 'saving' | 'saved' | 'erreur' = 'idle';
+  private modificationSubject = new Subject<void>();
+  private modificationSub?: Subscription;
 
   get etapeReadonly(): boolean {
     return this.progression?.etape === 'VALIDEE';
@@ -46,6 +54,56 @@ export class MatiereNotesDialogComponent implements OnInit {
   ngOnInit(): void {
     this.refresh();
     this.chargerProgression();
+    this.chargerHistorique();
+    this.modificationSub = this.modificationSubject.pipe(debounceTime(1500)).subscribe(() => this.enregistrerAuto());
+  }
+
+  ngOnDestroy(): void {
+    this.modificationSub?.unsubscribe();
+    if (!this.feuille || this.data.readonly || this.etapeReadonly) return;
+    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe();
+  }
+
+  onValeurModifiee(): void {
+    this.autoSaveStatut = 'idle';
+    this.modificationSubject.next();
+  }
+
+  private construirePayload(): any {
+    return {
+      classeId: this.data.classeId,
+      matiereId: this.data.matiereId,
+      periodeId: this.data.periodeId,
+      eleves: this.feuille!.eleves.map((el) => ({
+        eleveId: el.eleveId,
+        interrogations: el.interrogations ?? [],
+        devoir1: el.devoir1 ?? null,
+        devoir2: el.devoir2 ?? null
+      }))
+    };
+  }
+
+  private enregistrerAuto(): void {
+    if (!this.feuille || this.data.readonly || this.etapeReadonly) return;
+    this.autoSaveStatut = 'saving';
+    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe({
+      next: (res: any) => {
+        this.feuille = res.data ?? res;
+        this.modifie = true;
+        this.autoSaveStatut = 'saved';
+      },
+      error: (err) => {
+        this.autoSaveStatut = 'erreur';
+        this.notification.error(err);
+      }
+    });
+  }
+
+  private chargerHistorique(): void {
+    this.noteService.getHistorique(this.data.classeId, this.data.matiereId, this.data.periodeId).subscribe({
+      next: (res: any) => (this.historique = res.data ?? res ?? []),
+      error: () => (this.historique = [])
+    });
   }
 
   private chargerProgression(): void {
@@ -100,6 +158,48 @@ export class MatiereNotesDialogComponent implements OnInit {
       });
   }
 
+  async validerInterrogation(): Promise<void> {
+    if (!this.progression) return;
+    const numero = this.progression.interrogationsValideesJusqua + 1;
+    if (numero > this.progression.interrogationsVerroueesJusqua) return;
+    const confirmed = await this.notification.confirm(
+      `Valider l'interrogation ${numero} ? Le professeur pourra alors verrouiller la colonne suivante.`,
+      'Valider cette colonne'
+    );
+    if (!confirmed) return;
+    this.validerColonne('INTERROGATION', numero);
+  }
+
+  async validerDevoir(): Promise<void> {
+    if (!this.progression) return;
+    const numero = this.progression.devoirsValideesJusqua + 1;
+    if (numero > this.progression.devoirsVerrouesJusqua) return;
+    const label = numero === 1 ? 'le 1er devoir' : 'le 2e devoir';
+    const confirmed = await this.notification.confirm(
+      `Valider ${label} ?`,
+      'Valider cette colonne'
+    );
+    if (!confirmed) return;
+    this.validerColonne('DEVOIR', numero);
+  }
+
+  private validerColonne(typeEvaluation: 'INTERROGATION' | 'DEVOIR', numero: number): void {
+    this.deverrouillageEnCours = true;
+    this.noteService
+      .validerColonne({ classeId: this.data.classeId, matiereId: this.data.matiereId, periodeId: this.data.periodeId, typeEvaluation, numero })
+      .subscribe({
+        next: (res: any) => {
+          this.progression = res.data ?? res;
+          this.notification.success('Colonne validée');
+          this.deverrouillageEnCours = false;
+        },
+        error: (err) => {
+          this.notification.error(err);
+          this.deverrouillageEnCours = false;
+        }
+      });
+  }
+
   async validerMatiere(): Promise<void> {
     if (!this.progression || this.progression.etape !== 'SOUMISE') return;
     const confirmed = await this.notification.confirm(
@@ -115,6 +215,7 @@ export class MatiereNotesDialogComponent implements OnInit {
           this.progression = res.data ?? res;
           this.notification.success('Matière validée');
           this.validationEnCours = false;
+          this.chargerHistorique();
         },
         error: (err) => {
           this.notification.error(err);
@@ -138,6 +239,7 @@ export class MatiereNotesDialogComponent implements OnInit {
           this.progression = res.data ?? res;
           this.notification.success('Validation annulée');
           this.validationEnCours = false;
+          this.chargerHistorique();
         },
         error: (err) => {
           this.notification.error(err);
@@ -163,18 +265,7 @@ export class MatiereNotesDialogComponent implements OnInit {
   enregistrer(): void {
     if (!this.feuille) return;
     this.saving = true;
-    const payload = {
-      classeId: this.data.classeId,
-      matiereId: this.data.matiereId,
-      periodeId: this.data.periodeId,
-      eleves: this.feuille.eleves.map((el) => ({
-        eleveId: el.eleveId,
-        interrogations: el.interrogations ?? [],
-        devoir1: el.devoir1 ?? null,
-        devoir2: el.devoir2 ?? null
-      }))
-    };
-    this.noteService.enregistrerFeuille(payload).subscribe({
+    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe({
       next: (res: any) => {
         this.feuille = res.data ?? res;
         this.modifie = true;
