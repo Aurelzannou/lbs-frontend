@@ -40,12 +40,11 @@ export class SaisieNotesComponent implements OnInit, OnDestroy {
   periodeId: number | null = null;
 
   /** Les matières proposées dépendent de la classe choisie (référentiel Classes) — si la classe
-      n'a encore aucune matière assignée, on retombe sur la liste complète pour ne pas bloquer. */
-  get matieresDisponibles(): Matiere[] {
-    const classe = this.classes.find((c) => c.id === this.classeId);
-    if (!classe?.matiereIds || classe.matiereIds.length === 0) return this.matieres;
-    return this.matieres.filter((m) => classe.matiereIds!.includes(m.id!));
-  }
+      n'a encore aucune matière assignée, on retombe sur la liste complète pour ne pas bloquer.
+      Propriété stockée (pas un getter) : [items] sur un ng-select ne doit jamais recevoir un
+      nouveau tableau à chaque cycle de détection de changement, sinon le composant perd son état
+      interne et les clics sur les options cessent de fonctionner. */
+  matieresDisponibles: Matiere[] = [];
 
   feuille: FeuilleSaisieNotes | null = null;
   progression: ProgressionSaisieNotes | null = null;
@@ -67,9 +66,11 @@ export class SaisieNotesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.classeService.getAll(1, 100).subscribe((res: any) => {
       this.classes = res.data ?? (Array.isArray(res) ? res : []);
+      this.mettreAJourMatieresDisponibles();
     });
     this.matiereService.getAll(1, 100).subscribe((res: any) => {
       this.matieres = res.data ?? (Array.isArray(res) ? res : []);
+      this.mettreAJourMatieresDisponibles();
     });
     // Cet écran de saisie directe se limite à l'année scolaire active — la consultation/modification
     // des périodes d'une année inactive reste possible, mais uniquement depuis l'écran "Validation
@@ -87,10 +88,19 @@ export class SaisieNotesComponent implements OnInit, OnDestroy {
   }
 
   onClasseChange(): void {
+    this.mettreAJourMatieresDisponibles();
     if (this.matiereId && !this.matieresDisponibles.some((m) => m.id === this.matiereId)) {
       this.matiereId = null;
     }
     this.refresh();
+  }
+
+  private mettreAJourMatieresDisponibles(): void {
+    const classe = this.classes.find((c) => c.id === this.classeId);
+    this.matieresDisponibles =
+      !classe?.matiereIds || classe.matiereIds.length === 0
+        ? this.matieres
+        : this.matieres.filter((m) => classe.matiereIds!.includes(m.id!));
   }
 
   onValeurModifiee(): void {
