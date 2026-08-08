@@ -48,51 +48,6 @@
   }
 }
 
-.tabs {
-  display: flex;
-  gap: 0.5rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.tab-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.7rem 0.25rem;
-  margin-bottom: -1px;
-  border: none;
-  border-bottom: 2px solid transparent;
-  background: none;
-  color: #64748b;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    color: #1e293b;
-  }
-
-  &.active {
-    color: #2563eb;
-    border-bottom-color: #2563eb;
-  }
-}
-
-.tab-count {
-  background: #f1f5f9;
-  color: #64748b;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 1px 7px;
-  border-radius: 10px;
-}
-
-.tab-btn.active .tab-count {
-  background: #dbeafe;
-  color: #2563eb;
-}
-
 .clickable-row {
   cursor: pointer;
   transition: background 0.15s;

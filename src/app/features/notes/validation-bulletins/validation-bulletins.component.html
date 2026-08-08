@@ -22,25 +22,6 @@
     <div class="spinner-overlay" *ngIf="loading"><div class="spinner"></div></div>
 
     <ng-container *ngIf="periodeId && !loading">
-      <div class="tabs">
-        <button
-          type="button"
-          class="tab-btn"
-          [class.active]="onglet === 'NON_VALIDE'"
-          (click)="onglet = 'NON_VALIDE'"
-        >
-          Non validés <span class="tab-count">{{ nombreNonValides }}</span>
-        </button>
-        <button
-          type="button"
-          class="tab-btn"
-          [class.active]="onglet === 'VALIDE'"
-          (click)="onglet = 'VALIDE'"
-        >
-          Validés <span class="tab-count">{{ nombreValides }}</span>
-        </button>
-      </div>
-
       <div class="table-card">
         <table class="data-table">
           <thead>
@@ -52,7 +33,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of listeFiltree" class="clickable-row" (click)="ouvrirClasse(item)">
+            <tr *ngFor="let item of liste" class="clickable-row" (click)="ouvrirClasse(item)">
               <td class="col-classe">{{ item.classeLibelle }}</td>
               <td>
                 <span class="statut-badge" [class.valide]="item.valide" [class.non-valide]="!item.valide">
@@ -99,10 +80,8 @@
                 </div>
               </td>
             </tr>
-            <tr *ngIf="listeFiltree.length === 0">
-              <td colspan="4" class="empty-row">
-                {{ onglet === 'VALIDE' ? 'Aucune classe validée.' : 'Aucune classe en attente de validation.' }}
-              </td>
+            <tr *ngIf="liste.length === 0">
+              <td colspan="4" class="empty-row">Aucune classe pour cette période.</td>
             </tr>
           </tbody>
         </table>

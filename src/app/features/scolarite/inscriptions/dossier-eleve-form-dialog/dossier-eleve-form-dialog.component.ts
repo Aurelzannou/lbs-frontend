@@ -93,7 +93,14 @@ export class DossierEleveFormDialogComponent implements OnInit {
 
   private loadData(): void {
     this.classeService.getAll(1, 100).subscribe((res) => (this.classes = res.data || res));
-    this.anneeService.getAll(1, 100).subscribe((res) => (this.annees = res.data || res));
+    this.anneeService.getAll(1, 100).subscribe((res) => {
+      const toutes: AnneeScolaire[] = res.data || res;
+      // Une nouvelle inscription ne doit se faire que sur l'année scolaire active — en édition,
+      // on garde aussi l'année déjà assignée au dossier même si elle n'est plus active, pour ne
+      // pas faire disparaître la valeur déjà sélectionnée.
+      const anneeActuelleId = this.data?.anneeScolaireId || this.data?.anneeScolaire?.id;
+      this.annees = toutes.filter((a) => a.actif || a.id === anneeActuelleId);
+    });
   }
 
   async onSubmit(): Promise<void> {

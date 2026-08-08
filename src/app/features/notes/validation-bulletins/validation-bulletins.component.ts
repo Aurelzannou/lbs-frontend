@@ -15,8 +15,6 @@ import { Bulletin } from '../../../core/models/bulletin.model';
 import { MatiereNotesDialogComponent } from '../matiere-notes-dialog/matiere-notes-dialog.component';
 import { PdfPreviewDialogComponent } from '../pdf-preview-dialog/pdf-preview-dialog.component';
 
-type Onglet = 'NON_VALIDE' | 'VALIDE';
-
 @Component({
   selector: 'app-validation-bulletins',
   standalone: true,
@@ -44,8 +42,6 @@ export class ValidationBulletinsComponent implements OnInit {
   loading = false;
   telechargementEnCours: number | null = null;
 
-  onglet: Onglet = 'NON_VALIDE';
-
   // Vue détaillée d'une classe (grille élèves × matières)
   classeSelectionnee: ValidationBulletin | null = null;
   bulletins: Bulletin[] = [];
@@ -61,18 +57,6 @@ export class ValidationBulletinsComponent implements OnInit {
 
   get periodeSelectionnee(): PeriodeAcademique | undefined {
     return this.periodes.find((p) => p.id === this.periodeId);
-  }
-
-  get listeFiltree(): ValidationBulletin[] {
-    return this.liste.filter((i) => (this.onglet === 'VALIDE' ? i.valide : !i.valide));
-  }
-
-  get nombreNonValides(): number {
-    return this.liste.filter((i) => !i.valide).length;
-  }
-
-  get nombreValides(): number {
-    return this.liste.filter((i) => i.valide).length;
   }
 
   onPeriodeChange(): void {
