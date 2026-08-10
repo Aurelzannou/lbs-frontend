@@ -35,9 +35,6 @@ export interface FeuilleSaisieNotesRequest {
   matiereId: number;
   periodeId: number;
   professeurId?: number | null;
-  /** Réservé à l'écran "Validation des bulletins" — signale au backend que l'accès à une année
-      scolaire inactive est légitime ici (contrairement à l'écran de saisie directe de l'admin). */
-  contexteValidation?: boolean;
   eleves: EleveNoteEntry[];
 }
 

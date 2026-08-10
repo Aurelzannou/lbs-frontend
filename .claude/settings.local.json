@@ -112,7 +112,10 @@
       "Bash(java GenWatermark)",
       "Bash(rm -f ListFonts.java ListFonts.class GenWatermark.class)",
       "Bash(./mvnw.cmd -q compile)",
-      "Bash(rm -f GenWatermark.java GenWatermark.class)"
+      "Bash(rm -f GenWatermark.java GenWatermark.class)",
+      "PowerShell(docker exec lbs-postgres psql -U lbs_user -d lbs_db -c \"SELECT n.lbs_note_eleve_id, e.lbs_elev_nom, n.lbs_note_numero, n.lbs_note_valeur FROM lbs.lbs_note n JOIN lbs.lbs_eleve e ON e.id = n.lbs_note_eleve_id WHERE n.lbs_note_classe_id = 15 AND n.lbs_note_matiere_id = 3 AND n.lbs_note_periode_id = 1 AND n.lbs_note_type_evaluation = 'INTERROGATION' ORDER BY n.lbs_note_numero, e.lbs_elev_nom;\")",
+      "PowerShell(docker exec lbs-postgres psql -U lbs_user -d lbs_db -c \"ALTER TABLE lbs.lbs_note ADD COLUMN IF NOT EXISTS lbs_note_classe_id BIGINT;\")",
+      "PowerShell(docker exec lbs-postgres psql -U lbs_user -d lbs_db -c \"UPDATE lbs.lbs_note n SET lbs_note_classe_id = e.lbs_elev_classe_id FROM lbs.lbs_eleve e WHERE e.id = n.lbs_note_eleve_id AND n.lbs_note_classe_id IS NULL;\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"

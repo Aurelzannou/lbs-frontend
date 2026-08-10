@@ -6,6 +6,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { NoteService } from '../../../core/services/note.service';
+import { ValidationBulletinService } from '../../../core/services/validation-bulletin.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { FeuilleSaisieNotes, ProgressionEtapeHistorique, ProgressionSaisieNotes } from '../../../core/models/note.model';
 import { NotesRosterTableComponent } from '../notes-roster-table/notes-roster-table.component';
@@ -31,6 +32,7 @@ export class MatiereNotesDialogComponent implements OnInit, OnDestroy {
   private dialogRef = inject(MatDialogRef<MatiereNotesDialogComponent>);
   public data = inject<MatiereNotesDialogData>(MAT_DIALOG_DATA);
   private noteService = inject(NoteService);
+  private validationBulletinService = inject(ValidationBulletinService);
   private notification = inject(NotificationService);
 
   feuille: FeuilleSaisieNotes | null = null;
@@ -47,10 +49,6 @@ export class MatiereNotesDialogComponent implements OnInit, OnDestroy {
   private modificationSubject = new Subject<void>();
   private modificationSub?: Subscription;
 
-  get etapeReadonly(): boolean {
-    return this.progression?.etape === 'VALIDEE';
-  }
-
   ngOnInit(): void {
     this.refresh();
     this.chargerProgression();
@@ -60,8 +58,8 @@ export class MatiereNotesDialogComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.modificationSub?.unsubscribe();
-    if (!this.feuille || this.data.readonly || this.etapeReadonly) return;
-    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe();
+    if (!this.feuille || this.data.readonly) return;
+    this.validationBulletinService.corrigerNotes(this.construirePayload()).subscribe();
   }
 
   onValeurModifiee(): void {
@@ -74,7 +72,6 @@ export class MatiereNotesDialogComponent implements OnInit, OnDestroy {
       classeId: this.data.classeId,
       matiereId: this.data.matiereId,
       periodeId: this.data.periodeId,
-      contexteValidation: true,
       eleves: this.feuille!.eleves.map((el) => ({
         eleveId: el.eleveId,
         interrogations: el.interrogations ?? [],
@@ -85,9 +82,9 @@ export class MatiereNotesDialogComponent implements OnInit, OnDestroy {
   }
 
   private enregistrerAuto(): void {
-    if (!this.feuille || this.data.readonly || this.etapeReadonly) return;
+    if (!this.feuille || this.data.readonly) return;
     this.autoSaveStatut = 'saving';
-    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe({
+    this.validationBulletinService.corrigerNotes(this.construirePayload()).subscribe({
       next: (res: any) => {
         this.feuille = res.data ?? res;
         this.modifie = true;
@@ -266,7 +263,7 @@ export class MatiereNotesDialogComponent implements OnInit, OnDestroy {
   enregistrer(): void {
     if (!this.feuille) return;
     this.saving = true;
-    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe({
+    this.validationBulletinService.corrigerNotes(this.construirePayload()).subscribe({
       next: (res: any) => {
         this.feuille = res.data ?? res;
         this.modifie = true;

@@ -72,12 +72,15 @@ export class SaisieNotesComponent implements OnInit, OnDestroy {
       this.matieres = res.data ?? (Array.isArray(res) ? res : []);
       this.mettreAJourMatieresDisponibles();
     });
-    // Cet écran de saisie directe se limite à l'année scolaire active — la consultation/modification
-    // des périodes d'une année inactive reste possible, mais uniquement depuis l'écran "Validation
-    // des bulletins" (qui garde volontairement un accès à tout l'historique).
+    // Cet écran de saisie directe se limite à la période EN_COURS d'une année scolaire active — la
+    // consultation/modification d'une autre période (À venir, Terminée) ou d'une année inactive
+    // reste possible, mais uniquement depuis l'écran "Validation des bulletins" (qui garde
+    // volontairement un accès à tout l'historique). Le backend applique la même règle.
     this.periodeService.getAll(1, 50).subscribe((res: any) => {
       const toutes = res.data ?? (Array.isArray(res) ? res : []);
-      this.periodes = toutes.filter((p: PeriodeAcademique) => !!p.anneeScolaire?.actif);
+      this.periodes = toutes.filter(
+        (p: PeriodeAcademique) => !!p.anneeScolaire?.actif && p.statut === 'EN_COURS'
+      );
     });
 
     this.modificationSub = this.modificationSubject.pipe(debounceTime(1500)).subscribe(() => this.enregistrerAuto());

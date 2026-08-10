@@ -335,6 +335,24 @@
     }
   }
 
+  .col-matiere.matiere-en-attente {
+    color: #94a3b8;
+    cursor: pointer;
+  }
+
+  th.col-matiere.matiere-en-attente {
+    color: #cbd5e1;
+  }
+
+  .icon-en-attente {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    margin-left: 4px;
+    opacity: 0.8;
+  }
+
   .col-moyenne {
     font-weight: 700;
     color: #2563eb;

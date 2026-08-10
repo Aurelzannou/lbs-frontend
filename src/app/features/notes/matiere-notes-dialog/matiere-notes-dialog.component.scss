@@ -82,16 +82,73 @@
   }
 }
 
-.btn-action-valider {
-  --mdc-filled-button-container-color: #16a34a;
+.btn-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
 }
 
-.btn-action-devalider {
-  --mdc-filled-button-container-color: #d97706;
+.btn-fermer {
+  background: transparent;
+  color: #64748b;
+  &:hover:not(:disabled) {
+    background: #f1f5f9;
+    color: #334155;
+  }
 }
 
-.btn-action-deverrouiller {
-  --mdc-filled-button-container-color: #dc2626;
+.btn-valider {
+  background: #dcfce7;
+  color: #15803d;
+  &:hover:not(:disabled) {
+    background: #bbf7d0;
+  }
+}
+
+.btn-devalider {
+  background: #fee2e2;
+  color: #b91c1c;
+  &:hover:not(:disabled) {
+    background: #fecaca;
+  }
+}
+
+.btn-deverrouiller {
+  background: #fef3c7;
+  color: #b45309;
+  &:hover:not(:disabled) {
+    background: #fde68a;
+  }
+}
+
+.btn-save {
+  background: #d97706;
+  color: white;
+  min-width: 130px;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(217, 119, 6, 0.3);
+  &:hover:not(:disabled) {
+    background: #b45309;
+  }
 }
 
 .historique-toggle {

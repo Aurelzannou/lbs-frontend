@@ -43,6 +43,11 @@ export class NoteService {
     return this.api.get<ProgressionSaisieNotes>(`${this.endpoint}/progression`, params);
   }
 
+  getProgressionsClasse(classeId: number, periodeId: number): Observable<ProgressionSaisieNotes[]> {
+    const params = new HttpParams().set('classeId', classeId.toString()).set('periodeId', periodeId.toString());
+    return this.api.get<ProgressionSaisieNotes[]>(`${this.endpoint}/progression/classe`, params);
+  }
+
   verrouillerColonne(payload: VerrouProgressionRequest): Observable<ProgressionSaisieNotes> {
     return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/verrouiller`, payload);
   }

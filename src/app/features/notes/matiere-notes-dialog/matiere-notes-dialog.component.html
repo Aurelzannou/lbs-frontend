@@ -52,11 +52,11 @@
         *ngIf="feuille && !loading"
         [eleves]="feuille.eleves"
         [(nombreInterrogations)]="feuille.nombreInterrogations"
-        [readonly]="data.readonly || etapeReadonly"
+        [readonly]="data.readonly"
         [allowAddInterrogation]="false"
         [estConduite]="feuille.estConduite ?? false"
-        [progressionInterrogations]="progression?.interrogationsVerroueesJusqua ?? null"
-        [progressionDevoirs]="progression?.devoirsVerrouesJusqua ?? null"
+        [progressionInterrogations]="null"
+        [progressionDevoirs]="null"
         [progressionInterrogationsValidees]="progression?.interrogationsValideesJusqua ?? 0"
         [progressionDevoirsValidees]="progression?.devoirsValideesJusqua ?? 0"
         [verrouillageActifPourEdition]="false"
@@ -72,12 +72,12 @@
         <mat-icon>check_circle</mat-icon> Enregistré automatiquement
       </span>
       <div class="rfm-actions">
-        <button mat-button class="rfm-cancel" (click)="fermer()">Fermer</button>
+        <button type="button" class="btn-action btn-fermer" (click)="fermer()">Fermer</button>
 
         <button
           *ngIf="progression?.etape === 'SOUMISE'"
-          mat-flat-button
-          class="rfm-submit btn-action-valider"
+          type="button"
+          class="btn-action btn-valider"
           [disabled]="validationEnCours"
           (click)="validerMatiere()"
         >
@@ -86,8 +86,8 @@
         </button>
         <button
           *ngIf="progression?.etape === 'VALIDEE'"
-          mat-flat-button
-          class="rfm-submit btn-action-deverrouiller"
+          type="button"
+          class="btn-action btn-devalider"
           [disabled]="validationEnCours"
           (click)="devaliderMatiere()"
           matTooltip="Annuler la validation pour pouvoir modifier à nouveau"
@@ -96,11 +96,11 @@
           Dévalider la matière
         </button>
 
-        <ng-container *ngIf="progression && !etapeReadonly">
+        <ng-container *ngIf="progression && progression.etape !== 'VALIDEE'">
           <button
             *ngIf="progression.interrogationsValideesJusqua < progression.interrogationsVerroueesJusqua"
-            mat-flat-button
-            class="rfm-submit btn-action-valider"
+            type="button"
+            class="btn-action btn-valider"
             [disabled]="deverrouillageEnCours"
             (click)="validerInterrogation()"
             matTooltip="Valider la prochaine interrogation verrouillée en attente"
@@ -110,8 +110,8 @@
           </button>
           <button
             *ngIf="progression.interrogationsVerroueesJusqua > 0"
-            mat-flat-button
-            class="rfm-submit btn-action-deverrouiller"
+            type="button"
+            class="btn-action btn-deverrouiller"
             [disabled]="deverrouillageEnCours"
             (click)="deverrouillerInterrogations()"
             matTooltip="Déverrouiller la dernière interrogation verrouillée"
@@ -122,8 +122,8 @@
 
           <button
             *ngIf="progression.devoirsValideesJusqua < progression.devoirsVerrouesJusqua"
-            mat-flat-button
-            class="rfm-submit btn-action-valider"
+            type="button"
+            class="btn-action btn-valider"
             [disabled]="deverrouillageEnCours"
             (click)="validerDevoir()"
             matTooltip="Valider le prochain devoir verrouillé en attente"
@@ -133,8 +133,8 @@
           </button>
           <button
             *ngIf="progression.devoirsVerrouesJusqua > 0"
-            mat-flat-button
-            class="rfm-submit btn-action-deverrouiller"
+            type="button"
+            class="btn-action btn-deverrouiller"
             [disabled]="deverrouillageEnCours"
             (click)="deverrouillerDevoirs()"
             matTooltip="Déverrouiller le dernier devoir verrouillé"
@@ -145,9 +145,9 @@
         </ng-container>
 
         <button
-          *ngIf="!data.readonly && !etapeReadonly"
-          mat-flat-button
-          class="rfm-submit"
+          *ngIf="!data.readonly"
+          type="button"
+          class="btn-action btn-save"
           (click)="enregistrer()"
           [disabled]="saving || loading"
         >

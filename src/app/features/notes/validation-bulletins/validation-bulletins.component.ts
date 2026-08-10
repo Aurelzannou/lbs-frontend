@@ -8,10 +8,12 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { PeriodeAcademiqueService } from '../../../core/services/periode-academique.service';
 import { ValidationBulletinService } from '../../../core/services/validation-bulletin.service';
 import { BulletinService } from '../../../core/services/bulletin.service';
+import { NoteService } from '../../../core/services/note.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PeriodeAcademique } from '../../../core/models/periode-academique.model';
 import { ValidationBulletin } from '../../../core/models/validation-bulletin.model';
 import { Bulletin } from '../../../core/models/bulletin.model';
+import { EtapeSaisieNotes } from '../../../core/models/note.model';
 import { MatiereNotesDialogComponent } from '../matiere-notes-dialog/matiere-notes-dialog.component';
 import { PdfPreviewDialogComponent } from '../pdf-preview-dialog/pdf-preview-dialog.component';
 
@@ -33,6 +35,7 @@ export class ValidationBulletinsComponent implements OnInit {
   private periodeService = inject(PeriodeAcademiqueService);
   private validationBulletinService = inject(ValidationBulletinService);
   private bulletinService = inject(BulletinService);
+  private noteService = inject(NoteService);
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
 
@@ -48,6 +51,11 @@ export class ValidationBulletinsComponent implements OnInit {
   matieres: { id: number; libelle: string }[] = [];
   loadingDetail = false;
   telechargementEleveEnCours: number | null = null;
+
+  /** Étape (BROUILLON/SOUMISE/VALIDEE) de chaque matière de la classe pour la période ouverte —
+      tant qu'une matière est en BROUILLON (le professeur n'a pas soumis), l'admin ne peut pas
+      l'ouvrir pour la modifier depuis cet écran de validation. */
+  etapeParMatiere = new Map<number, EtapeSaisieNotes>();
 
   ngOnInit(): void {
     this.periodeService.getAll(1, 50).subscribe((res: any) => {
@@ -87,12 +95,30 @@ export class ValidationBulletinsComponent implements OnInit {
   ouvrirClasse(item: ValidationBulletin): void {
     this.classeSelectionnee = item;
     this.chargerDetailClasse();
+    this.chargerEtapesMatieres(item);
   }
 
   fermerClasse(): void {
     this.classeSelectionnee = null;
     this.bulletins = [];
     this.matieres = [];
+    this.etapeParMatiere = new Map();
+  }
+
+  private chargerEtapesMatieres(item: ValidationBulletin): void {
+    this.noteService.getProgressionsClasse(item.classeId, item.periodeId).subscribe({
+      next: (progressions) => {
+        this.etapeParMatiere = new Map(progressions.map((p) => [p.matiereId, p.etape]));
+      },
+      error: () => (this.etapeParMatiere = new Map())
+    });
+  }
+
+  /** Une matière n'est ouvrable par l'admin, depuis cet écran de validation, qu'une fois que le
+      professeur l'a soumise (SOUMISE ou VALIDEE) — tant qu'elle est en BROUILLON, il continue d'y
+      travailler et l'admin ne doit pas intervenir. */
+  matiereEditable(matiereId: number): boolean {
+    return this.etapeParMatiere.get(matiereId) !== 'BROUILLON';
   }
 
   private chargerDetailClasse(): void {
@@ -128,6 +154,11 @@ export class ValidationBulletinsComponent implements OnInit {
     const item = this.classeSelectionnee;
     const periode = this.periodeSelectionnee;
 
+    // Cet écran de correction n'a aucune restriction d'édition liée à la soumission du professeur
+    // (contrairement à la saisie directe) — seule une classe déjà validée reste en lecture seule,
+    // et il faut explicitement la dévalider pour la modifier à nouveau.
+    const lectureSeule = item.valide;
+
     this.dialog
       .open(MatiereNotesDialogComponent, {
         width: '900px',
@@ -140,7 +171,7 @@ export class ValidationBulletinsComponent implements OnInit {
           classeLibelle: item.classeLibelle,
           matiereLibelle,
           periodeLibelle: periode?.libelle ?? '',
-          readonly: item.valide
+          readonly: lectureSeule
         }
       })
       .afterClosed()
