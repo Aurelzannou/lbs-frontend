@@ -1,0 +1,240 @@
+@import '../../../../styles.scss';
+
+.page-wrapper {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-height: 100%;
+  position: relative;
+}
+
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dossier-picker {
+  min-width: 340px;
+  flex: 1;
+  max-width: 480px;
+}
+
+.btn-add {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background: var(--primary-color);
+  color: white;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: #0e41b8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(19, 82, 226, 0.2);
+  }
+}
+
+.totals-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.total-card {
+  flex: 1;
+  min-width: 200px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--card-shadow);
+
+  &.paye {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+  }
+  &.reste {
+    border-color: #fecaca;
+    background: #fef2f2;
+  }
+}
+
+.total-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #64748b;
+}
+
+.total-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.frais-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: var(--card-shadow);
+}
+
+.frais-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 12px;
+
+  h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: #1e293b;
+  }
+}
+
+.frais-resume {
+  font-size: 0.85rem;
+  color: #475569;
+
+  em {
+    color: #b91c1c;
+    font-style: normal;
+    font-weight: 600;
+  }
+}
+
+.tranches-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.tranche-chip {
+  flex: 1;
+  min-width: 200px;
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+
+  .tranche-numero {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #64748b;
+  }
+  .tranche-libelle {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+  .tranche-date,
+  .tranche-montant {
+    font-size: 0.78rem;
+    color: #64748b;
+  }
+  .tranche-statut {
+    margin-top: 4px;
+    align-self: flex-start;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  &.payee {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+    .tranche-statut {
+      background: #dcfce7;
+      color: #15803d;
+    }
+  }
+  &.partielle {
+    border-color: #fde68a;
+    background: #fffbeb;
+    .tranche-statut {
+      background: #fef3c7;
+      color: #b45309;
+    }
+  }
+  &.en_retard {
+    border-color: #fecaca;
+    background: #fef2f2;
+    .tranche-statut {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+  }
+  &.en_attente {
+    .tranche-statut {
+      background: #e2e8f0;
+      color: #475569;
+    }
+  }
+}
+
+.text-muted {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #94a3b8;
+}
+
+.spinner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(19, 82, 226, 0.1);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

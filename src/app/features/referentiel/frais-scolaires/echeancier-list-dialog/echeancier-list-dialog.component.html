@@ -1,0 +1,103 @@
+<div class="rfm-dialog">
+  <div class="rfm-card">
+    <div class="rfm-header">
+      <div class="rfm-header-inner">
+        <div class="rfm-title-group">
+          <div class="rfm-icon-box edit">
+            <mat-icon>event_note</mat-icon>
+          </div>
+          <div>
+            <h3 class="rfm-title">Échéancier</h3>
+            <p class="rfm-subtitle">{{ data.fraisLibelle }}</p>
+          </div>
+        </div>
+        <button mat-icon-button class="rfm-close" (click)="fermer()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="rfm-body">
+      <div class="tranches-list" *ngIf="!loading">
+        <div class="tranche-row" *ngFor="let t of echeanciers">
+          <div class="tranche-info">
+            <span class="tranche-numero">Tranche {{ t.numero }}</span>
+            <span class="tranche-libelle">{{ t.libelle || '—' }}</span>
+            <span class="tranche-date">{{ t.dateEcheance | date: 'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="tranche-montant">{{ t.montant | number: '1.0-0' }} FCFA</div>
+          <div class="tranche-actions">
+            <button class="icon-btn edit" (click)="ouvrirEdition(t)" title="Modifier">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button class="icon-btn delete" (click)="supprimer(t)" title="Supprimer">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="!echeanciers.length">
+          <p>Aucune tranche définie pour ce frais.</p>
+        </div>
+
+        <div class="tranches-total" *ngIf="echeanciers.length">
+          Total des tranches : <strong>{{ totalMontant | number: '1.0-0' }} FCFA</strong>
+        </div>
+      </div>
+
+      <button class="btn-add-tranche" *ngIf="!formOuvert" (click)="ouvrirAjout()">
+        <mat-icon>add</mat-icon>
+        Ajouter une tranche
+      </button>
+
+      <form [formGroup]="form" class="rfm-form tranche-form" *ngIf="formOuvert">
+        <div class="rfm-row two-cols">
+          <div class="rfm-field">
+            <span class="rfm-label">Numéro <span class="req">*</span></span>
+            <mat-form-field appearance="outline">
+              <input matInput type="number" formControlName="numero" />
+            </mat-form-field>
+          </div>
+          <div class="rfm-field">
+            <span class="rfm-label">Montant (FCFA) <span class="req">*</span></span>
+            <mat-form-field appearance="outline">
+              <input matInput type="number" formControlName="montant" />
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="rfm-row two-cols">
+          <div class="rfm-field">
+            <span class="rfm-label">Libellé</span>
+            <mat-form-field appearance="outline">
+              <input matInput formControlName="libelle" placeholder="Ex: 1ère tranche à l'inscription" />
+            </mat-form-field>
+          </div>
+          <div class="rfm-field">
+            <span class="rfm-label">Date d'échéance <span class="req">*</span></span>
+            <mat-form-field appearance="outline">
+              <input matInput type="date" formControlName="dateEcheance" />
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="tranche-form-actions">
+          <button mat-button type="button" (click)="annulerForm()" [disabled]="saving">Annuler</button>
+          <button
+            mat-flat-button
+            class="rfm-submit"
+            type="button"
+            (click)="onSubmit()"
+            [disabled]="form.invalid || saving"
+          >
+            Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="rfm-footer">
+      <div class="rfm-actions">
+        <button mat-flat-button class="rfm-submit" (click)="fermer()">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>

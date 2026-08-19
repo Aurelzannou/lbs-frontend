@@ -1,0 +1,155 @@
+<div class="rfm-dialog">
+  <div class="rfm-card">
+    <div class="rfm-header">
+      <div class="rfm-header-inner">
+        <div class="rfm-title-group">
+          <div class="rfm-icon-box create">
+            <mat-icon>payments</mat-icon>
+          </div>
+          <div>
+            <h3 class="rfm-title">Nouveau Paiement</h3>
+            <p class="rfm-subtitle">Encaissement d'un frais scolaire</p>
+          </div>
+        </div>
+        <button mat-icon-button class="rfm-close" (click)="onCancel()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="rfm-body">
+      <form [formGroup]="form" class="rfm-form">
+        <div class="rfm-row">
+          <div class="rfm-select">
+            <span class="rfm-label">Élève <span class="req">*</span></span>
+            <ng-select
+              [items]="dossiers"
+              bindLabel="nomComplet"
+              bindValue="id"
+              formControlName="dossierEleveId"
+              placeholder="Rechercher un élève par nom..."
+              [loading]="loading"
+              appendTo="body"
+              class="ng-field"
+              (change)="onDossierSelectionne($event?.id ?? null)"
+            >
+            </ng-select>
+            <div
+              class="rfm-error"
+              *ngIf="form.get('dossierEleveId')?.invalid && form.get('dossierEleveId')?.touched"
+            >
+              Ce champ est obligatoire
+            </div>
+          </div>
+        </div>
+
+        <div class="rfm-row">
+          <div class="rfm-select">
+            <span class="rfm-label">Frais scolaire <span class="req">*</span></span>
+            <ng-select
+              [items]="fraisDisponibles"
+              bindValue="id"
+              formControlName="fraisScolaireId"
+              placeholder="Sélectionner un frais"
+              appendTo="body"
+              class="ng-field"
+              (change)="onFraisSelectionne($event?.id ?? null)"
+            >
+              <ng-template ng-option-tmp let-item="item">
+                {{ item.typeFrais?.libelle }} — {{ item.montant | number: '1.0-0' }} FCFA
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item">
+                {{ item.typeFrais?.libelle }} — {{ item.montant | number: '1.0-0' }} FCFA
+              </ng-template>
+            </ng-select>
+            <div class="rfm-hint" *ngIf="resteAPayerFrais !== null">
+              Reste à payer sur ce frais : <strong>{{ resteAPayerFrais | number: '1.0-0' }} FCFA</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="rfm-row two-cols">
+          <div class="rfm-field">
+            <span class="rfm-label">Montant (FCFA) <span class="req">*</span></span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>payments</mat-icon>
+              <input matInput type="number" formControlName="montant" placeholder="0" />
+            </mat-form-field>
+          </div>
+          <div class="rfm-field">
+            <span class="rfm-label">Date de paiement <span class="req">*</span></span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>event</mat-icon>
+              <input matInput type="date" formControlName="datePaiement" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="rfm-row two-cols">
+          <div class="rfm-select">
+            <span class="rfm-label">Mode de paiement <span class="req">*</span></span>
+            <ng-select
+              [items]="modesPaiement"
+              bindLabel="libelle"
+              bindValue="id"
+              formControlName="modePaiementId"
+              placeholder="Sélectionner un mode"
+              appendTo="body"
+              class="ng-field"
+            >
+            </ng-select>
+          </div>
+          <div class="rfm-select">
+            <span class="rfm-label">Caisse <span class="req">*</span></span>
+            <ng-select
+              [items]="caisses"
+              bindLabel="libelle"
+              bindValue="id"
+              formControlName="caisseId"
+              placeholder="Sélectionner une caisse"
+              appendTo="body"
+              class="ng-field"
+            >
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="rfm-row">
+          <div class="rfm-field">
+            <span class="rfm-label">Référence (optionnel)</span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>tag</mat-icon>
+              <input matInput formControlName="reference" placeholder="Ex: reçu manuel n°..." />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="rfm-row">
+          <div class="rfm-field">
+            <span class="rfm-label">Observation</span>
+            <mat-form-field appearance="outline">
+              <textarea matInput formControlName="observation" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="rfm-footer">
+      <div class="rfm-actions">
+        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="saving">
+          Annuler
+        </button>
+        <button
+          mat-flat-button
+          class="rfm-submit"
+          (click)="onSubmit()"
+          [disabled]="form.invalid || saving"
+        >
+          <mat-icon *ngIf="!saving">save</mat-icon>
+          Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

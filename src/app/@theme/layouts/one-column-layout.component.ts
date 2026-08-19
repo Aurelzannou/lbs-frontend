@@ -341,7 +341,9 @@ export class OneColumnLayoutComponent {
       'flag-outline': 'flag',
       'award-outline': 'military_tech',
       'edit-2-outline': 'edit',
-      'checkmark-square-2-outline': 'fact_check'
+      'checkmark-square-2-outline': 'fact_check',
+      'trending-down-outline': 'trending_down',
+      'pie-chart-outline': 'pie_chart'
     };
     return iconMap[evaName] || evaName;
   }

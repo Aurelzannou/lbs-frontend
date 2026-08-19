@@ -12,11 +12,11 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FraisScolaireService } from '../../../../core/services/frais-scolaire.service';
+import { PaiementService } from '../../../../core/services/paiement.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { FraisScolaire } from '../../../../core/models/frais-scolaire.model';
-import { FraisScolaireFormDialogComponent } from '../frais-scolaire-form-dialog/frais-scolaire-form-dialog.component';
-import { EcheancierListDialogComponent } from '../echeancier-list-dialog/echeancier-list-dialog.component';
+import { Paiement } from '../../../../core/models/paiement.model';
+import { PaiementFormDialogComponent } from '../paiement-form-dialog/paiement-form-dialog.component';
+import { PdfPreviewDialogComponent } from '../../../notes/pdf-preview-dialog/pdf-preview-dialog.component';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -29,7 +29,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
-  selector: 'app-frais-scolaire-list',
+  selector: 'app-paiement-list',
   standalone: true,
   imports: [
     CommonModule,
@@ -53,25 +53,29 @@ import { MatTooltipModule } from '@angular/material/tooltip';
       ])
     ])
   ],
-  templateUrl: './frais-scolaire-list.component.html',
-  styleUrl: './frais-scolaire-list.component.scss'
+  templateUrl: './paiement-list.component.html',
+  styleUrl: './paiement-list.component.scss'
 })
-export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewInit {
-  private fraisScolaireService = inject(FraisScolaireService);
+export class PaiementListComponent implements OnInit, OnDestroy, AfterViewInit {
+  private paiementService = inject(PaiementService);
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
   displayedColumns: string[] = [
-    'classe',
-    'typeFrais',
-    'anneeScolaire',
-    'code',
+    'eleve',
+    'frais',
     'montant',
+    'modePaiement',
+    'caisse',
+    'statut',
+    'datePaiement',
     'actions'
   ];
-  dataSource = new MatTableDataSource<FraisScolaire>([]);
+  dataSource = new MatTableDataSource<Paiement>([]);
   loading = false;
+  recuEnCours: number | null = null;
+  annulationEnCours: number | null = null;
 
   totalElements = 0;
   pageIndex = 0;
@@ -110,14 +114,9 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
     this.searchSubject.next(value);
   }
 
-  clearSearch(input: HTMLInputElement): void {
-    input.value = '';
-    this.searchSubject.next('');
-  }
-
   refresh(): void {
     this.loading = true;
-    this.fraisScolaireService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
+    this.paiementService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
       next: (response: any) => {
         const items = response.data || (Array.isArray(response) ? response : []);
         const meta = response.meta || {};
@@ -134,9 +133,8 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Erreur chargement frais scolaires:', err);
-        this.notification.error('Impossible de charger les frais');
+      error: () => {
+        this.notification.error('Impossible de charger les paiements');
         this.loading = false;
       }
     });
@@ -145,20 +143,15 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
   get totalPages(): number {
     return Math.ceil(this.totalElements / this.pageSize) || 1;
   }
-  get currentPage(): number {
-    return this.pageIndex;
-  }
   getEndIndex(): number {
     return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements);
   }
-
   goToPage(page: number): void {
     const index = page - 1;
     if (index < 0 || index >= this.totalPages) return;
     this.pageIndex = index;
     this.refresh();
   }
-
   nextPage(): void {
     if (this.pageIndex < this.totalPages - 1) {
       this.pageIndex++;
@@ -178,12 +171,11 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
     return this.pageIndex >= this.totalPages - 1;
   }
 
-  openForm(frais?: FraisScolaire): void {
+  openForm(): void {
     this.dialog
-      .open(FraisScolaireFormDialogComponent, {
-        width: '500px',
+      .open(PaiementFormDialogComponent, {
+        width: '560px',
         maxWidth: '95vw',
-        data: frais,
         panelClass: 'professional-dialog'
       })
       .afterClosed()
@@ -192,34 +184,48 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
       });
   }
 
-  openEcheancier(frais: FraisScolaire): void {
-    this.dialog.open(EcheancierListDialogComponent, {
-      width: '560px',
-      maxWidth: '95vw',
-      panelClass: 'professional-dialog',
-      data: {
-        fraisScolaireId: frais.id,
-        fraisLibelle: `${frais.typeFrais?.libelle ?? ''} — ${frais.classe?.code ?? ''}`
+  voirRecu(paiement: Paiement): void {
+    this.recuEnCours = paiement.id ?? null;
+    this.paiementService.getRecuPdf(paiement.uuid!).subscribe({
+      next: (blob) => {
+        this.dialog.open(PdfPreviewDialogComponent, {
+          width: '700px',
+          maxWidth: '95vw',
+          height: '860px',
+          maxHeight: '92vh',
+          panelClass: 'professional-dialog',
+          data: {
+            blob,
+            filename: `recu-${paiement.code}.pdf`,
+            title: `Reçu ${paiement.code}`
+          }
+        });
+        this.recuEnCours = null;
+      },
+      error: () => {
+        this.notification.error('Impossible de générer le reçu');
+        this.recuEnCours = null;
       }
     });
   }
 
-  async deleteFrais(frais: FraisScolaire): Promise<void> {
+  async annuler(paiement: Paiement): Promise<void> {
     const confirmed = await this.notification.confirm(
-      `Souhaitez-vous vraiment supprimer les frais ${frais.code} ?`
+      `Annuler ce paiement de ${paiement.montant} FCFA ? Un mouvement compensatoire sera enregistré en caisse.`
     );
-    if (confirmed) {
-      this.loading = true;
-      this.fraisScolaireService.delete(frais.uuid!).subscribe({
-        next: () => {
-          this.notification.success('Frais supprimé avec succès');
-          this.refresh();
-        },
-        error: () => {
-          this.notification.error('Erreur lors de la suppression');
-          this.loading = false;
-        }
-      });
-    }
+    if (!confirmed) return;
+
+    this.annulationEnCours = paiement.id ?? null;
+    this.paiementService.annuler(paiement.uuid!).subscribe({
+      next: () => {
+        this.notification.success('Paiement annulé');
+        this.annulationEnCours = null;
+        this.refresh();
+      },
+      error: (err) => {
+        this.notification.error(err?.error?.message || "Impossible d'annuler ce paiement");
+        this.annulationEnCours = null;
+      }
+    });
   }
 }

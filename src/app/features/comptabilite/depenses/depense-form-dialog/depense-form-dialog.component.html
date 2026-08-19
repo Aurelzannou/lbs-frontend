@@ -1,0 +1,108 @@
+<div class="rfm-dialog">
+  <div class="rfm-card">
+    <div class="rfm-header">
+      <div class="rfm-header-inner">
+        <div class="rfm-title-group">
+          <div class="rfm-icon-box create">
+            <mat-icon>trending_down</mat-icon>
+          </div>
+          <div>
+            <h3 class="rfm-title">Nouvelle Dépense</h3>
+            <p class="rfm-subtitle">Décaissement depuis une caisse</p>
+          </div>
+        </div>
+        <button mat-icon-button class="rfm-close" (click)="onCancel()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="rfm-body">
+      <form [formGroup]="form" class="rfm-form">
+        <div class="rfm-row two-cols">
+          <div class="rfm-select">
+            <span class="rfm-label">Caisse <span class="req">*</span></span>
+            <ng-select
+              [items]="caisses"
+              bindLabel="libelle"
+              bindValue="id"
+              formControlName="caisseId"
+              placeholder="Sélectionner une caisse"
+              [loading]="loading"
+              appendTo="body"
+              class="ng-field"
+            >
+            </ng-select>
+          </div>
+          <div class="rfm-select">
+            <span class="rfm-label">Catégorie <span class="req">*</span></span>
+            <ng-select
+              [items]="categories"
+              bindLabel="libelle"
+              bindValue="id"
+              formControlName="categorieDepenseId"
+              placeholder="Sélectionner une catégorie"
+              [loading]="loading"
+              appendTo="body"
+              class="ng-field"
+            >
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="rfm-row two-cols">
+          <div class="rfm-field">
+            <span class="rfm-label">Montant (FCFA) <span class="req">*</span></span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>payments</mat-icon>
+              <input matInput type="number" formControlName="montant" placeholder="0" />
+            </mat-form-field>
+          </div>
+          <div class="rfm-field">
+            <span class="rfm-label">Date <span class="req">*</span></span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>event</mat-icon>
+              <input matInput type="date" formControlName="dateDepense" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="rfm-row">
+          <div class="rfm-field">
+            <span class="rfm-label">Motif <span class="req">*</span></span>
+            <mat-form-field appearance="outline">
+              <textarea matInput formControlName="motif" rows="2" placeholder="Ex: Achat de fournitures"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="rfm-row">
+          <div class="rfm-field">
+            <span class="rfm-label">Référence (optionnel)</span>
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix>tag</mat-icon>
+              <input matInput formControlName="reference" />
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="rfm-footer">
+      <div class="rfm-actions">
+        <button mat-button class="rfm-cancel" (click)="onCancel()" [disabled]="saving">
+          Annuler
+        </button>
+        <button
+          mat-flat-button
+          class="rfm-submit"
+          (click)="onSubmit()"
+          [disabled]="form.invalid || saving"
+        >
+          <mat-icon *ngIf="!saving">save</mat-icon>
+          Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

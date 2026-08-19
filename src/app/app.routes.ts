@@ -188,6 +188,40 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'comptabilite',
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'paiements',
+        loadComponent: () =>
+          import('./features/comptabilite/paiements/paiement-list/paiement-list.component').then(
+            (m) => m.PaiementListComponent
+          )
+      },
+      {
+        path: 'depenses',
+        loadComponent: () =>
+          import('./features/comptabilite/depenses/depense-list/depense-list.component').then(
+            (m) => m.DepenseListComponent
+          )
+      },
+      {
+        path: 'mouvements',
+        loadComponent: () =>
+          import(
+            './features/comptabilite/mouvements-caisse/mouvement-caisse-list/mouvement-caisse-list.component'
+          ).then((m) => m.MouvementCaisseListComponent)
+      },
+      {
+        path: 'suivi',
+        loadComponent: () =>
+          import(
+            './features/comptabilite/suivi-paiements/suivi-paiements.component'
+          ).then((m) => m.SuiviPaiementsComponent)
+      }
+    ]
+  },
+  {
     path: 'profile',
     loadComponent: () =>
       import('./features/profile/profile.component').then((m) => m.UserProfileComponent),

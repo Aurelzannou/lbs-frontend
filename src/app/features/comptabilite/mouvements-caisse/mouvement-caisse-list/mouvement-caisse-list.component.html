@@ -1,0 +1,88 @@
+<div class="page-wrapper">
+  <div class="toolbar">
+    <div class="rfm-select caisse-picker">
+      <span class="rfm-label">Caisse</span>
+      <ng-select
+        [items]="caisses"
+        bindLabel="libelle"
+        bindValue="id"
+        [(ngModel)]="caisseId"
+        (change)="onCaisseChange()"
+        placeholder="Sélectionner une caisse"
+        appendTo="body"
+        class="ng-field"
+      >
+      </ng-select>
+    </div>
+
+    <div class="solde-card" *ngIf="caisseId && soldeActuel !== null">
+      <span class="solde-label">Solde actuel</span>
+      <span class="solde-value">{{ soldeActuel | number: '1.0-0' }} FCFA</span>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="spinner-overlay" *ngIf="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="table-wrapper" *ngIf="caisseId; else pasDeCaisse">
+      <table class="data-table" mat-table [dataSource]="mouvements">
+        <ng-container matColumnDef="dateMouvement">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let row">{{ row.dateMouvement | date: 'dd/MM/yyyy HH:mm' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="typeMouvement">
+          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="mvt-badge" [class.entree]="row.typeMouvement === 'ENTREE'" [class.sortie]="row.typeMouvement === 'SORTIE'">
+              {{ row.typeMouvement === 'ENTREE' ? 'Entrée' : 'Sortie' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="source">
+          <th mat-header-cell *matHeaderCellDef>Source</th>
+          <td mat-cell *matCellDef="let row">{{ row.source === 'PAIEMENT' ? 'Paiement' : 'Dépense' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let row">{{ row.description }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="montant">
+          <th mat-header-cell *matHeaderCellDef>Montant</th>
+          <td mat-cell *matCellDef="let row">
+            <span [class.text-entree]="row.typeMouvement === 'ENTREE'" [class.text-sortie]="row.typeMouvement === 'SORTIE'">
+              {{ row.typeMouvement === 'ENTREE' ? '+' : '−' }}{{ row.montant | number: '1.0-0' }} FCFA
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="soldeApres">
+          <th mat-header-cell *matHeaderCellDef>Solde après</th>
+          <td mat-cell *matCellDef="let row">{{ row.soldeApres | number: '1.0-0' }} FCFA</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="data-row"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="no-data-cell" [attr.colspan]="displayedColumns.length">
+            <div class="empty-state" *ngIf="!loading">
+              <p>Aucun mouvement pour cette caisse</p>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <ng-template #pasDeCaisse>
+      <div class="empty-state">
+        <p>Choisissez une caisse pour afficher son journal.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

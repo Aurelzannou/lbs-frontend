@@ -1,0 +1,75 @@
+<div class="page-wrapper">
+  <div class="toolbar">
+    <div class="rfm-select dossier-picker">
+      <span class="rfm-label">Élève</span>
+      <ng-select
+        [items]="dossiers"
+        bindLabel="nomComplet"
+        bindValue="id"
+        [(ngModel)]="dossierEleveId"
+        (change)="onDossierChange()"
+        placeholder="Rechercher un élève..."
+        [loading]="loadingDossiers"
+        appendTo="body"
+        class="ng-field"
+      >
+      </ng-select>
+    </div>
+
+    <button class="btn-add" *ngIf="dossierEleveId" (click)="nouveauPaiement()">
+      <mat-icon>add</mat-icon>
+      Nouveau paiement
+    </button>
+  </div>
+
+  <div class="spinner-overlay" *ngIf="loadingSuivi">
+    <div class="spinner"></div>
+  </div>
+
+  <ng-container *ngIf="suivi">
+    <div class="totals-row">
+      <div class="total-card">
+        <span class="total-label">Total dû</span>
+        <span class="total-value">{{ suivi.totalDu | number: '1.0-0' }} FCFA</span>
+      </div>
+      <div class="total-card paye">
+        <span class="total-label">Total payé</span>
+        <span class="total-value">{{ suivi.totalPaye | number: '1.0-0' }} FCFA</span>
+      </div>
+      <div class="total-card reste">
+        <span class="total-label">Reste à payer</span>
+        <span class="total-value">{{ suivi.totalReste | number: '1.0-0' }} FCFA</span>
+      </div>
+    </div>
+
+    <div class="frais-card" *ngFor="let f of suivi.frais">
+      <div class="frais-header">
+        <h4>{{ f.typeFraisLibelle }}</h4>
+        <span class="frais-resume">
+          {{ f.montantPaye | number: '1.0-0' }} / {{ f.montantDu | number: '1.0-0' }} FCFA
+          <em *ngIf="f.reste > 0">— reste {{ f.reste | number: '1.0-0' }} FCFA</em>
+        </span>
+      </div>
+
+      <div class="tranches-row" *ngIf="f.tranches.length; else pasEcheancier">
+        <div class="tranche-chip" *ngFor="let t of f.tranches" [ngClass]="t.statut.toLowerCase()">
+          <span class="tranche-numero">Tranche {{ t.numero }}</span>
+          <span class="tranche-libelle">{{ t.libelle }}</span>
+          <span class="tranche-date">{{ t.dateEcheance | date: 'dd/MM/yyyy' }}</span>
+          <span class="tranche-montant">{{ t.montantAlloue | number: '1.0-0' }} / {{ t.montant | number: '1.0-0' }} FCFA</span>
+          <span class="tranche-statut">{{ statutLabel(t.statut) }}</span>
+        </div>
+      </div>
+      <ng-template #pasEcheancier>
+        <p class="text-muted">Aucun échéancier défini pour ce frais.</p>
+      </ng-template>
+    </div>
+  </ng-container>
+
+  <div class="empty-state" *ngIf="!suivi && dossierEleveId && !loadingSuivi">
+    <p>Aucun frais scolaire configuré pour la classe/année de cet élève.</p>
+  </div>
+  <div class="empty-state" *ngIf="!dossierEleveId">
+    <p>Choisissez un élève pour afficher son suivi de paiement.</p>
+  </div>
+</div>

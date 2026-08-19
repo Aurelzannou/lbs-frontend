@@ -98,6 +98,9 @@
           <th mat-header-cell *matHeaderCellDef class="col-actions">Opérations</th>
           <td mat-cell *matCellDef="let row" class="col-actions">
             <div class="action-group">
+              <button class="icon-btn echeancier" (click)="openEcheancier(row)" title="Échéancier (tranches)">
+                <mat-icon>event_note</mat-icon>
+              </button>
               <button class="icon-btn edit" (click)="openForm(row)" title="Modifier">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

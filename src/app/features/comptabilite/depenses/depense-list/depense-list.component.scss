@@ -129,9 +129,48 @@
   }
 }
 
-.price-text {
+.text-muted {
+  color: #94a3b8;
+  font-size: 0.78rem;
+}
+
+.price-text-negative {
   font-weight: 600;
-  color: #059669;
+  color: #dc2626;
+}
+
+.statut-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #475569;
+
+  .statut-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #94a3b8;
+  }
+
+  &.actif {
+    background: #dcfce7;
+    color: #15803d;
+    .statut-dot {
+      background: #22c55e;
+    }
+  }
+  &.annule {
+    background: #fee2e2;
+    color: #b91c1c;
+    .statut-dot {
+      background: #ef4444;
+    }
+  }
 }
 
 .col-actions {
@@ -163,26 +202,17 @@
     height: 18px;
   }
 
-  &.echeancier {
-    color: #94a3b8;
-    &:hover {
-      background: #fefce8;
-      color: #ca8a04;
-    }
-  }
-  &.edit {
-    color: #64748b;
-    &:hover {
-      background: #eff6ff;
-      color: #2563eb;
-    }
-  }
   &.delete {
     color: #94a3b8;
     &:hover {
       background: #fef2f2;
       color: #ef4444;
     }
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 }
 

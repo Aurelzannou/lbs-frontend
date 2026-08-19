@@ -12,11 +12,10 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FraisScolaireService } from '../../../../core/services/frais-scolaire.service';
+import { DepenseScolaireService } from '../../../../core/services/depense-scolaire.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { FraisScolaire } from '../../../../core/models/frais-scolaire.model';
-import { FraisScolaireFormDialogComponent } from '../frais-scolaire-form-dialog/frais-scolaire-form-dialog.component';
-import { EcheancierListDialogComponent } from '../echeancier-list-dialog/echeancier-list-dialog.component';
+import { DepenseScolaire } from '../../../../core/models/depense-scolaire.model';
+import { DepenseFormDialogComponent } from '../depense-form-dialog/depense-form-dialog.component';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -29,7 +28,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
-  selector: 'app-frais-scolaire-list',
+  selector: 'app-depense-list',
   standalone: true,
   imports: [
     CommonModule,
@@ -53,25 +52,19 @@ import { MatTooltipModule } from '@angular/material/tooltip';
       ])
     ])
   ],
-  templateUrl: './frais-scolaire-list.component.html',
-  styleUrl: './frais-scolaire-list.component.scss'
+  templateUrl: './depense-list.component.html',
+  styleUrl: './depense-list.component.scss'
 })
-export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewInit {
-  private fraisScolaireService = inject(FraisScolaireService);
+export class DepenseListComponent implements OnInit, OnDestroy, AfterViewInit {
+  private depenseService = inject(DepenseScolaireService);
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns: string[] = [
-    'classe',
-    'typeFrais',
-    'anneeScolaire',
-    'code',
-    'montant',
-    'actions'
-  ];
-  dataSource = new MatTableDataSource<FraisScolaire>([]);
+  displayedColumns: string[] = ['motif', 'categorie', 'caisse', 'montant', 'dateDepense', 'statut', 'actions'];
+  dataSource = new MatTableDataSource<DepenseScolaire>([]);
   loading = false;
+  annulationEnCours: number | null = null;
 
   totalElements = 0;
   pageIndex = 0;
@@ -110,14 +103,9 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
     this.searchSubject.next(value);
   }
 
-  clearSearch(input: HTMLInputElement): void {
-    input.value = '';
-    this.searchSubject.next('');
-  }
-
   refresh(): void {
     this.loading = true;
-    this.fraisScolaireService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
+    this.depenseService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
       next: (response: any) => {
         const items = response.data || (Array.isArray(response) ? response : []);
         const meta = response.meta || {};
@@ -134,9 +122,8 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Erreur chargement frais scolaires:', err);
-        this.notification.error('Impossible de charger les frais');
+      error: () => {
+        this.notification.error('Impossible de charger les dépenses');
         this.loading = false;
       }
     });
@@ -145,20 +132,15 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
   get totalPages(): number {
     return Math.ceil(this.totalElements / this.pageSize) || 1;
   }
-  get currentPage(): number {
-    return this.pageIndex;
-  }
   getEndIndex(): number {
     return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements);
   }
-
   goToPage(page: number): void {
     const index = page - 1;
     if (index < 0 || index >= this.totalPages) return;
     this.pageIndex = index;
     this.refresh();
   }
-
   nextPage(): void {
     if (this.pageIndex < this.totalPages - 1) {
       this.pageIndex++;
@@ -178,12 +160,11 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
     return this.pageIndex >= this.totalPages - 1;
   }
 
-  openForm(frais?: FraisScolaire): void {
+  openForm(): void {
     this.dialog
-      .open(FraisScolaireFormDialogComponent, {
-        width: '500px',
+      .open(DepenseFormDialogComponent, {
+        width: '560px',
         maxWidth: '95vw',
-        data: frais,
         panelClass: 'professional-dialog'
       })
       .afterClosed()
@@ -192,34 +173,23 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
       });
   }
 
-  openEcheancier(frais: FraisScolaire): void {
-    this.dialog.open(EcheancierListDialogComponent, {
-      width: '560px',
-      maxWidth: '95vw',
-      panelClass: 'professional-dialog',
-      data: {
-        fraisScolaireId: frais.id,
-        fraisLibelle: `${frais.typeFrais?.libelle ?? ''} — ${frais.classe?.code ?? ''}`
+  async annuler(depense: DepenseScolaire): Promise<void> {
+    const confirmed = await this.notification.confirm(
+      `Annuler cette dépense de ${depense.montant} FCFA ? Un mouvement compensatoire sera enregistré en caisse.`
+    );
+    if (!confirmed) return;
+
+    this.annulationEnCours = depense.id ?? null;
+    this.depenseService.annuler(depense.uuid!).subscribe({
+      next: () => {
+        this.notification.success('Dépense annulée');
+        this.annulationEnCours = null;
+        this.refresh();
+      },
+      error: (err) => {
+        this.notification.error(err?.error?.message || "Impossible d'annuler cette dépense");
+        this.annulationEnCours = null;
       }
     });
-  }
-
-  async deleteFrais(frais: FraisScolaire): Promise<void> {
-    const confirmed = await this.notification.confirm(
-      `Souhaitez-vous vraiment supprimer les frais ${frais.code} ?`
-    );
-    if (confirmed) {
-      this.loading = true;
-      this.fraisScolaireService.delete(frais.uuid!).subscribe({
-        next: () => {
-          this.notification.success('Frais supprimé avec succès');
-          this.refresh();
-        },
-        error: () => {
-          this.notification.error('Erreur lors de la suppression');
-          this.loading = false;
-        }
-      });
-    }
   }
 }

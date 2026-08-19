@@ -25,7 +25,52 @@
 
     <div class="rfm-body">
       <form [formGroup]="form" class="rfm-form">
-        <!-- Champs élève — éditables à la création comme à la validation -->
+        <!-- Type d'inscription — uniquement à la création : une réinscription rattache le dossier
+             à un élève déjà existant (passage en classe supérieure) au lieu d'en recréer un. -->
+        <div class="rfm-row type-inscription" *ngIf="!isEdit">
+          <button
+            type="button"
+            class="type-btn"
+            [class.active]="typeInscription === 'NOUVELLE'"
+            (click)="changerTypeInscription('NOUVELLE')"
+          >
+            <mat-icon>person_add</mat-icon>
+            Nouvelle inscription
+          </button>
+          <button
+            type="button"
+            class="type-btn"
+            [class.active]="typeInscription === 'REINSCRIPTION'"
+            (click)="changerTypeInscription('REINSCRIPTION')"
+          >
+            <mat-icon>autorenew</mat-icon>
+            Réinscription (élève existant)
+          </button>
+        </div>
+
+        <div class="rfm-row" *ngIf="!isEdit && typeInscription === 'REINSCRIPTION'">
+          <div class="rfm-field rfm-select">
+            <span class="rfm-label">Élève <span class="req">*</span></span>
+            <ng-select
+              [items]="eleves"
+              bindLabel="nomComplet"
+              bindValue="id"
+              formControlName="eleveId"
+              placeholder="Rechercher un élève par nom..."
+              (change)="onEleveSelectionne($event)"
+            >
+              <ng-template ng-option-tmp let-item="item">{{ item.nom }} {{ item.prenom }}</ng-template>
+              <ng-template ng-label-tmp let-item="item">{{ item.nom }} {{ item.prenom }}</ng-template>
+            </ng-select>
+            <div class="rfm-hint">
+              La classe et l'année scolaire ci-dessous seront celles de sa nouvelle inscription.
+            </div>
+          </div>
+        </div>
+
+        <!-- Champs élève — éditables à la création comme à la validation ; en réinscription, ils
+             sont recopiés depuis l'élève sélectionné et modifiables uniquement depuis le
+             référentiel Élèves. -->
         <div class="rfm-section-label">Informations de l'élève</div>
 
           <div class="rfm-row two-cols">
@@ -33,7 +78,7 @@
               <span class="rfm-label">Nom <span class="req">*</span></span>
               <mat-form-field appearance="outline">
                 <mat-icon matPrefix>person</mat-icon>
-                <input matInput placeholder="Nom de famille" formControlName="nom" />
+                <input matInput placeholder="Nom de famille" formControlName="nom" [readonly]="typeInscription === 'REINSCRIPTION'" />
               </mat-form-field>
               <div class="rfm-error" *ngIf="form.get('nom')?.invalid && form.get('nom')?.touched">
                 Obligatoire
@@ -43,7 +88,7 @@
               <span class="rfm-label">Prénom <span class="req">*</span></span>
               <mat-form-field appearance="outline">
                 <mat-icon matPrefix>person_outline</mat-icon>
-                <input matInput placeholder="Prénom" formControlName="prenom" />
+                <input matInput placeholder="Prénom" formControlName="prenom" [readonly]="typeInscription === 'REINSCRIPTION'" />
               </mat-form-field>
               <div
                 class="rfm-error"
@@ -72,7 +117,7 @@
               <span class="rfm-label">Date de naissance</span>
               <mat-form-field appearance="outline">
                 <mat-icon matPrefix>cake</mat-icon>
-                <input matInput type="date" formControlName="dateNaissance" />
+                <input matInput type="date" formControlName="dateNaissance" [readonly]="typeInscription === 'REINSCRIPTION'" />
               </mat-form-field>
             </div>
           </div>
@@ -86,6 +131,7 @@
                   matInput
                   formControlName="provenance"
                   placeholder="Ex: École Primaire Publique de ..."
+                  [readonly]="typeInscription === 'REINSCRIPTION'"
                 />
               </mat-form-field>
             </div>
