@@ -227,6 +227,16 @@ export class AuthService {
   }
 
   /**
+   * Changement de mot de passe de l'utilisateur connecté.
+   * Le backend vérifie l'ancien mot de passe puis applique le nouveau côté Keycloak,
+   * sans jamais exposer les pages Keycloak à l'utilisateur.
+   */
+  public changePassword(currentPassword: string, newPassword: string): Observable<any> {
+    const url = `${environment.apiUrl}/api/auth/change-password`;
+    return this.http.post<{ message: string }>(url, { currentPassword, newPassword });
+  }
+
+  /**
    * Indique si le compte a déjà activé l'OTP (TOTP) — sert à désambiguïser un échec de
    * connexion ("mot de passe invalide" vs "code de vérification requis").
    */

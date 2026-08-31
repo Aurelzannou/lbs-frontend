@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
+import { ChangePasswordDialogComponent } from './change-password-dialog.component';
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -64,7 +66,10 @@ import { environment } from '../../../environments/environment';
                 </div>
                 <div class="info-item"><strong>Dernière Connexion:</strong> Aujourd'hui</div>
                 <div class="info-item">
-                  <button mat-button color="primary">Changer le mot de passe</button>
+                  <button mat-button color="primary" type="button" (click)="openChangePassword()">
+                    <mat-icon>lock_reset</mat-icon>
+                    Changer le mot de passe
+                  </button>
                 </div>
                 <div class="info-item">
                   <a
@@ -181,9 +186,24 @@ import { environment } from '../../../environments/environment';
 export class UserProfileComponent implements OnInit {
   user: any;
 
+  /**
+   * Console "Mon compte" de Keycloak, page « Connexion » : utilisée pour configurer
+   * la double authentification. Le changement de mot de passe, lui, se fait via une
+   * boîte de dialogue interne (endpoint backend), sans exposer les pages Keycloak.
+   */
   readonly keycloakAccountUrl = `${environment.keycloak.url}/realms/${environment.keycloak.realm}/account/#/security/signing-in`;
 
+  private dialog = inject(MatDialog);
+
   constructor(private authService: AuthService) {}
+
+  openChangePassword(): void {
+    this.dialog.open(ChangePasswordDialogComponent, {
+      width: '440px',
+      autoFocus: 'input',
+      disableClose: false
+    });
+  }
 
   ngOnInit(): void {
     this.authService.getCurrentUser().subscribe({
