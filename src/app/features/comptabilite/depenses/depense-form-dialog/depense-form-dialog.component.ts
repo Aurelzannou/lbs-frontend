@@ -64,9 +64,11 @@ export class DepenseFormDialogComponent implements OnInit {
 
   private loadData(): void {
     this.loading = true;
-    this.caisseService.getAll(1, 100).subscribe((res) => (this.caisses = res.data || []));
+    this.caisseService
+      .getAll(1, 100)
+      .subscribe((res) => (this.caisses = (res.data || []).filter((c: Caisse) => c.actif !== false)));
     this.categorieDepenseService.getAll(1, 100).subscribe((res) => {
-      this.categories = res.data || [];
+      this.categories = (res.data || []).filter((c: CategorieDepense) => c.actif !== false);
       this.loading = false;
     });
   }

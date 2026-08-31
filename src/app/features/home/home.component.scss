@@ -1,0 +1,990 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  Landing page — LBS Education
+//  Palette : ambre (#f59e0b / #d97706) · ardoise (#0f172a / #475569)
+// ═══════════════════════════════════════════════════════════════════════════
+
+$amber: #f59e0b;
+$amber-dark: #d97706;
+$ink: #0f172a;
+$body: #475569;
+$muted: #64748b;
+$line: #e2e8f0;
+$bg-soft: #f8fafc;
+
+:host {
+  display: block;
+}
+
+.lp {
+  font-family: 'Inter', sans-serif;
+  color: $body;
+  background: #fff;
+  overflow-x: hidden;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: 'Outfit', sans-serif;
+    color: $ink;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+}
+
+.lp-container {
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+// ── Boutons ───────────────────────────────────────────────────────────────
+.lp-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  padding: 0 1.4rem !important;
+  height: 44px;
+  line-height: 44px;
+  text-decoration: none !important;
+  cursor: pointer;
+
+  mat-icon {
+    font-size: 1.15rem;
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  &--lg {
+    height: 54px;
+    line-height: 54px;
+    padding: 0 1.8rem !important;
+    font-size: 1rem !important;
+  }
+
+  &--primary {
+    background: linear-gradient(135deg, $amber, $amber-dark) !important;
+    color: #fff !important;
+    box-shadow: 0 10px 24px -8px rgba(217, 119, 6, 0.55);
+  }
+
+  &--ghost {
+    color: $ink !important;
+    border: 1px solid $line !important;
+    background: #fff !important;
+  }
+
+  &--light {
+    background: #fff !important;
+    color: $amber-dark !important;
+  }
+
+  &--ghost-light {
+    color: #fff !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────
+.lp-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid $line;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 74px;
+  }
+
+  &__links {
+    display: flex;
+    gap: 2rem;
+
+    a {
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: $body;
+      transition: color 0.2s;
+
+      &:hover {
+        color: $amber-dark;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  &__login {
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $ink;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $amber-dark;
+    }
+  }
+}
+
+.lp-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+
+  &__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, $ink, #1e293b);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+
+  &__text {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: $ink;
+  }
+}
+
+// ── Hero ──────────────────────────────────────────────────────────────────
+.lp-hero {
+  position: relative;
+  background:
+    radial-gradient(1100px 480px at 78% -8%, rgba(245, 158, 11, 0.14), transparent 60%),
+    linear-gradient(180deg, $bg-soft, #fff);
+  padding: 5rem 0 6rem;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  &__content h1 {
+    font-size: clamp(2.4rem, 4.4vw, 3.6rem);
+    line-height: 1.08;
+    margin: 1.25rem 0;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 2rem 0 1.5rem;
+  }
+
+  &__proof {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: $muted;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    mat-icon {
+      color: $amber-dark;
+      font-size: 1.2rem;
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+  }
+
+  &__visual {
+    position: relative;
+  }
+
+  &__image {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 40px 80px -30px rgba(15, 23, 42, 0.35);
+    border: 1px solid $line;
+    aspect-ratio: 4 / 3.4;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+}
+
+.lp-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  border: 1px solid $line;
+  color: $amber-dark;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  box-shadow: 0 6px 16px -10px rgba(15, 23, 42, 0.25);
+
+  mat-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.lp-lead {
+  font-size: 1.12rem;
+  line-height: 1.7;
+  color: $body;
+  max-width: 34rem;
+}
+
+.lp-accent {
+  color: $amber-dark;
+  position: relative;
+  white-space: nowrap;
+}
+
+.lp-float {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #fff;
+  border: 1px solid $line;
+  border-radius: 16px;
+  padding: 0.85rem 1rem;
+  box-shadow: 0 24px 50px -20px rgba(15, 23, 42, 0.35);
+
+  strong {
+    display: block;
+    color: $ink;
+    font-size: 0.9rem;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  span {
+    font-size: 0.78rem;
+    color: $muted;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, $amber, $amber-dark);
+    color: #fff;
+    flex-shrink: 0;
+
+    &--alt {
+      background: linear-gradient(135deg, $ink, #1e293b);
+    }
+
+    mat-icon {
+      font-size: 1.2rem;
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+  }
+
+  &--tl {
+    top: 1.5rem;
+    left: -2.5rem;
+  }
+
+  &--br {
+    bottom: 1.5rem;
+    right: -2.5rem;
+  }
+}
+
+// ── Statistiques ──────────────────────────────────────────────────────────
+.lp-stats {
+  border-top: 1px solid $line;
+  border-bottom: 1px solid $line;
+  background: #fff;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+}
+
+.lp-stat {
+  text-align: center;
+  padding: 0 0.5rem;
+
+  &__value {
+    display: block;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    line-height: 1.25;
+    color: $ink;
+    margin-bottom: 0.35rem;
+  }
+
+  &__label {
+    font-size: 0.88rem;
+    line-height: 1.4;
+    color: $muted;
+  }
+}
+
+// ── Sections génériques ───────────────────────────────────────────────────
+.lp-section {
+  padding: 5.5rem 0;
+
+  &--muted {
+    background: $bg-soft;
+  }
+
+  &__head {
+    max-width: 640px;
+    margin: 0 auto 3.5rem;
+    text-align: center;
+
+    h2 {
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      margin: 0.75rem 0 0.85rem;
+    }
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: $muted;
+      margin: 0;
+    }
+  }
+}
+
+.lp-kicker {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $amber-dark;
+
+  &--light {
+    display: inline-block;
+    color: $amber;
+    margin-bottom: 0.75rem;
+  }
+}
+
+// ── Piliers ───────────────────────────────────────────────────────────────
+.lp-piliers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.lp-pilier {
+  background: #fff;
+  border: 1px solid $line;
+  border-radius: 18px;
+  padding: 1.75rem;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+
+  &:hover {
+    transform: translateY(-6px);
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 24px 46px -24px rgba(15, 23, 42, 0.25);
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: #fef3c7;
+    color: $amber-dark;
+    margin-bottom: 1.1rem;
+
+    mat-icon {
+      font-size: 1.5rem;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: $muted;
+    margin: 0;
+  }
+}
+
+// ── Modules ───────────────────────────────────────────────────────────────
+.lp-modules {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.lp-module {
+  display: flex;
+  gap: 1rem;
+  background: #fff;
+  border: 1px solid $line;
+  border-radius: 18px;
+  padding: 1.6rem;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 44px -26px rgba(15, 23, 42, 0.3);
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, $ink, #1e293b);
+    color: #fff;
+    flex-shrink: 0;
+
+    mat-icon {
+      font-size: 1.35rem;
+      width: 1.35rem;
+      height: 1.35rem;
+    }
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.35rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: $amber-dark;
+    background: #fef3c7;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+  }
+
+  p {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: $muted;
+    margin: 0;
+  }
+}
+
+// ── À propos ──────────────────────────────────────────────────────────────
+.lp-about {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 4rem;
+  align-items: center;
+
+  &__visual {
+    position: relative;
+
+    img {
+      width: 100%;
+      border-radius: 22px;
+      border: 1px solid $line;
+      box-shadow: 0 36px 70px -34px rgba(15, 23, 42, 0.4);
+      display: block;
+    }
+  }
+
+  &__badge {
+    position: absolute;
+    top: -1.25rem;
+    right: -1.25rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, $amber, $amber-dark);
+    color: #fff;
+    box-shadow: 0 18px 34px -14px rgba(217, 119, 6, 0.6);
+
+    mat-icon {
+      font-size: 1.7rem;
+      width: 1.7rem;
+      height: 1.7rem;
+    }
+  }
+
+  &__content h2 {
+    font-size: clamp(1.8rem, 3vw, 2.3rem);
+    margin: 0.75rem 0 1rem;
+  }
+
+  &__content > p {
+    font-size: 1.03rem;
+    line-height: 1.7;
+    color: $muted;
+  }
+}
+
+.lp-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  display: grid;
+  gap: 0.9rem;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    font-size: 0.98rem;
+    color: $body;
+    font-weight: 500;
+
+    mat-icon {
+      color: $amber-dark;
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// ── CTA ───────────────────────────────────────────────────────────────────
+.lp-cta {
+  background:
+    radial-gradient(700px 300px at 20% 0%, rgba(245, 158, 11, 0.25), transparent 60%),
+    linear-gradient(135deg, $ink, #1e293b);
+  color: #fff;
+  padding: 4.5rem 0;
+
+  &__inner {
+    text-align: center;
+
+    h2 {
+      color: #fff;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+    }
+
+    p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.05rem;
+      margin: 0.75rem auto 2rem;
+      max-width: 40rem;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+}
+
+// ── Admissions (2 voies) ──────────────────────────────────────────────────
+.lp-admis {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+
+  &__card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.45);
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: 1.25rem;
+
+    h3 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 13px;
+    background: #fef3c7;
+    color: $amber-dark;
+    flex-shrink: 0;
+
+    &--alt {
+      background: $ink;
+      color: #fff;
+    }
+
+    mat-icon {
+      font-size: 1.4rem;
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+  }
+
+  &__steps {
+    margin: 0 0 1.75rem;
+    padding: 0;
+    list-style: none;
+    counter-reset: admis;
+    display: grid;
+    gap: 0.85rem;
+
+    li {
+      counter-increment: admis;
+      position: relative;
+      padding-left: 2.25rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: $body;
+
+      &::before {
+        content: counter(admis);
+        position: absolute;
+        left: 0;
+        top: -0.1rem;
+        width: 1.6rem;
+        height: 1.6rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, $amber, $amber-dark);
+        color: #fff;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      strong {
+        color: $ink;
+      }
+    }
+  }
+
+  &__text {
+    margin: 0 0 1.75rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: $muted;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: auto;
+  }
+}
+
+// ── Contact ───────────────────────────────────────────────────────────────
+.lp-contact {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 3.5rem;
+  align-items: center;
+
+  &__intro {
+    h2 {
+      font-size: clamp(1.7rem, 2.8vw, 2.2rem);
+      margin: 0.75rem 0 1rem;
+    }
+
+    p {
+      font-size: 1.03rem;
+      line-height: 1.7;
+      color: $muted;
+      margin: 0;
+    }
+  }
+
+  &__cards {
+    display: grid;
+    gap: 1rem;
+  }
+
+  &__card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.4rem;
+    background: #fff;
+    border: 1px solid $line;
+    border-radius: 16px;
+    text-decoration: none;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+
+    strong {
+      display: block;
+      color: $ink;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+    }
+
+    span {
+      font-size: 0.9rem;
+      color: $muted;
+    }
+
+    &[href]:hover {
+      transform: translateY(-3px);
+      border-color: rgba(245, 158, 11, 0.5);
+      box-shadow: 0 20px 40px -24px rgba(15, 23, 42, 0.28);
+    }
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: #fef3c7;
+    color: $amber-dark;
+    flex-shrink: 0;
+
+    mat-icon {
+      font-size: 1.35rem;
+      width: 1.35rem;
+      height: 1.35rem;
+    }
+  }
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────
+.lp-footer {
+  background: $ink;
+  color: rgba(255, 255, 255, 0.75);
+  padding: 3.5rem 0 2rem;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  &__brand {
+    .lp-brand__text {
+      color: #fff;
+    }
+
+    p {
+      margin: 1rem 0 0;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      max-width: 22rem;
+    }
+  }
+
+  &__col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+
+    h4 {
+      color: #fff;
+      font-size: 0.95rem;
+      margin-bottom: 0.3rem;
+    }
+
+    a {
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      transition: color 0.2s;
+
+      &:hover {
+        color: $amber;
+      }
+    }
+  }
+
+  &__bottom {
+    padding-top: 1.5rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.55);
+    text-align: center;
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────
+@media (max-width: 960px) {
+  .lp-hero {
+    padding: 3.5rem 0 4rem;
+
+    &__grid {
+      grid-template-columns: 1fr;
+      gap: 3.5rem;
+    }
+  }
+
+  .lp-nav__links,
+  .lp-nav__login {
+    display: none;
+  }
+
+  .lp-piliers {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .lp-modules {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .lp-about,
+  .lp-contact {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .lp-admis {
+    grid-template-columns: 1fr;
+  }
+
+  .lp-stats__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .lp-container {
+    padding: 0 1.1rem;
+  }
+
+  .lp-brand__text {
+    display: none;
+  }
+
+  .lp-nav__inner {
+    height: 64px;
+  }
+
+  .lp-nav .lp-btn {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 0.95rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .lp-hero__content h1 {
+    font-size: 2.05rem;
+  }
+
+  .lp-eyebrow {
+    font-size: 0.75rem;
+    padding: 0.45rem 0.75rem;
+  }
+
+  .lp-about__badge {
+    top: -1rem;
+    right: 0.75rem;
+    width: 48px;
+    height: 48px;
+  }
+
+  .lp-hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+
+    .lp-btn {
+      justify-content: center;
+    }
+  }
+
+  .lp-float--tl {
+    left: 0.5rem;
+  }
+
+  .lp-float--br {
+    right: 0.5rem;
+  }
+
+  .lp-piliers,
+  .lp-modules {
+    grid-template-columns: 1fr;
+  }
+
+  .lp-footer__grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}

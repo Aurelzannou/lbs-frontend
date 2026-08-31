@@ -93,8 +93,12 @@ export class PaiementFormDialogComponent implements OnInit {
         this.onDossierSelectionne(this.data.dossierEleveId);
       }
     });
-    this.modePaiementService.getAll(1, 100).subscribe((res) => (this.modesPaiement = res.data || []));
-    this.caisseService.getAll(1, 100).subscribe((res) => (this.caisses = res.data || []));
+    this.modePaiementService
+      .getAll(1, 100)
+      .subscribe((res) => (this.modesPaiement = (res.data || []).filter((m: ModePaiement) => m.actif !== false)));
+    this.caisseService
+      .getAll(1, 100)
+      .subscribe((res) => (this.caisses = (res.data || []).filter((c: Caisse) => c.actif !== false)));
   }
 
   onDossierSelectionne(dossierId: number | null): void {
@@ -106,7 +110,7 @@ export class PaiementFormDialogComponent implements OnInit {
 
     this.fraisScolaireService
       .getFraisByClasseAndAnnee(dossier.classeId, dossier.anneeScolaireId)
-      .subscribe((frais) => (this.fraisDisponibles = frais || []));
+      .subscribe((frais) => (this.fraisDisponibles = (frais || []).filter((f) => f.actif !== false)));
   }
 
   onFraisSelectionne(fraisScolaireId: number | null): void {

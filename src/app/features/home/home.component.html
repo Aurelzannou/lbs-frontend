@@ -1,0 +1,314 @@
+<div class="lp">
+  <!-- ══ Barre de navigation ══ -->
+  <header class="lp-nav">
+    <div class="lp-container lp-nav__inner">
+      <a class="lp-brand" (click)="scrollTo('top')">
+        <span class="lp-brand__mark">{{ ecole.sigle }}</span>
+        <span class="lp-brand__text">{{ ecole.nom }}</span>
+      </a>
+
+      <nav class="lp-nav__links">
+        <a (click)="scrollTo('ecole')">L'école</a>
+        <a (click)="scrollTo('cycles')">Nos cycles</a>
+        <a (click)="scrollTo('admissions')">Admissions</a>
+        <a (click)="scrollTo('contact')">Contact</a>
+      </nav>
+
+      <div class="lp-nav__actions">
+        <a class="lp-nav__login" (click)="navigate()">
+          {{ isLoggedIn ? 'Mon espace' : 'Connexion' }}
+        </a>
+        <button mat-flat-button class="lp-btn lp-btn--primary" (click)="scrollTo('admissions')">
+          <mat-icon>edit_note</mat-icon>
+          Inscrire mon enfant
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ Hero ══ -->
+  <section id="top" class="lp-hero">
+    <div class="lp-container lp-hero__grid">
+      <div class="lp-hero__content">
+        <span class="lp-eyebrow">
+          <mat-icon>eco</mat-icon>
+          École privée bilingue · Djeffa
+        </span>
+        <h1>
+          L'école privée où votre enfant
+          <span class="lp-accent">grandit et réussit</span>
+        </h1>
+        <p class="lp-lead">
+          À La Bonne Semence, chaque enfant est suivi de près, encouragé et préparé à réussir ses
+          examens — de la maternelle au lycée. Un enseignement bilingue, des valeurs solides et un
+          cadre sécurisé, à deux pas de chez vous.
+        </p>
+
+        <div class="lp-hero__actions">
+          <button mat-flat-button class="lp-btn lp-btn--primary lp-btn--lg" (click)="scrollTo('admissions')">
+            <mat-icon>edit_note</mat-icon>
+            Inscrire mon enfant
+          </button>
+          <a
+            mat-stroked-button
+            class="lp-btn lp-btn--ghost lp-btn--lg"
+            [href]="'tel:' + ecole.telephoneLien"
+          >
+            <mat-icon>call</mat-icon>
+            {{ ecole.telephoneAffiche }}
+          </a>
+        </div>
+
+        <div class="lp-hero__proof">
+          <mat-icon>favorite</mat-icon>
+          <span>Effectifs réduits · Suivi personnalisé · Communication régulière avec les parents</span>
+        </div>
+      </div>
+
+      <div class="lp-hero__visual">
+        <div class="lp-hero__image">
+          <img src="images/school_background.png" alt="École La Bonne Semence à Djeffa" />
+        </div>
+        <div class="lp-float lp-float--tl">
+          <div class="lp-float__icon"><mat-icon>menu_book</mat-icon></div>
+          <div>
+            <strong>Enseignement bilingue</strong>
+            <span>Français &amp; Anglais dès la maternelle</span>
+          </div>
+        </div>
+        <div class="lp-float lp-float--br">
+          <div class="lp-float__icon lp-float__icon--alt"><mat-icon>workspace_premium</mat-icon></div>
+          <div>
+            <strong>Cap sur la réussite</strong>
+            <span>Préparation sérieuse aux examens</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Repères ══ -->
+  <section class="lp-stats">
+    <div class="lp-container lp-stats__grid">
+      @for (r of reperes; track r.label) {
+        <div class="lp-stat">
+          <span class="lp-stat__value">{{ r.valeur }}</span>
+          <span class="lp-stat__label">{{ r.label }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ══ Pourquoi nous choisir ══ -->
+  <section id="ecole" class="lp-section">
+    <div class="lp-container">
+      <div class="lp-section__head">
+        <span class="lp-kicker">Pourquoi La Bonne Semence</span>
+        <h2>Ce que les parents recherchent, réuni au même endroit</h2>
+        <p>
+          Vous voulez le meilleur pour votre enfant : de bons résultats, un vrai encadrement et un
+          environnement sain. C'est exactement ce que nous cultivons chaque jour.
+        </p>
+      </div>
+
+      <div class="lp-piliers">
+        @for (r of raisons; track r.titre) {
+          <article class="lp-pilier">
+            <div class="lp-pilier__icon"><mat-icon>{{ r.icon }}</mat-icon></div>
+            <h3>{{ r.titre }}</h3>
+            <p>{{ r.description }}</p>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Nos cycles ══ -->
+  <section id="cycles" class="lp-section lp-section--muted">
+    <div class="lp-container">
+      <div class="lp-section__head">
+        <span class="lp-kicker">Nos cycles</span>
+        <h2>Un parcours complet, de la maternelle au lycée</h2>
+        <p>Votre enfant peut faire toute sa scolarité chez nous, sans changement d'école ni de repères.</p>
+      </div>
+
+      <div class="lp-modules">
+        @for (c of cycles; track c.titre) {
+          <article class="lp-module">
+            <div class="lp-module__icon"><mat-icon>{{ c.icon }}</mat-icon></div>
+            <div class="lp-module__body">
+              <h3>{{ c.titre }} <span class="lp-module__tag">{{ c.tranche }}</span></h3>
+              <p>{{ c.description }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Notre mission ══ -->
+  <section class="lp-section">
+    <div class="lp-container lp-about">
+      <div class="lp-about__visual">
+        <div class="lp-about__badge"><mat-icon>eco</mat-icon></div>
+        <img src="images/school_background.png" alt="La vie à l'école La Bonne Semence" />
+      </div>
+      <div class="lp-about__content">
+        <span class="lp-kicker">Notre mission</span>
+        <h2>Semer aujourd'hui ce que votre enfant récoltera demain</h2>
+        <p>
+          La Bonne Semence est née d'une conviction simple : bien accompagné, chaque enfant peut
+          réussir. Nous mettons donc l'exigence au service de la bienveillance, pour former des
+          élèves compétents, confiants et respectueux.
+        </p>
+        <ul class="lp-checklist">
+          <li><mat-icon>check_circle</mat-icon> Enseignement bilingue français / anglais</li>
+          <li><mat-icon>check_circle</mat-icon> Classes à effectif réduit et soutien scolaire</li>
+          <li><mat-icon>check_circle</mat-icon> Suivi régulier communiqué aux parents</li>
+          <li><mat-icon>check_circle</mat-icon> Activités : lecture, sport, informatique</li>
+          <li><mat-icon>check_circle</mat-icon> Cour clôturée, accès contrôlé et cantine</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Admissions ══ -->
+  <section id="admissions" class="lp-cta">
+    <div class="lp-container lp-cta__inner">
+      <span class="lp-kicker lp-kicker--light">Admissions {{ annee }}–{{ annee + 1 }}</span>
+      <h2>Inscrivez votre enfant</h2>
+      <p>
+        Les places sont limitées pour préserver la qualité du suivi. Deux façons de faire, au choix :
+      </p>
+    </div>
+
+    <div class="lp-container lp-admis">
+      <article class="lp-admis__card">
+        <div class="lp-admis__head">
+          <div class="lp-admis__icon"><mat-icon>devices</mat-icon></div>
+          <h3>En ligne, à votre rythme</h3>
+        </div>
+        <ol class="lp-admis__steps">
+          <li>Créez votre <strong>compte parent</strong> (nom, e-mail, téléphone)</li>
+          <li>Connectez-vous à votre <strong>espace parents</strong></li>
+          <li>Complétez le <strong>dossier d'inscription</strong> de votre enfant</li>
+        </ol>
+        <div class="lp-admis__actions">
+          @if (isLoggedIn) {
+            <button mat-flat-button class="lp-btn lp-btn--primary" (click)="navigate()">
+              <mat-icon>arrow_forward</mat-icon>
+              Ouvrir mon espace
+            </button>
+          } @else {
+            <button mat-flat-button class="lp-btn lp-btn--primary" (click)="goTo('/register')">
+              <mat-icon>person_add</mat-icon>
+              Créer un compte parent
+            </button>
+            <button mat-stroked-button class="lp-btn lp-btn--ghost" (click)="goTo('/login')">
+              J'ai déjà un compte
+            </button>
+          }
+        </div>
+      </article>
+
+      <article class="lp-admis__card">
+        <div class="lp-admis__head">
+          <div class="lp-admis__icon lp-admis__icon--alt"><mat-icon>support_agent</mat-icon></div>
+          <h3>Avec l'école, accompagné</h3>
+        </div>
+        <p class="lp-admis__text">
+          Pas à l'aise avec le formulaire en ligne ? Appelez-nous, écrivez sur WhatsApp ou passez
+          directement à l'école, à Djeffa : nous constituons le dossier avec vous et vous faisons
+          visiter les locaux.
+        </p>
+        <div class="lp-admis__actions">
+          <a class="lp-btn lp-btn--primary" [href]="'tel:' + ecole.telephoneLien">
+            <mat-icon>call</mat-icon>
+            {{ ecole.telephoneAffiche }}
+          </a>
+          <a
+            class="lp-btn lp-btn--ghost"
+            [href]="ecole.whatsapp"
+            target="_blank"
+            rel="noopener"
+          >
+            <mat-icon>chat</mat-icon>
+            WhatsApp
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ══ Contact ══ -->
+  <section id="contact" class="lp-section">
+    <div class="lp-container lp-contact">
+      <div class="lp-contact__intro">
+        <span class="lp-kicker">Contact</span>
+        <h2>Parlons de la scolarité de votre enfant</h2>
+        <p>
+          Une question sur les niveaux, les frais ou le dossier d'inscription ? Le fondateur de
+          l'école vous répond directement.
+        </p>
+      </div>
+
+      <div class="lp-contact__cards">
+        <a class="lp-contact__card" [href]="'tel:' + ecole.telephoneLien">
+          <div class="lp-contact__icon"><mat-icon>call</mat-icon></div>
+          <div>
+            <strong>Téléphone</strong>
+            <span>{{ ecole.telephoneAffiche }}</span>
+          </div>
+        </a>
+        <a class="lp-contact__card" [href]="ecole.whatsapp" target="_blank" rel="noopener">
+          <div class="lp-contact__icon"><mat-icon>chat</mat-icon></div>
+          <div>
+            <strong>WhatsApp</strong>
+            <span>{{ ecole.telephoneAffiche }}</span>
+          </div>
+        </a>
+        <div class="lp-contact__card">
+          <div class="lp-contact__icon"><mat-icon>location_on</mat-icon></div>
+          <div>
+            <strong>Adresse</strong>
+            <span>{{ ecole.nom }}, Djeffa</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Pied de page ══ -->
+  <footer class="lp-footer">
+    <div class="lp-container lp-footer__grid">
+      <div class="lp-footer__brand">
+        <div class="lp-brand">
+          <span class="lp-brand__mark">{{ ecole.sigle }}</span>
+          <span class="lp-brand__text">{{ ecole.nom }}</span>
+        </div>
+        <p>École privée bilingue à Djeffa — de la maternelle au lycée. Nous semons de bonnes graines pour de beaux avenirs.</p>
+      </div>
+
+      <div class="lp-footer__col">
+        <h4>L'école</h4>
+        <a (click)="scrollTo('ecole')">Pourquoi nous choisir</a>
+        <a (click)="scrollTo('cycles')">Nos cycles</a>
+        <a (click)="scrollTo('admissions')">Admissions</a>
+      </div>
+
+      <div class="lp-footer__col">
+        <h4>Inscription & contact</h4>
+        <a [href]="'tel:' + ecole.telephoneLien">{{ ecole.telephoneAffiche }}</a>
+        <a [href]="ecole.whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+        @if (!isLoggedIn) {
+          <a (click)="goTo('/register')">Créer un compte parent</a>
+        }
+        <a (click)="navigate()">{{ isLoggedIn ? 'Mon espace' : 'Espace parents & personnel' }}</a>
+      </div>
+    </div>
+
+    <div class="lp-container lp-footer__bottom">
+      <span>&copy; {{ annee }} {{ ecole.nom }} (LBS), Djeffa. Tous droits réservés.</span>
+    </div>
+  </footer>
+</div>

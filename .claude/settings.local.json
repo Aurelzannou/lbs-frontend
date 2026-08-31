@@ -118,7 +118,9 @@
       "PowerShell(docker exec lbs-postgres psql -U lbs_user -d lbs_db -c \"UPDATE lbs.lbs_note n SET lbs_note_classe_id = e.lbs_elev_classe_id FROM lbs.lbs_eleve e WHERE e.id = n.lbs_note_eleve_id AND n.lbs_note_classe_id IS NULL;\")",
       "PowerShell(cd C:\\\\Users\\\\di\\\\Desktop\\\\lbs_Backend; echo \"EXIT CODE: $LASTEXITCODE\")",
       "PowerShell(Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue)",
-      "PowerShell(Stop-Process -Id 11000 -Force)"
+      "PowerShell(Stop-Process -Id 11000 -Force)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8082/api/menus/my-menu?profilCode=ADMIN)",
+      "Bash(./mvnw.cmd -B compile -q)"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"
