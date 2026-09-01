@@ -61,6 +61,10 @@ export class DossierEleveFormDialogComponent implements OnInit {
       pertinent à la création : on ne change pas ce choix en modification d'un dossier existant. */
   typeInscription: 'NOUVELLE' | 'REINSCRIPTION' = 'NOUVELLE';
 
+  /** Élève choisi en réinscription — sert à afficher un récapitulatif en lecture seule
+      (son identité ne se modifie que depuis le référentiel Élèves). */
+  eleveSelectionne: Eleve | null = null;
+
   constructor(
     public dialogRef: MatDialogRef<DossierEleveFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DossierEleve
@@ -108,18 +112,35 @@ export class DossierEleveFormDialogComponent implements OnInit {
       l'élève obligatoire uniquement en réinscription. */
   changerTypeInscription(type: 'NOUVELLE' | 'REINSCRIPTION'): void {
     this.typeInscription = type;
+    this.eleveSelectionne = null;
     this.form.patchValue({ eleveId: null, nom: null, prenom: null, sexe: null, dateNaissance: null, provenance: null, souffrant: false });
     const eleveIdCtrl = this.form.get('eleveId');
     eleveIdCtrl?.setValidators(type === 'REINSCRIPTION' ? [Validators.required] : []);
     eleveIdCtrl?.updateValueAndValidity();
   }
 
+  /** Libellé lisible du sexe pour le récapitulatif en lecture seule. */
+  libelleSexe(sexe: string | null | undefined): string {
+    if (sexe === 'M') return 'Masculin';
+    if (sexe === 'F') return 'Féminin';
+    return '—';
+  }
+
   /** L'identité (nom, prénom, sexe...) d'un élève existant se modifie depuis le référentiel
       Élèves, pas ici — on la recopie simplement pour affichage/confirmation et on verrouille les
       champs concernés ; seules la classe et l'année scolaire restent éditables. */
-  onEleveSelectionne(eleveId: number | null): void {
-    const eleve = this.eleves.find((e) => e.id === eleveId);
-    if (!eleve) return;
+  onEleveSelectionne(event: any): void {
+    // ng-select peut émettre l'objet complet ou la seule bindValue selon les cas — on gère les deux.
+    const eleve =
+      event && typeof event === 'object'
+        ? this.eleves.find((e) => e.id === event.id)
+        : this.eleves.find((e) => e.id === event);
+
+    this.eleveSelectionne = eleve ?? null;
+    if (!eleve) {
+      this.form.patchValue({ nom: null, prenom: null, sexe: null, dateNaissance: null, provenance: null, souffrant: false });
+      return;
+    }
     this.form.patchValue({
       nom: eleve.nom,
       prenom: eleve.prenom,
@@ -169,8 +190,10 @@ export class DossierEleveFormDialogComponent implements OnInit {
           this.notification.success(this.isEdit ? 'Dossier modifié' : 'Dossier créé');
           this.dialogRef.close(true);
         },
-        error: () => {
-          this.notification.error('Une erreur est survenue');
+        error: (err) => {
+          // Le backend renvoie un message métier explicite (ex: réinscription déjà existante
+          // pour cette année scolaire) — on l'affiche tel quel plutôt qu'un message générique.
+          this.notification.error(err?.error?.message || 'Une erreur est survenue');
           this.loading = false;
         }
       });

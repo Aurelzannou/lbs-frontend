@@ -68,17 +68,49 @@
           </div>
         </div>
 
-        <!-- Champs élève — éditables à la création comme à la validation ; en réinscription, ils
-             sont recopiés depuis l'élève sélectionné et modifiables uniquement depuis le
-             référentiel Élèves. -->
-        <div class="rfm-section-label">Informations de l'élève</div>
+        <!-- ── Réinscription : l'identité de l'élève est simplement reconduite en lecture seule.
+             Elle ne se modifie que depuis le référentiel Élèves. Seules la classe et l'année
+             scolaire (plus bas) sont à renseigner. ── -->
+        <ng-container *ngIf="!isEdit && typeInscription === 'REINSCRIPTION'; else champsEleve">
+          <div class="rfm-section-label">Informations de l'élève</div>
+
+          <div class="rfm-row" *ngIf="!eleveSelectionne">
+            <div class="rfm-empty-recap">
+              <mat-icon>person_search</mat-icon>
+              Sélectionnez l'élève ci-dessus : ses informations seront reprises automatiquement.
+            </div>
+          </div>
+
+          <div class="rfm-recap" *ngIf="eleveSelectionne">
+            <div class="rfm-recap-item">
+              <span class="k">Nom &amp; prénom</span>
+              <span class="v">{{ eleveSelectionne.nom }} {{ eleveSelectionne.prenom }}</span>
+            </div>
+            <div class="rfm-recap-item">
+              <span class="k">Sexe</span>
+              <span class="v">{{ libelleSexe(eleveSelectionne.sexe) }}</span>
+            </div>
+            <div class="rfm-recap-item">
+              <span class="k">Date de naissance</span>
+              <span class="v">{{ eleveSelectionne.dateNaissance ? (eleveSelectionne.dateNaissance | date: 'dd/MM/yyyy') : '—' }}</span>
+            </div>
+            <div class="rfm-recap-item">
+              <span class="k">Problèmes de santé</span>
+              <span class="v">{{ eleveSelectionne.souffrant ? 'Oui' : 'Non' }}</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- ── Nouvelle inscription (ou édition d'un dossier) : saisie complète de l'identité ── -->
+        <ng-template #champsEleve>
+          <div class="rfm-section-label">Informations de l'élève</div>
 
           <div class="rfm-row two-cols">
             <div class="rfm-field">
               <span class="rfm-label">Nom <span class="req">*</span></span>
               <mat-form-field appearance="outline">
                 <mat-icon matPrefix>person</mat-icon>
-                <input matInput placeholder="Nom de famille" formControlName="nom" [readonly]="typeInscription === 'REINSCRIPTION'" />
+                <input matInput placeholder="Nom de famille" formControlName="nom" />
               </mat-form-field>
               <div class="rfm-error" *ngIf="form.get('nom')?.invalid && form.get('nom')?.touched">
                 Obligatoire
@@ -88,7 +120,7 @@
               <span class="rfm-label">Prénom <span class="req">*</span></span>
               <mat-form-field appearance="outline">
                 <mat-icon matPrefix>person_outline</mat-icon>
-                <input matInput placeholder="Prénom" formControlName="prenom" [readonly]="typeInscription === 'REINSCRIPTION'" />
+                <input matInput placeholder="Prénom" formControlName="prenom" />
               </mat-form-field>
               <div
                 class="rfm-error"
@@ -117,7 +149,7 @@
               <span class="rfm-label">Date de naissance</span>
               <mat-form-field appearance="outline">
                 <mat-icon matPrefix>cake</mat-icon>
-                <input matInput type="date" formControlName="dateNaissance" [readonly]="typeInscription === 'REINSCRIPTION'" />
+                <input matInput type="date" formControlName="dateNaissance" />
               </mat-form-field>
             </div>
           </div>
@@ -131,7 +163,6 @@
                   matInput
                   formControlName="provenance"
                   placeholder="Ex: École Primaire Publique de ..."
-                  [readonly]="typeInscription === 'REINSCRIPTION'"
                 />
               </mat-form-field>
             </div>
@@ -143,6 +174,7 @@
               <span>L'élève présente-t-il des problèmes de santé ?</span>
             </label>
           </div>
+        </ng-template>
 
           <div class="rfm-section-label" style="margin-top: 8px">Scolarité</div>
 

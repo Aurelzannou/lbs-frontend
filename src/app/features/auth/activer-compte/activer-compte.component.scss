@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0f172a;
+  background: #f8fafc;
   padding: 2rem;
 }
 
@@ -13,11 +13,13 @@
   padding: 2.5rem 2rem;
   border-radius: 16px;
   text-align: center;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 }
 
 .logo-badge {
   display: inline-block;
-  background: linear-gradient(135deg, #2563eb, #60a5fa);
+  background: linear-gradient(135deg, #d97706, #f59e0b);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 0.75rem;

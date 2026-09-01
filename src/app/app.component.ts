@@ -8,6 +8,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { OneColumnLayoutComponent } from './@theme/layouts/one-column-layout.component';
 import { AuthService } from './core/services/auth.service';
 import { MenuService } from './core/services/menu.service';
+import { NotificationService } from './core/services/notification.service';
+import { KeycloakService, KeycloakEventTypeLegacy } from 'keycloak-angular';
 import { filter } from 'rxjs/operators';
 
 export interface MenuItem {
@@ -45,8 +47,12 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private keycloak: KeycloakService,
+    private notification: NotificationService
   ) {
+    this.surveillerExpirationSession();
+
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {
@@ -68,6 +74,37 @@ export class AppComponent implements OnInit {
       this.loadMenu();
       this.lastLoadedProfile = this.authService.getSelectedProfile();
     }
+  }
+
+  /**
+   * Quand la session Keycloak expire et ne peut plus être rafraîchie (jeton de rafraîchissement
+   * périmé), l'application se retrouve sur une page « morte » : les requêtes échouent en silence
+   * et les boutons ne font rien (ex. « Refuser un dossier »). On force alors le retour à la page
+   * de connexion avec un message explicite au lieu de laisser l'utilisateur bloqué.
+   */
+  private surveillerExpirationSession(): void {
+    this.keycloak.keycloakEvents$.subscribe((event) => {
+      const type = event?.type;
+
+      if (
+        type === KeycloakEventTypeLegacy.OnAuthRefreshError ||
+        type === KeycloakEventTypeLegacy.OnAuthLogout
+      ) {
+        this.forcerReconnexion();
+      }
+
+      if (type === KeycloakEventTypeLegacy.OnTokenExpired) {
+        // On tente un dernier rafraîchissement ; s'il échoue, la session est bel et bien finie.
+        this.keycloak.updateToken(20).catch(() => this.forcerReconnexion());
+      }
+    });
+  }
+
+  private forcerReconnexion(): void {
+    if (this.authService.isLoggingOut) return;
+    if (this.router.url.includes('/login')) return;
+    this.notification.warning('Votre session a expiré. Veuillez vous reconnecter.');
+    this.authService.logout();
   }
 
   private loadMenu(): void {

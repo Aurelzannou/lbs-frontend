@@ -1,5 +1,63 @@
 // styles are in global styles.scss (rfm-*)
 
+// Réinscription : récapitulatif de l'élève en lecture seule
+.rfm-empty-recap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.85rem;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+}
+
+.rfm-recap {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem 1.5rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  margin-bottom: 0.25rem;
+
+  .rfm-recap-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .k {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .v {
+      font-size: 0.9rem;
+      color: #1e293b;
+      font-weight: 500;
+    }
+  }
+}
+
+@media (max-width: 520px) {
+  .rfm-recap {
+    grid-template-columns: 1fr;
+  }
+}
+
 .type-inscription {
   display: flex;
   gap: 0.6rem;
