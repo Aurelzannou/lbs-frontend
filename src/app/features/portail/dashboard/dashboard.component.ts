@@ -16,7 +16,6 @@ import { PortalEmploiDuTempsDialogComponent } from '../emploi-du-temps-dialog/em
 import { PresenceHistoriqueDialogComponent } from '../presence-historique-dialog/presence-historique-dialog.component';
 import { PresenceService } from '../../../core/services/presence.service';
 import { PresenceEnfant } from '../../../core/models/presence.model';
-import { BulletinDialogComponent } from '../bulletin-dialog/bulletin-dialog.component';
 
 @Component({
   selector: 'app-portal-dashboard',
@@ -39,8 +38,12 @@ import { BulletinDialogComponent } from '../bulletin-dialog/bulletin-dialog.comp
       <div class="success-banner" *ngIf="inscriptionSuccess">
         <mat-icon>check_circle</mat-icon>
         <div>
-          <strong>Inscription soumise avec succès !</strong>
-          <span>L'administration examinera votre dossier et vous serez notifié par email.</span>
+          <strong *ngIf="paiementConfirme">
+            Paiement reçu{{ montantPaye ? ' (' + (montantPaye | number: '1.0-0') + ' FCFA)' : '' }} —
+            inscription enregistrée !
+          </strong>
+          <strong *ngIf="!paiementConfirme">Inscription soumise avec succès !</strong>
+          <span>L'administration examinera votre dossier et vous serez notifié par e-mail.</span>
         </div>
         <button class="banner-close" (click)="inscriptionSuccess = false">
           <mat-icon>close</mat-icon>
@@ -177,14 +180,6 @@ import { BulletinDialogComponent } from '../bulletin-dialog/bulletin-dialog.comp
                       <mat-icon>fact_check</mat-icon>
                       Présences
                     </button>
-                    <button
-                      class="edt-btn bulletin-btn"
-                      *ngIf="canVoirPresences(d)"
-                      (click)="voirBulletins(d)"
-                    >
-                      <mat-icon>description</mat-icon>
-                      Bulletins
-                    </button>
                   </div>
                 </td>
               </tr>
@@ -243,14 +238,6 @@ import { BulletinDialogComponent } from '../bulletin-dialog/bulletin-dialog.comp
               >
                 <mat-icon>fact_check</mat-icon>
                 Présences
-              </button>
-              <button
-                class="edt-btn bulletin-btn edt-btn-block"
-                *ngIf="canVoirPresences(d)"
-                (click)="voirBulletins(d)"
-              >
-                <mat-icon>description</mat-icon>
-                Bulletins
               </button>
             </div>
           </div>
@@ -709,15 +696,6 @@ import { BulletinDialogComponent } from '../bulletin-dialog/bulletin-dialog.comp
         }
       }
 
-      .bulletin-btn {
-        border-color: #dbeafe;
-        background: #eff6ff;
-        color: #2563eb;
-        &:hover {
-          background: #dbeafe;
-        }
-      }
-
       .new-badge {
         font-size: 0.65rem;
         font-weight: 700;
@@ -833,12 +811,16 @@ export class PortalDashboardComponent implements OnInit {
   recherche = '';
   loadingDossiers = false;
   inscriptionSuccess = false;
+  paiementConfirme = false;
+  montantPaye: number | null = null;
   newDossierId: number | null = null;
 
   async ngOnInit() {
     const navState = window.history.state;
     if (navState?.inscriptionSuccess) {
       this.inscriptionSuccess = true;
+      this.paiementConfirme = !!navState.paiementConfirme;
+      this.montantPaye = navState.montant ?? null;
       this.newDossierId = navState.dossierId || null;
     }
 
@@ -928,17 +910,6 @@ export class PortalDashboardComponent implements OnInit {
       data: {
         eleveNomComplet: `${d.elevePrenom} ${d.eleveNom}`,
         historique: enfant?.historique ?? []
-      },
-      panelClass: 'professional-dialog'
-    });
-  }
-
-  voirBulletins(d: any): void {
-    this.dialog.open(BulletinDialogComponent, {
-      width: '520px',
-      data: {
-        eleveId: d.eleveId,
-        eleveNomComplet: `${d.elevePrenom} ${d.eleveNom}`
       },
       panelClass: 'professional-dialog'
     });

@@ -250,64 +250,75 @@
     </form>
   </div>
 
-  <!-- ══════ ÉTAPE 3 : Simulation Mobile Money ══════ -->
-  <div class="insc-card simulation-step" *ngIf="stepIndex === 2">
+  <!-- ══════ ÉTAPE 3 : Paiement FedaPay ══════ -->
+  <div class="insc-card payment-step" *ngIf="stepIndex === 2">
     <div class="card-section-title">
-      <mat-icon>smartphone</mat-icon>
-      <span>Confirmation de paiement</span>
+      <mat-icon>account_balance_wallet</mat-icon>
+      <span>Paiement des frais d'inscription</span>
     </div>
 
-    <div class="sim-layout">
-      <!-- Téléphone mockup -->
-      <div class="phone-wrap">
-        <div class="phone-device">
-          <div class="phone-notch"></div>
-          <div class="phone-screen">
-            <div class="momo-brand">
-              <div class="momo-logo">MM</div>
-              <span>Mobile Money</span>
-            </div>
-            <div class="momo-body">
-              <div class="momo-amount-block">
-                <span class="momo-label">Montant à payer</span>
-                <span class="momo-amount">{{ montantTotal | number: '1.0-0' }} FCFA</span>
-              </div>
-              <div class="momo-merchant">
-                <mat-icon>store</mat-icon>
-                <span>LBS EDUCATION</span>
-              </div>
-              <div class="momo-phone">
-                <mat-icon>phone</mat-icon>
-                <span>{{ secondForm.get('telephonePaiement')?.value }}</span>
-              </div>
-            </div>
-            <div class="momo-actions">
-              <button class="momo-btn cancel" (click)="cancelSimulation()">Annuler</button>
-              <button class="momo-btn confirm" (click)="confirmSimulation()">Confirmer</button>
-            </div>
-          </div>
-          <div class="phone-home-bar"></div>
-        </div>
+    <!-- Récapitulatif -->
+    <div class="pay-summary">
+      <div>
+        <span class="pay-label">Montant à régler</span>
+        <span class="pay-amount">{{ paieMontant | number: '1.0-0' }} <small>FCFA</small></span>
       </div>
+      <div class="pay-channel"><mat-icon>smartphone</mat-icon> MTN MoMo · Moov Money</div>
+    </div>
 
-      <!-- Infos -->
-      <div class="sim-info">
-        <div class="sim-info-item">
-          <mat-icon>info_outline</mat-icon>
-          <p>
-            Un message de confirmation sera envoyé au
-            <strong>{{ secondForm.get('telephonePaiement')?.value }}</strong>
-          </p>
-        </div>
-        <div class="sim-info-item">
-          <mat-icon>lock_outline</mat-icon>
-          <p>Transaction sécurisée via Mobile Money</p>
-        </div>
-        <div class="sim-info-item warning">
-          <mat-icon>warning_amber</mat-icon>
-          <p>Ceci est une <strong>simulation</strong> — aucun débit réel ne sera effectué</p>
-        </div>
+    <!-- Préparation -->
+    <div class="pay-state" *ngIf="paie === 'idle'">
+      <mat-spinner diameter="26"></mat-spinner>
+      <p>{{ paieMessage || 'Préparation du paiement sécurisé…' }}</p>
+    </div>
+
+    <!-- Prêt à payer -->
+    <div class="pay-state" *ngIf="paie === 'pret'">
+      <p class="pay-hint">
+        Cliquez sur le bouton ci-dessous : une fenêtre sécurisée FedaPay s'ouvrira pour
+        valider le paiement avec votre numéro Mobile Money.
+      </p>
+      <button id="fedapay-btn" class="btn-pay" type="button" (click)="ouvrirPaiement()">
+        <mat-icon>lock</mat-icon>
+        <span>Payer {{ paieMontant | number: '1.0-0' }} FCFA</span>
+      </button>
+    </div>
+
+    <!-- Vérification -->
+    <div class="pay-state" *ngIf="paie === 'verif'">
+      <mat-spinner diameter="26"></mat-spinner>
+      <p>{{ paieMessage }}</p>
+    </div>
+
+    <!-- Succès -->
+    <div class="pay-state success" *ngIf="paie === 'succes'">
+      <mat-icon>check_circle</mat-icon>
+      <p>
+        Paiement de {{ paieMontant | number: '1.0-0' }} FCFA reçu.<br />
+        Votre dossier est transmis à l'administration, qui l'examinera et vous notifiera par e-mail.
+      </p>
+      <button class="btn-pay" type="button" (click)="retourEspace()">
+        <mat-icon>home</mat-icon> Retour à mon espace
+      </button>
+    </div>
+
+    <!-- Échec -->
+    <div class="pay-state error" *ngIf="paie === 'echec'">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ paieMessage }}</p>
+      <div class="pay-actions">
+        <button class="btn-back" type="button" (click)="reessayerPaiement()">
+          <mat-icon>arrow_back</mat-icon> Modifier
+        </button>
+        <button class="btn-pay" type="button" (click)="preparerWidget()">
+          <mat-icon>refresh</mat-icon> Réessayer
+        </button>
       </div>
+    </div>
+
+    <div class="pay-note">
+      <mat-icon>lock_outline</mat-icon>
+      <span>Paiement traité par FedaPay. LBS ne stocke aucune donnée bancaire.</span>
     </div>
   </div>
 </div>

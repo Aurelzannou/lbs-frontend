@@ -1,0 +1,77 @@
+<div class="reset-wrapper">
+  <mat-card class="reset-card">
+    <div class="logo-badge">LBS</div>
+
+    <ng-container *ngIf="!success">
+      <h1>Nouveau mot de passe</h1>
+      <p class="subtitle">Choisissez un nouveau mot de passe pour votre compte LBS.</p>
+
+      <div class="error-banner" *ngIf="error">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error }}</span>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="token">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nouveau mot de passe</mat-label>
+          <input
+            matInput
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="motDePasse"
+            autocomplete="new-password"
+          />
+          <mat-icon matPrefix>lock</mat-icon>
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="showPassword = !showPassword"
+            [attr.aria-label]="showPassword ? 'Cacher' : 'Afficher'"
+          >
+            <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="form.get('motDePasse')?.hasError('required')">Obligatoire</mat-error>
+          <mat-error *ngIf="form.get('motDePasse')?.hasError('minlength')">8 caractères minimum</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirmer le mot de passe</mat-label>
+          <input
+            matInput
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="confirmation"
+            autocomplete="new-password"
+          />
+          <mat-icon matPrefix>lock</mat-icon>
+          <mat-error *ngIf="form.hasError('mismatch')">Les mots de passe ne correspondent pas</mat-error>
+        </mat-form-field>
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="submit-btn"
+          type="submit"
+          [disabled]="form.invalid || loading"
+        >
+          <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+          <span *ngIf="!loading">Réinitialiser mon mot de passe</span>
+        </button>
+      </form>
+
+      <a class="link-back" (click)="allerVersLogin()" *ngIf="!token">
+        <mat-icon>arrow_back</mat-icon> Retour à la connexion
+      </a>
+    </ng-container>
+
+    <ng-container *ngIf="success">
+      <div class="success-icon"><mat-icon>check_circle</mat-icon></div>
+      <h1>Mot de passe réinitialisé</h1>
+      <p class="subtitle">
+        Votre nouveau mot de passe est actif. Vous pouvez maintenant vous connecter.
+      </p>
+      <button mat-flat-button color="primary" class="submit-btn" (click)="allerVersLogin()">
+        Se connecter
+      </button>
+    </ng-container>
+  </mat-card>
+</div>

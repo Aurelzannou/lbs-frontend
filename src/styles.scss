@@ -620,6 +620,14 @@ input[type='time'] {
   }
 }
 
+/* ── Widget de paiement FedaPay (checkout.js / MicroModal) ──────────────────
+   Le SDK injecte un fond `rgba(0,0,0,0.6)` très sombre derrière le modal.
+   On l'éclaircit (le logo animé FedaPay reste centré). */
+.modal.micromodal-slide .modal__overlay {
+  background-color: rgba(15, 23, 42, 0.3) !important;
+  backdrop-filter: blur(2px);
+}
+
 /* Professional SweetAlert2 customization */
 .swal2-container {
   z-index: 11000 !important;

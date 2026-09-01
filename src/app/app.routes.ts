@@ -23,6 +23,20 @@ export const routes: Routes = [
       )
   },
   {
+    path: 'mot-de-passe-oublie',
+    loadComponent: () =>
+      import('./features/auth/mot-de-passe-oublie/mot-de-passe-oublie.component').then(
+        (m) => m.MotDePasseOublieComponent
+      )
+  },
+  {
+    path: 'reinitialiser-mot-de-passe',
+    loadComponent: () =>
+      import(
+        './features/auth/reinitialiser-mot-de-passe/reinitialiser-mot-de-passe.component'
+      ).then((m) => m.ReinitialiserMotDePasseComponent)
+  },
+  {
     path: 'auth/select-profile',
     loadComponent: () =>
       import('./features/auth/select-profile/select-profile.component').then(

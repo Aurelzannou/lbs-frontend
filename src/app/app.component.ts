@@ -30,7 +30,16 @@ export class AppComponent implements OnInit {
   menu: MenuItem[] = [];
   showLayout = true;
 
-  private noLayoutPaths = ['/login', '/register', '/auth', '/home', '/portail'];
+  private noLayoutPaths = [
+    '/login',
+    '/register',
+    '/auth',
+    '/home',
+    '/portail',
+    '/activer-compte',
+    '/mot-de-passe-oublie',
+    '/reinitialiser-mot-de-passe'
+  ];
   private lastLoadedProfile: string | null = null;
 
   constructor(

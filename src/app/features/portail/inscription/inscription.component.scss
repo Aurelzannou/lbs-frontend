@@ -681,3 +681,108 @@
     flex-direction: column;
   }
 }
+
+// ── Étape paiement FedaPay ────────────────────────────────────────────────────
+.payment-step {
+  .pay-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.25rem 0 1.5rem;
+  }
+  .pay-label {
+    display: block;
+    font-size: 0.8rem;
+    color: #047857;
+    font-weight: 600;
+  }
+  .pay-amount {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #065f46;
+    small {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+  }
+  .pay-channel {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #047857;
+    mat-icon {
+      font-size: 1.1rem;
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+  }
+
+  .pay-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+    text-align: center;
+    padding: 1.75rem 1rem;
+
+    p {
+      margin: 0;
+      color: #475569;
+      font-size: 0.95rem;
+      max-width: 32rem;
+    }
+    .pay-hint {
+      color: #64748b;
+    }
+    > mat-icon {
+      font-size: 2.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+    &.success {
+      color: #059669;
+      p {
+        color: #065f46;
+        font-weight: 600;
+      }
+    }
+    &.error {
+      color: #dc2626;
+      p {
+        color: #b91c1c;
+      }
+    }
+  }
+
+  .pay-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pay-note {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    mat-icon {
+      font-size: 0.95rem;
+      width: 0.95rem;
+      height: 0.95rem;
+    }
+  }
+}

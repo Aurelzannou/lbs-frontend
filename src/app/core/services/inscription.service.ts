@@ -60,4 +60,19 @@ export class InscriptionService {
       .set('anneeScolaireId', anneeScolaireId.toString());
     return this.api.get<any>('/api/frais-scolaires/search', params);
   }
+
+  /**
+   * Initialise le paiement des frais d'inscription (crée la transaction FedaPay).
+   * Renvoie { fedapayTransactionId, publicKey, montant, devise, description }.
+   */
+  initPaiement(dossierId: number, telephonePaiement?: string): Observable<any> {
+    return this.api.post<any>(`/api/inscription/${dossierId}/paiement/init`, {
+      telephonePaiement: telephonePaiement ?? null
+    });
+  }
+
+  /** Demande au backend de relire le statut de la transaction chez FedaPay. */
+  verifierPaiement(fedapayTransactionId: number | string): Observable<any> {
+    return this.api.get<any>(`/api/inscription/paiement/${fedapayTransactionId}/verifier`);
+  }
 }

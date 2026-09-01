@@ -237,6 +237,24 @@ export class AuthService {
   }
 
   /**
+   * Parcours « Mot de passe oublié » — étape 1 : demande l'envoi d'un lien de réinitialisation
+   * par email. Le backend répond toujours 200 (il ne révèle pas si le compte existe).
+   */
+  public forgotPassword(email: string): Observable<{ message: string }> {
+    const url = `${environment.apiUrl}/api/auth/forgot-password`;
+    return this.http.post<{ message: string }>(url, { email });
+  }
+
+  /**
+   * Parcours « Mot de passe oublié » — étape 2 : consomme le jeton reçu par email et applique
+   * le nouveau mot de passe choisi par l'utilisateur.
+   */
+  public resetPassword(token: string, newPassword: string): Observable<{ message: string }> {
+    const url = `${environment.apiUrl}/api/auth/reset-password`;
+    return this.http.post<{ message: string }>(url, { token, newPassword });
+  }
+
+  /**
    * Indique si le compte a déjà activé l'OTP (TOTP) — sert à désambiguïser un échec de
    * connexion ("mot de passe invalide" vs "code de vérification requis").
    */
