@@ -1,1 +1,26 @@
 // styles are in global styles.scss (rfm-*)
+
+.caisse-verrouillee {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  small {
+    color: #94a3b8;
+    font-weight: 400;
+  }
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #94a3b8;
+  }
+}

@@ -79,6 +79,14 @@
           <td mat-cell *matCellDef="let row">{{ row.libelle }}</td>
         </ng-container>
 
+        <!-- Responsable Column -->
+        <ng-container matColumnDef="responsable">
+          <th mat-header-cell *matHeaderCellDef>Caissier responsable</th>
+          <td mat-cell *matCellDef="let row">
+            {{ row.utilisateurNomComplet || '—' }}
+          </td>
+        </ng-container>
+
         <!-- Solde Column -->
         <ng-container matColumnDef="solde">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Solde</th>

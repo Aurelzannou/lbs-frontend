@@ -199,7 +199,8 @@ export class FraisScolaireListComponent implements OnInit, OnDestroy, AfterViewI
       panelClass: 'professional-dialog',
       data: {
         fraisScolaireId: frais.id,
-        fraisLibelle: `${frais.typeFrais?.libelle ?? ''} — ${frais.classe?.code ?? ''}`
+        fraisLibelle: `${frais.typeFrais?.libelle ?? ''} — ${frais.classe?.code ?? ''}`,
+        fraisMontant: frais.montant ?? null
       }
     });
   }

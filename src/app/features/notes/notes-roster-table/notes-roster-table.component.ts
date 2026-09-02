@@ -18,7 +18,7 @@ export class NotesRosterTableComponent implements OnChanges {
   @Input() readonly = false;
   @Input() allowAddInterrogation = true;
   // Matière "Conduite" — sa moyenne est la valeur unique saisie (colonne Interrogation 1), jamais
-  // divisée par 3 comme les autres matières (interro + devoir1 + devoir2).
+  // combinée à des devoirs comme les autres matières.
   @Input() estConduite = false;
   @Output() nombreInterrogationsChange = new EventEmitter<number>();
 
@@ -104,19 +104,59 @@ export class NotesRosterTableComponent implements OnChanges {
     this.nombreInterrogationsChange.emit(this.nombreInterrogations);
   }
 
-  calculerMoyenneInterrogations(el: EleveNoteDto): number | null {
-    const valeurs = (el.interrogations || []).filter((v): v is number => v !== null && v !== undefined);
-    if (valeurs.length === 0) return null;
-    return valeurs.reduce((a, b) => a + b, 0) / valeurs.length;
+  /** Nombre d'interrogations réellement organisées pour la classe = plus grand rang ayant au
+      moins une note saisie chez un élève. Sert de dénominateur : une interro organisée mais non
+      composée par l'élève compte 0 (identique au calcul backend). */
+  private nombreInterrosOrganisees(): number {
+    let organisees = 0;
+    for (let i = 0; i < this.nombreInterrogations; i++) {
+      const remplie = this.eleves.some((el) => {
+        const v = el.interrogations?.[i];
+        return v !== null && v !== undefined;
+      });
+      if (remplie) organisees = i + 1;
+    }
+    return Math.min(organisees, this.maxInterrogations);
   }
 
-  /** Moyenne sur 3 de {moyenne des interrogations, devoir1, devoir2} — toute composante jamais
-      saisie compte pour 0, y compris quand rien n'a encore été saisi du tout (une matière jamais
-      évaluée compte 0, elle n'est jamais simplement ignorée dans le calcul). */
+  /** Nombre de devoirs organisés (0, 1 ou 2) selon les colonnes ayant au moins une note. */
+  private nombreDevoirsOrganises(): number {
+    const d2 = this.eleves.some((el) => el.devoir2 !== null && el.devoir2 !== undefined);
+    if (d2) return 2;
+    const d1 = this.eleves.some((el) => el.devoir1 !== null && el.devoir1 !== undefined);
+    return d1 ? 1 : 0;
+  }
+
+  /** Moyenne des interrogations = somme des notes de l'élève (0 pour une interro non composée)
+      ÷ nombre d'interros organisées. */
+  calculerMoyenneInterrogations(el: EleveNoteDto): number | null {
+    const n = this.nombreInterrosOrganisees();
+    if (n === 0) return null;
+    let somme = 0;
+    for (let i = 0; i < n; i++) somme += el.interrogations?.[i] ?? 0;
+    return somme / n;
+  }
+
+  /** Moyenne des devoirs = somme des devoirs de l'élève (0 pour un devoir non composé)
+      ÷ nombre de devoirs organisés. null si aucun devoir n'a été organisé. */
+  private calculerMoyenneDevoirs(el: EleveNoteDto): number | null {
+    const nd = this.nombreDevoirsOrganises();
+    if (nd === 0) return null;
+    if (nd === 1) return el.devoir1 ?? 0;
+    return ((el.devoir1 ?? 0) + (el.devoir2 ?? 0)) / 2;
+  }
+
+  /** Moyenne d'une matière = (moyenne des interros + moyenne des devoirs) ÷ 2.
+      Si une seule des deux composantes a été organisée, elle vaut à elle seule la moyenne.
+      Matière sans aucune note = 0. Conduite = la note unique saisie. */
   calculerMoyenne(el: EleveNoteDto): number {
     const moyInterro = this.calculerMoyenneInterrogations(el);
     if (this.estConduite) return moyInterro ?? 0;
-    return ((moyInterro ?? 0) + (el.devoir1 ?? 0) + (el.devoir2 ?? 0)) / 3;
+    const moyDevoirs = this.calculerMoyenneDevoirs(el);
+    if (moyInterro === null && moyDevoirs === null) return 0;
+    if (moyInterro === null) return moyDevoirs as number;
+    if (moyDevoirs === null) return moyInterro;
+    return (moyInterro + moyDevoirs) / 2;
   }
 
   private clamp(valeur: number | null | undefined): number | null {

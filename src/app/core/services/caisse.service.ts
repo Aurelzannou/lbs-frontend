@@ -21,6 +21,11 @@ export class CaisseService {
     return this.api.get<Caisse>(`${this.endpoint}/${uuid}`);
   }
 
+  /** Caisse rattachée à l'utilisateur connecté (null s'il n'en a aucune). */
+  getMaCaisse(): Observable<Caisse | null> {
+    return this.api.get<Caisse | null>(`${this.endpoint}/ma-caisse`);
+  }
+
   create(data: CaisseRequest): Observable<Caisse> {
     return this.api.post<Caisse>(this.endpoint, data);
   }

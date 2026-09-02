@@ -14,6 +14,7 @@ import { ValidationService } from '../../../core/services/validation.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PortalEmploiDuTempsDialogComponent } from '../emploi-du-temps-dialog/emploi-du-temps-dialog.component';
 import { PresenceHistoriqueDialogComponent } from '../presence-historique-dialog/presence-historique-dialog.component';
+import { PortailPaiementDialogComponent } from '../paiement-dialog/portail-paiement-dialog.component';
 import { PresenceService } from '../../../core/services/presence.service';
 import { PresenceEnfant } from '../../../core/models/presence.model';
 
@@ -165,6 +166,14 @@ import { PresenceEnfant } from '../../../core/models/presence.model';
                 <td>
                   <div class="action-buttons">
                     <button
+                      class="edt-btn paiement-btn"
+                      *ngIf="canPayer(d)"
+                      (click)="voirPaiements(d)"
+                    >
+                      <mat-icon>payments</mat-icon>
+                      Frais &amp; paiement
+                    </button>
+                    <button
                       class="edt-btn"
                       *ngIf="canVoirEmploiDuTemps(d)"
                       (click)="voirEmploiDuTemps(d)"
@@ -223,6 +232,14 @@ import { PresenceEnfant } from '../../../core/models/presence.model';
                 <span class="mc-label">Date dépôt</span
                 ><span>{{ d.dateDebut ? (d.dateDebut | date: 'dd/MM/yyyy') : '—' }}</span>
               </div>
+              <button
+                class="edt-btn paiement-btn edt-btn-block"
+                *ngIf="canPayer(d)"
+                (click)="voirPaiements(d)"
+              >
+                <mat-icon>payments</mat-icon>
+                Frais &amp; paiement
+              </button>
               <button
                 class="edt-btn edt-btn-block"
                 *ngIf="canVoirEmploiDuTemps(d)"
@@ -696,6 +713,15 @@ import { PresenceEnfant } from '../../../core/models/presence.model';
         }
       }
 
+      .paiement-btn {
+        border-color: #bbf7d0;
+        background: #f0fdf4;
+        color: #15803d;
+        &:hover {
+          background: #dcfce7;
+        }
+      }
+
       .new-badge {
         font-size: 0.65rem;
         font-weight: 700;
@@ -901,6 +927,29 @@ export class PortalDashboardComponent implements OnInit {
 
   canVoirPresences(d: any): boolean {
     return ['ACCEPTE', 'INSCRIT'].includes(d.statutCode) && !!d.eleveId;
+  }
+
+  canPayer(d: any): boolean {
+    return ['ACCEPTE', 'INSCRIT'].includes(d.statutCode) && !!d.id;
+  }
+
+  voirPaiements(d: any): void {
+    this.dialog
+      .open(PortailPaiementDialogComponent, {
+        width: '620px',
+        maxWidth: '95vw',
+        panelClass: 'professional-dialog',
+        data: {
+          dossierId: d.id,
+          eleveNomComplet: `${d.elevePrenom} ${d.eleveNom}`,
+          classeLibelle: d.classeLibelle,
+          anneeScolaireLibelle: d.anneeScolaireLibelle
+        }
+      })
+      .afterClosed()
+      .subscribe((recharger) => {
+        if (recharger) this.loadDossiers();
+      });
   }
 
   voirPresences(d: any): void {

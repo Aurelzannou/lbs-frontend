@@ -139,14 +139,15 @@
 }
 
 .btn-action {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  border-radius: 6px;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 8px;
   border: none;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
+  color: white;
   cursor: pointer;
   transition: all 0.2s;
 
@@ -157,32 +158,29 @@
   }
 
   &:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 }
 
 .btn-valider {
-  background: #dcfce7;
-  color: #15803d;
-  &:hover {
-    background: #bbf7d0;
+  background: #059669;
+  &:hover:not(:disabled) {
+    background: #047857;
   }
 }
 
 .btn-devalider {
-  background: #fee2e2;
-  color: #b91c1c;
-  &:hover {
-    background: #fecaca;
+  background: #dc2626;
+  &:hover:not(:disabled) {
+    background: #b91c1c;
   }
 }
 
 .btn-pdf {
-  background: #eff6ff;
-  color: #2563eb;
+  background: #2563eb;
   &:hover:not(:disabled) {
-    background: #dbeafe;
+    background: #1d4ed8;
   }
 }
 

@@ -58,6 +58,10 @@ export class PaiementFormDialogComponent implements OnInit {
   modesPaiement: ModePaiement[] = [];
   caisses: Caisse[] = [];
 
+  /** Caisse rattachée à l'utilisateur connecté — si présente, le champ Caisse est verrouillé
+      dessus (l'agent encaisse toujours dans sa propre caisse). */
+  maCaisse: Caisse | null = null;
+
   resteAPayerFrais: number | null = null;
 
   ngOnInit(): void {
@@ -82,10 +86,13 @@ export class PaiementFormDialogComponent implements OnInit {
     this.loading = true;
     this.dossierEleveService.getAll(1, 300).subscribe((res) => {
       const liste: DossierEleve[] = res.data || res || [];
-      this.dossiers = liste.map((d) => ({
-        ...d,
-        nomComplet: `${d.eleveNom ?? ''} ${d.elevePrenom ?? ''} — ${d.classeLibelle ?? ''}`
-      }));
+      // On n'encaisse que sur un dossier accepté / inscrit (pas un dossier déposé ou refusé).
+      this.dossiers = liste
+        .filter((d: any) => ['ACCEPTE', 'INSCRIT'].includes(d.statutCode))
+        .map((d) => ({
+          ...d,
+          nomComplet: `${d.eleveNom ?? ''} ${d.elevePrenom ?? ''} — ${d.classeLibelle ?? ''}`
+        }));
       this.loading = false;
 
       if (this.data?.dossierEleveId) {
@@ -99,6 +106,18 @@ export class PaiementFormDialogComponent implements OnInit {
     this.caisseService
       .getAll(1, 100)
       .subscribe((res) => (this.caisses = (res.data || []).filter((c: Caisse) => c.actif !== false)));
+
+    // Caisse de l'agent connecté : si elle existe, on la fixe et on verrouille le champ.
+    this.caisseService.getMaCaisse().subscribe({
+      next: (caisse) => {
+        if (caisse && caisse.id) {
+          this.maCaisse = caisse;
+          this.form.patchValue({ caisseId: caisse.id });
+          this.form.get('caisseId')?.disable();
+        }
+      },
+      error: () => {}
+    });
   }
 
   onDossierSelectionne(dossierId: number | null): void {
@@ -109,7 +128,7 @@ export class PaiementFormDialogComponent implements OnInit {
     if (!dossier || !dossier.classeId || !dossier.anneeScolaireId) return;
 
     this.fraisScolaireService
-      .getFraisByClasseAndAnnee(dossier.classeId, dossier.anneeScolaireId)
+      .getFraisByClasseAndAnnee(dossier.classeId, dossier.anneeScolaireId, true)
       .subscribe((frais) => (this.fraisDisponibles = (frais || []).filter((f) => f.actif !== false)));
   }
 
@@ -130,13 +149,14 @@ export class PaiementFormDialogComponent implements OnInit {
     if (!confirmed) return;
 
     this.saving = true;
-    this.paiementService.create(this.form.value).subscribe({
+    // getRawValue() : inclut caisseId même quand le champ est verrouillé (caisse de l'agent).
+    this.paiementService.create(this.form.getRawValue()).subscribe({
       next: () => {
         this.notification.success('Paiement enregistré');
         this.dialogRef.close(true);
       },
-      error: () => {
-        this.notification.error("Erreur lors de l'enregistrement du paiement");
+      error: (err) => {
+        this.notification.error(err?.error?.message || "Erreur lors de l'enregistrement du paiement");
         this.saving = false;
       }
     });

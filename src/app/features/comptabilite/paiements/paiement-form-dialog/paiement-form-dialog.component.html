@@ -101,7 +101,9 @@
           </div>
           <div class="rfm-select">
             <span class="rfm-label">Caisse <span class="req">*</span></span>
+
             <ng-select
+              *ngIf="!maCaisse"
               [items]="caisses"
               bindLabel="libelle"
               bindValue="id"
@@ -111,6 +113,11 @@
               class="ng-field"
             >
             </ng-select>
+
+            <div class="caisse-verrouillee" *ngIf="maCaisse">
+              <mat-icon>lock</mat-icon>
+              <span>{{ maCaisse.libelle }}<small *ngIf="maCaisse.code"> ({{ maCaisse.code }})</small></span>
+            </div>
           </div>
         </div>
 

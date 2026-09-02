@@ -33,10 +33,19 @@ export class FraisScolaireService {
     return this.api.delete<void>(`${this.endpoint}/${uuid}`);
   }
 
-  getFraisByClasseAndAnnee(classeId: number, anneeId: number): Observable<FraisScolaire[]> {
-    const params = new HttpParams()
+  /**
+   * @param paiementGuichet true pour ne récupérer que le type de frais encaissé au guichet
+   *   (SCOLARITE) — utilisé par l'écran /comptabilite/paiements.
+   */
+  getFraisByClasseAndAnnee(
+    classeId: number,
+    anneeId: number,
+    paiementGuichet = false
+  ): Observable<FraisScolaire[]> {
+    let params = new HttpParams()
       .set('classeId', classeId.toString())
       .set('anneeScolaireId', anneeId.toString());
+    if (paiementGuichet) params = params.set('paiementGuichet', 'true');
     return this.api.get<FraisScolaire[]>(`${this.endpoint}/search`, params);
   }
 }

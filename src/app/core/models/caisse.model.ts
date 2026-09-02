@@ -5,6 +5,8 @@ export interface Caisse {
   libelle: string;
   solde?: number;
   actif?: boolean;
+  utilisateurId?: number | null;
+  utilisateurNomComplet?: string | null;
 }
 
 export interface CaisseRequest {
@@ -12,4 +14,5 @@ export interface CaisseRequest {
   libelle: string;
   solde?: number;
   actif?: boolean;
+  utilisateurId?: number | null;
 }

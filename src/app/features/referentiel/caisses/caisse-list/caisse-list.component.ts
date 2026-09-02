@@ -61,7 +61,7 @@ export class CaisseListComponent implements OnInit, OnDestroy, AfterViewInit {
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns: string[] = ['code', 'libelle', 'solde', 'actions'];
+  displayedColumns: string[] = ['code', 'libelle', 'responsable', 'solde', 'actions'];
   dataSource = new MatTableDataSource<Caisse>([]);
   loading = false;
 

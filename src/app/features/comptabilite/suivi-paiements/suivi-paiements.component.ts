@@ -46,10 +46,13 @@ export class SuiviPaiementsComponent implements OnInit {
     this.loadingDossiers = true;
     this.dossierEleveService.getAll(1, 300).subscribe((res) => {
       const liste: DossierEleve[] = res.data || res || [];
-      this.dossiers = liste.map((d) => ({
-        ...d,
-        nomComplet: `${d.eleveNom ?? ''} ${d.elevePrenom ?? ''} — ${d.classeLibelle ?? ''}`
-      }));
+      // Seuls les dossiers acceptés / inscrits ont une scolarité à payer.
+      this.dossiers = liste
+        .filter((d: any) => ['ACCEPTE', 'INSCRIT'].includes(d.statutCode))
+        .map((d) => ({
+          ...d,
+          nomComplet: `${d.eleveNom ?? ''} ${d.elevePrenom ?? ''} — ${d.classeLibelle ?? ''}`
+        }));
       this.loadingDossiers = false;
     });
   }

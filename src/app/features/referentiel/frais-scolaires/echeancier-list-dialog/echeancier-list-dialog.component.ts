@@ -30,7 +30,9 @@ import { Echeancier } from '../../../../core/models/echeancier.model';
 export class EcheancierListDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<EcheancierListDialogComponent>);
-  public data = inject<{ fraisScolaireId: number; fraisLibelle: string }>(MAT_DIALOG_DATA);
+  public data = inject<{ fraisScolaireId: number; fraisLibelle: string; fraisMontant: number | null }>(
+    MAT_DIALOG_DATA
+  );
   private echeancierService = inject(EcheancierService);
   private notification = inject(NotificationService);
 
@@ -98,6 +100,15 @@ export class EcheancierListDialogComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.invalid) return;
+
+    if (this.depassementMontant > 0) {
+      this.notification.error(
+        `Le total des tranches dépasserait le montant du frais de ${this.depassementMontant.toLocaleString('fr-FR')} FCFA. ` +
+          `Il reste ${this.resteARepartir.toLocaleString('fr-FR')} FCFA à répartir.`
+      );
+      return;
+    }
+
     this.saving = true;
     const payload = { ...this.form.value, fraisScolaireId: this.data.fraisScolaireId };
 
@@ -112,8 +123,10 @@ export class EcheancierListDialogComponent implements OnInit {
         this.formOuvert = false;
         this.refresh();
       },
-      error: () => {
-        this.notification.error("Erreur lors de l'enregistrement de la tranche");
+      error: (err) => {
+        this.notification.error(
+          err?.error?.message || "Erreur lors de l'enregistrement de la tranche"
+        );
         this.saving = false;
       }
     });
@@ -136,6 +149,32 @@ export class EcheancierListDialogComponent implements OnInit {
 
   get totalMontant(): number {
     return this.echeanciers.reduce((sum, e) => sum + (e.montant || 0), 0);
+  }
+
+  /** Montant du frais (référence pour le contrôle de répartition). null = pas de contrôle. */
+  get montantFrais(): number | null {
+    return this.data.fraisMontant ?? null;
+  }
+
+  /** Total des tranches déjà enregistrées + celle en cours de saisie (hors tranche éditée). */
+  get totalAvecFormEnCours(): number {
+    const saisi = Number(this.form?.get('montant')?.value) || 0;
+    const dejaHorsEdition = this.echeanciers
+      .filter((e) => !this.editingUuid || e.uuid !== this.editingUuid)
+      .reduce((sum, e) => sum + (e.montant || 0), 0);
+    return dejaHorsEdition + saisi;
+  }
+
+  /** Reste à répartir avant d'atteindre le montant du frais (0 si atteint/dépassé ou pas de contrôle). */
+  get resteARepartir(): number {
+    if (this.montantFrais == null) return 0;
+    return Math.max(0, this.montantFrais - this.totalMontant);
+  }
+
+  /** De combien la tranche en cours de saisie ferait dépasser le montant du frais (0 si OK). */
+  get depassementMontant(): number {
+    if (this.montantFrais == null) return 0;
+    return Math.max(0, Math.round(this.totalAvecFormEnCours - this.montantFrais));
   }
 
   fermer(): void {

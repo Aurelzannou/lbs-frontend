@@ -59,6 +59,31 @@
             </mat-form-field>
           </div>
         </div>
+
+        <div class="rfm-row">
+          <div class="rfm-field rfm-select">
+            <span class="rfm-label">Caissier responsable</span>
+            <ng-select
+              [items]="utilisateurs"
+              bindLabel="nomComplet"
+              bindValue="id"
+              formControlName="utilisateurId"
+              placeholder="Aucun (facultatif)"
+              appendTo="body"
+              class="ng-field"
+              notFoundText="Aucun caissier"
+            >
+            </ng-select>
+            <div class="rfm-hint" *ngIf="utilisateurs.length">
+              À la connexion de cet utilisateur, cette caisse sera sélectionnée automatiquement sur
+              l'écran d'encaissement.
+            </div>
+            <div class="rfm-hint" *ngIf="!utilisateurs.length">
+              Aucun utilisateur n'a le profil « Caissier ». Attribuez-le depuis
+              Administration ▸ Utilisateurs.
+            </div>
+          </div>
+        </div>
       </form>
     </div>
 

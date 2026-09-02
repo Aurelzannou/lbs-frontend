@@ -40,8 +40,18 @@
           <p>Aucune tranche définie pour ce frais.</p>
         </div>
 
-        <div class="tranches-total" *ngIf="echeanciers.length">
-          Total des tranches : <strong>{{ totalMontant | number: '1.0-0' }} FCFA</strong>
+        <div class="tranches-total" *ngIf="echeanciers.length || montantFrais != null">
+          <div>
+            Total des tranches :
+            <strong>{{ totalMontant | number: '1.0-0' }} FCFA</strong>
+            <span *ngIf="montantFrais != null"> / {{ montantFrais | number: '1.0-0' }} FCFA</span>
+          </div>
+          <div class="reste-hint" *ngIf="montantFrais != null && resteARepartir > 0">
+            Reste à répartir : <strong>{{ resteARepartir | number: '1.0-0' }} FCFA</strong>
+          </div>
+          <div class="reste-hint ok" *ngIf="montantFrais != null && resteARepartir === 0 && totalMontant <= montantFrais && echeanciers.length">
+            Le montant du frais est entièrement réparti.
+          </div>
         </div>
       </div>
 
@@ -79,6 +89,15 @@
             </mat-form-field>
           </div>
         </div>
+        <div class="tranche-depassement" *ngIf="depassementMontant > 0">
+          <mat-icon>error_outline</mat-icon>
+          <span>
+            Ce montant fait dépasser le total du frais de
+            <strong>{{ depassementMontant | number: '1.0-0' }} FCFA</strong>.
+            Il reste <strong>{{ resteARepartir | number: '1.0-0' }} FCFA</strong> à répartir.
+          </span>
+        </div>
+
         <div class="tranche-form-actions">
           <button mat-button type="button" (click)="annulerForm()" [disabled]="saving">Annuler</button>
           <button
@@ -86,7 +105,7 @@
             class="rfm-submit"
             type="button"
             (click)="onSubmit()"
-            [disabled]="form.invalid || saving"
+            [disabled]="form.invalid || saving || depassementMontant > 0"
           >
             Enregistrer
           </button>
