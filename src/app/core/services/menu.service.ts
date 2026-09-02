@@ -50,7 +50,24 @@ export class MenuService {
     return this.http.get<any>(`${this.apiUrl}/my-menu`, { params }).pipe(
       map((response) => {
         const menus = response.data || [];
-        return this.mapToMenuItems(menus);
+        const items = this.mapToMenuItems(menus);
+
+        // Un utilisateur PROFESSEUR (souvent combiné à un autre profil personnel) n'a pas de
+        // menu en base : on ajoute « Mes classes » dans sa sidebar unifiée, sauf s'il a
+        // explicitement choisi un autre espace.
+        const roles = this.authService.getBusinessRoles();
+        const estProfesseur = roles.includes('PROFESSEUR');
+        const dansUnAutreEspace = selectedProfile && selectedProfile !== 'PROFESSEUR';
+        const dejaPresent = items.some((i) => i.link === '/professeur/dashboard');
+
+        if (estProfesseur && !dansUnAutreEspace && !dejaPresent) {
+          items.push({
+            title: 'Mes classes',
+            icon: 'book-open-outline',
+            link: '/professeur/dashboard'
+          });
+        }
+        return items;
       })
     );
   }

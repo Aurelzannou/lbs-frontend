@@ -116,7 +116,7 @@ export class MenuFormDialogComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Erreur:', err);
-        this.notification.error('Erreur lors de la sauvegarde du menu');
+        this.notification.error(err?.error?.message || 'Erreur lors de la sauvegarde du menu');
         this.loading = false;
       }
     });

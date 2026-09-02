@@ -272,7 +272,8 @@ export class AuthService {
     const isTuteur = roles.includes('TUTEUR');
     const isAdmin = roles.includes('ADMIN') || roles.includes('SECRETAIRE');
     const isProfesseur = roles.includes('PROFESSEUR');
-    const rolesCount = [isTuteur, isAdmin, isProfesseur].filter(Boolean).length;
+    const isCaissier = roles.includes('CAISSIER');
+    const staffCount = [isAdmin, isProfesseur, isCaissier].filter(Boolean).length;
 
     // Si un profil est déjà sélectionné (ex: refresh), on l'utilise
     const selectedProfile = this.getSelectedProfile();
@@ -281,19 +282,28 @@ export class AuthService {
       return;
     }
 
-    if (rolesCount > 1) {
+    // Le portail parent est une application à part entière (layout dédié). Si l'utilisateur
+    // est à la fois parent ET membre du personnel, on lui laisse choisir l'espace.
+    if (isTuteur && staffCount > 0) {
       this.router.navigate(['/auth/select-profile']);
-    } else if (isAdmin) {
-      this.setSelectedProfile('ADMIN');
-      this.router.navigate(['/dashboard']);
-    } else if (isProfesseur) {
-      this.setSelectedProfile('PROFESSEUR');
-      this.router.navigate(['/professeur/dashboard']);
-    } else if (isTuteur) {
+      return;
+    }
+    if (isTuteur) {
       this.setSelectedProfile('TUTEUR');
       this.router.navigate(['/portail/dashboard']);
+      return;
+    }
+
+    // Personnel (admin / caissier / professeur) : UNE seule sidebar avec l'union de ses menus.
+    // On ne fixe aucun profil → le backend renvoie tous les menus de tous ses profils.
+    this.clearSelectedProfile();
+    if (isAdmin) {
+      this.router.navigate(['/dashboard']);
+    } else if (isCaissier) {
+      this.router.navigate(['/comptabilite/paiements']);
+    } else if (isProfesseur) {
+      this.router.navigate(['/professeur/dashboard']);
     } else {
-      // Par défaut si pas de rôle reconnu
       this.setSelectedProfile('TUTEUR');
       this.router.navigate(['/portail/dashboard']);
     }
@@ -301,6 +311,10 @@ export class AuthService {
 
   public setSelectedProfile(profile: string): void {
     localStorage.setItem('selectedProfile', profile);
+  }
+
+  public clearSelectedProfile(): void {
+    localStorage.removeItem('selectedProfile');
   }
 
   public getSelectedProfile(): string | null {
@@ -312,6 +326,8 @@ export class AuthService {
       this.router.navigate(['/portail/dashboard']);
     } else if (profile === 'PROFESSEUR') {
       this.router.navigate(['/professeur/dashboard']);
+    } else if (profile === 'CAISSIER') {
+      this.router.navigate(['/comptabilite/paiements']);
     } else {
       this.router.navigate(['/dashboard']);
     }

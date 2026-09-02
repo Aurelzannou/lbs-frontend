@@ -80,6 +80,24 @@ import { AuthService } from '../../../core/services/auth.service';
               </div>
             </div>
           }
+
+          <!-- Carte Caissier -->
+          @if (hasRole('CAISSIER')) {
+            <div class="profile-card caissier-theme" (click)="selectProfile('CAISSIER')">
+              <div class="card-glass"></div>
+              <div class="icon-container">
+                <mat-icon>point_of_sale</mat-icon>
+              </div>
+              <div class="card-body">
+                <h3>Caisse</h3>
+                <p>Encaissement des frais scolaires, dépenses et journal de caisse.</p>
+              </div>
+              <div class="card-action">
+                <span>Accéder</span>
+                <mat-icon>chevron_right</mat-icon>
+              </div>
+            </div>
+          }
         </div>
 
         <button mat-button class="logout-action" (click)="logout()">
@@ -302,6 +320,19 @@ import { AuthService } from '../../../core/services/auth.service';
             border-color: rgba(16, 185, 129, 0.3);
           }
         }
+
+        &.caissier-theme {
+          .icon-container {
+            background: rgba(20, 184, 166, 0.1);
+            color: #14b8a6;
+          }
+          .card-action {
+            color: #14b8a6;
+          }
+          &:hover {
+            border-color: rgba(20, 184, 166, 0.3);
+          }
+        }
       }
 
       .logout-action {
@@ -364,7 +395,8 @@ export class ProfileSelectionComponent implements OnInit {
     // Si un seul rôle métier après filtrage, on redirige directement
     if (this.roles.length === 1) {
       const role = this.roles[0];
-      this.selectProfile(role === 'TUTEUR' ? 'TUTEUR' : role === 'PROFESSEUR' ? 'PROFESSEUR' : 'ADMIN');
+      const connus = ['TUTEUR', 'PROFESSEUR', 'CAISSIER', 'ADMIN'];
+      this.selectProfile((connus.includes(role) ? role : 'ADMIN') as any);
     }
   }
 
@@ -372,13 +404,15 @@ export class ProfileSelectionComponent implements OnInit {
     return this.roles.includes(role);
   }
 
-  selectProfile(profile: 'TUTEUR' | 'ADMIN' | 'PROFESSEUR') {
+  selectProfile(profile: 'TUTEUR' | 'ADMIN' | 'PROFESSEUR' | 'CAISSIER') {
     this.authService.setSelectedProfile(profile);
 
     if (profile === 'TUTEUR') {
       this.router.navigate(['/portail/dashboard']);
     } else if (profile === 'PROFESSEUR') {
       this.router.navigate(['/professeur/dashboard']);
+    } else if (profile === 'CAISSIER') {
+      this.router.navigate(['/comptabilite/paiements']);
     } else {
       this.router.navigate(['/dashboard']);
     }

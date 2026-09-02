@@ -140,11 +140,26 @@ export class PaiementFormDialogComponent implements OnInit {
     this.suiviPaiementService.getSuiviParDossier(dossierId).subscribe((suivi) => {
       const ligne = suivi.frais.find((f) => f.fraisScolaireId === fraisScolaireId);
       this.resteAPayerFrais = ligne ? ligne.reste : null;
+      // Pré-remplit le montant avec le reste à payer (l'agent peut le réduire).
+      if (this.resteAPayerFrais && this.resteAPayerFrais > 0 && !this.form.value.montant) {
+        this.form.patchValue({ montant: this.resteAPayerFrais });
+      }
     });
   }
 
   async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
+
+    const montant = Number(this.form.value.montant);
+    if (this.resteAPayerFrais != null && montant > this.resteAPayerFrais + 0.01) {
+      this.notification.error(
+        this.resteAPayerFrais <= 0
+          ? 'Ce frais est déjà entièrement réglé.'
+          : `Le montant dépasse le reste à payer (${this.resteAPayerFrais.toLocaleString('fr-FR')} FCFA).`
+      );
+      return;
+    }
+
     const confirmed = await this.notification.confirm('Voulez-vous enregistrer ce paiement ?');
     if (!confirmed) return;
 
