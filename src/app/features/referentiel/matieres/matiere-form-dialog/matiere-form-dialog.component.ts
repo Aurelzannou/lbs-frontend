@@ -10,7 +10,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-matiere-form-dialog',
@@ -23,8 +22,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatInputModule,
     MatFormFieldModule,
     MatIconModule,
-    MatProgressSpinnerModule,
-    MatSlideToggleModule
+    MatProgressSpinnerModule
   ],
   templateUrl: './matiere-form-dialog.component.html',
   styleUrl: './matiere-form-dialog.component.scss'
@@ -48,8 +46,7 @@ export class MatiereFormDialogComponent implements OnInit {
   private initForm(): void {
     this.form = this.fb.group({
       code: [this.data?.code || '', [Validators.required, Validators.maxLength(20)]],
-      libelle: [this.data?.libelle || '', [Validators.required]],
-      estConduite: [this.data?.estConduite ?? false]
+      libelle: [this.data?.libelle || '', [Validators.required]]
     });
   }
 

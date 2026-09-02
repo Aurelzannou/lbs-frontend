@@ -91,6 +91,34 @@
             </div>
           </div>
         </div>
+
+        <div class="rfm-row" *ngIf="lignes.length">
+          <div class="rfm-field">
+            <span class="rfm-label">
+              Coefficients
+              <span class="coef-count">{{ lignes.length }}</span>
+            </span>
+            <div class="coef-list" formArrayName="matieres">
+              <div
+                class="coef-row"
+                *ngFor="let ligne of lignes.controls; let i = index"
+                [formGroupName]="i"
+              >
+                <span class="coef-avatar">{{ libelleMatiere(ligne.value.matiereId).charAt(0) }}</span>
+                <span class="coef-matiere">{{ libelleMatiere(ligne.value.matiereId) }}</span>
+                <div class="coef-stepper" [class.invalid]="ligne.get('coefficient')?.invalid">
+                  <button type="button" (click)="ajusterCoef(i, -0.5)" tabindex="-1">−</button>
+                  <input type="number" min="0.5" step="0.5" formControlName="coefficient" />
+                  <button type="button" (click)="ajusterCoef(i, 0.5)" tabindex="-1">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="rfm-hint">
+              Un coefficient s'applique au niveau : toutes les classes du même niveau partagent la
+              même valeur. Conduite : généralement 1.
+            </div>
+          </div>
+        </div>
       </form>
     </div>
 

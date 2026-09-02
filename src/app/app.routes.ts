@@ -100,13 +100,6 @@ export const routes: Routes = [
           )
       },
       {
-        path: 'coefficients',
-        loadComponent: () =>
-          import('./features/referentiel/coefficients/coefficient-list/coefficient-list.component').then(
-            (m) => m.CoefficientListComponent
-          )
-      },
-      {
         path: 'frais-scolaires',
         loadComponent: () =>
           import('./features/referentiel/frais-scolaires/frais-scolaire-list/frais-scolaire-list.component').then(
