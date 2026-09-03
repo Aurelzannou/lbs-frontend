@@ -31,7 +31,7 @@ import {
           <h1>Tableau de Bord</h1>
           <p>
             Vue d'ensemble de l'établissement
-            <span *ngIf="stats"> · Année scolaire {{ stats.anneeScolaireLibelle }}</span>
+            <span *ngIf="stats"> · {{ stats.anneeScolaireLibelle }}</span>
           </p>
         </div>
         <button mat-button class="refresh" (click)="charger()" [disabled]="loading">
@@ -290,12 +290,13 @@ import {
     .dash { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
 
     .banner {
-      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
       border-radius: 1.5rem; padding: 1.75rem 2rem; margin-bottom: 1.75rem;
-      color: #451a03; display: flex; justify-content: space-between; align-items: center; gap: 1rem;
-      h1 { font-size: 1.9rem; font-weight: 900; margin: 0 0 .3rem; }
-      p { margin: 0; font-weight: 600; opacity: .9; }
-      .refresh { background: rgba(255,255,255,.25); color: #451a03; font-weight: 700; border-radius: .75rem; }
+      color: #f1f5f9; display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+      h1 { font-size: 1.9rem; font-weight: 900; margin: 0 0 .3rem; color: #fff; }
+      p { margin: 0; font-weight: 600; opacity: .85; }
+      .refresh { background: rgba(255,255,255,.18); color: #fff; font-weight: 700; border-radius: .75rem; }
+      .refresh:hover { background: rgba(255,255,255,.28); }
     }
 
     .loading { display: flex; justify-content: center; padding: 3rem; }
