@@ -6,4 +6,7 @@ export interface ValidationBulletin {
   valide: boolean;
   dateValidation?: string;
   valideParEmail?: string;
+  /** Matières envoyées par les professeurs / total des matières de la classe. */
+  matieresRecues?: number;
+  matieresTotal?: number;
 }

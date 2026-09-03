@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -16,11 +17,16 @@ import { Matiere } from '../../../core/models/matiere.model';
 import { PeriodeAcademique } from '../../../core/models/periode-academique.model';
 import { FeuilleSaisieNotes, ProgressionEtapeHistorique, ProgressionSaisieNotes } from '../../../core/models/note.model';
 import { NotesRosterTableComponent } from '../notes-roster-table/notes-roster-table.component';
+import {
+  ChoixColonnesDialogComponent,
+  ColonneChoix,
+  ChoixColonnesResultat
+} from '../choix-colonnes-dialog.component';
 
 @Component({
   selector: 'app-saisie-notes',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, MatTooltipModule, NgSelectModule, NotesRosterTableComponent],
+  imports: [CommonModule, FormsModule, MatIconModule, MatTooltipModule, MatDialogModule, NgSelectModule, NotesRosterTableComponent],
   templateUrl: './saisie-notes.component.html',
   styleUrl: './saisie-notes.component.scss'
 })
@@ -30,6 +36,7 @@ export class SaisieNotesComponent implements OnInit, OnDestroy {
   private matiereService = inject(MatiereService);
   private periodeService = inject(PeriodeAcademiqueService);
   private notification = inject(NotificationService);
+  private dialog = inject(MatDialog);
 
   classes: Classe[] = [];
   matieres: Matiere[] = [];
@@ -52,15 +59,67 @@ export class SaisieNotesComponent implements OnInit, OnDestroy {
   afficherHistorique = false;
   loading = false;
   saving = false;
-  deverrouillageEnCours = false;
-  validationEnCours = false;
+  approbationEnCours = false;
 
   autoSaveStatut: 'idle' | 'saving' | 'saved' | 'erreur' = 'idle';
   private modificationSubject = new Subject<void>();
   private modificationSub?: Subscription;
 
+  /** Le professeur est en charge de cette matière et ne l'a pas encore envoyée à l'administration :
+      l'admin peut regarder mais pas modifier (le professeur travaille encore dessus). */
+  get enAttenteProfesseur(): boolean {
+    return !!this.feuille?.professeurAssigne && this.progression?.etape === 'BROUILLON';
+  }
+
   get etapeReadonly(): boolean {
+    return !!this.feuille?.valide || this.progression?.etape === 'VALIDEE' || this.enAttenteProfesseur;
+  }
+
+  get etapeLabel(): string {
+    switch (this.progression?.etape) {
+      case 'VALIDEE':
+        return 'Approuvé';
+      case 'SOUMISE':
+        return "À approuver — reçu de l'enseignant";
+      default:
+        return this.feuille?.professeurAssigne ? 'En cours de saisie (enseignant)' : 'Brouillon';
+    }
+  }
+
+  /** Notes reçues de l'enseignant, en attente d'approbation par l'administration. */
+  get aApprouver(): boolean {
+    return this.progression?.etape === 'SOUMISE';
+  }
+
+  /** Reste-t-il des colonnes reçues non approuvées ? */
+  get peutApprouver(): boolean {
+    if (!this.aApprouver || !this.progression) return false;
+    const p = this.progression;
+    return (p.interrogationsVerroueesJusqua ?? 0) > (p.interrogationsValideesJusqua ?? 0)
+      || (p.devoirsVerrouesJusqua ?? 0) > (p.devoirsValideesJusqua ?? 0);
+  }
+
+  get estApprouve(): boolean {
     return this.progression?.etape === 'VALIDEE';
+  }
+
+  /** Colonnes déjà approuvées → grisées côté admin aussi. */
+  get colonnesApprouveesInterro(): number {
+    return this.progression?.interrogationsValideesJusqua ?? 0;
+  }
+  get colonnesApprouveesDevoir(): number {
+    return this.progression?.devoirsValideesJusqua ?? 0;
+  }
+
+  get etapeIcon(): string {
+    switch (this.progression?.etape) {
+      case 'VALIDEE':
+        return 'verified';
+      case 'SOUMISE':
+        return 'inbox';
+      default:
+        return 'edit_note';
+    }
   }
 
   ngOnInit(): void {
@@ -164,130 +223,6 @@ export class SaisieNotesComponent implements OnInit, OnDestroy {
     });
   }
 
-  async validerInterrogation(): Promise<void> {
-    if (!this.progression) return;
-    const numero = this.progression.interrogationsValideesJusqua + 1;
-    if (numero > this.progression.interrogationsVerroueesJusqua) return;
-    const confirmed = await this.notification.confirm(
-      `Valider l'interrogation ${numero} ? Le professeur pourra alors verrouiller la colonne suivante.`,
-      'Valider cette colonne'
-    );
-    if (!confirmed) return;
-    this.validerColonne('INTERROGATION', numero);
-  }
-
-  async validerDevoir(): Promise<void> {
-    if (!this.progression) return;
-    const numero = this.progression.devoirsValideesJusqua + 1;
-    if (numero > this.progression.devoirsVerrouesJusqua) return;
-    const label = numero === 1 ? 'le 1er devoir' : 'le 2e devoir';
-    const confirmed = await this.notification.confirm(`Valider ${label} ?`, 'Valider cette colonne');
-    if (!confirmed) return;
-    this.validerColonne('DEVOIR', numero);
-  }
-
-  private validerColonne(typeEvaluation: 'INTERROGATION' | 'DEVOIR', numero: number): void {
-    if (!this.classeId || !this.matiereId || !this.periodeId) return;
-    this.deverrouillageEnCours = true;
-    this.noteService
-      .validerColonne({ classeId: this.classeId, matiereId: this.matiereId, periodeId: this.periodeId, typeEvaluation, numero })
-      .subscribe({
-        next: (res: any) => {
-          this.progression = res.data ?? res;
-          this.notification.success('Colonne validée');
-          this.deverrouillageEnCours = false;
-        },
-        error: (err) => {
-          this.notification.error(err);
-          this.deverrouillageEnCours = false;
-        }
-      });
-  }
-
-  async deverrouillerInterrogations(): Promise<void> {
-    if (!this.progression || this.progression.interrogationsVerroueesJusqua === 0) return;
-    const confirmed = await this.notification.confirm(
-      `Déverrouiller l'interrogation ${this.progression.interrogationsVerroueesJusqua} ? Le professeur pourra de nouveau la modifier.`,
-      'Déverrouiller cette colonne'
-    );
-    if (!confirmed) return;
-    this.deverrouiller('INTERROGATION', this.progression.interrogationsVerroueesJusqua);
-  }
-
-  async deverrouillerDevoirs(): Promise<void> {
-    if (!this.progression || this.progression.devoirsVerrouesJusqua === 0) return;
-    const numero = this.progression.devoirsVerrouesJusqua;
-    const label = numero === 1 ? 'le 1er devoir' : 'le 2e devoir';
-    const confirmed = await this.notification.confirm(
-      `Déverrouiller ${label} ? Le professeur pourra de nouveau le modifier.`,
-      'Déverrouiller cette colonne'
-    );
-    if (!confirmed) return;
-    this.deverrouiller('DEVOIR', numero);
-  }
-
-  private deverrouiller(typeEvaluation: 'INTERROGATION' | 'DEVOIR', numero: number): void {
-    if (!this.classeId || !this.matiereId || !this.periodeId) return;
-    this.deverrouillageEnCours = true;
-    this.noteService
-      .deverrouillerColonne({ classeId: this.classeId, matiereId: this.matiereId, periodeId: this.periodeId, typeEvaluation, numero })
-      .subscribe({
-        next: (res: any) => {
-          this.progression = res.data ?? res;
-          this.notification.success('Colonne déverrouillée');
-          this.deverrouillageEnCours = false;
-        },
-        error: (err) => {
-          this.notification.error(err);
-          this.deverrouillageEnCours = false;
-        }
-      });
-  }
-
-  async validerMatiere(): Promise<void> {
-    if (!this.progression || this.progression.etape !== 'SOUMISE' || !this.classeId || !this.matiereId || !this.periodeId) return;
-    const confirmed = await this.notification.confirm(
-      'Valider cette matière ? Plus personne (y compris vous) ne pourra modifier les notes tant que vous ne dévaliderez pas.',
-      'Valider cette matière'
-    );
-    if (!confirmed) return;
-    this.validationEnCours = true;
-    this.noteService.validerMatiere({ classeId: this.classeId, matiereId: this.matiereId, periodeId: this.periodeId }).subscribe({
-      next: (res: any) => {
-        this.progression = res.data ?? res;
-        this.notification.success('Matière validée');
-        this.validationEnCours = false;
-        this.chargerHistorique();
-      },
-      error: (err) => {
-        this.notification.error(err);
-        this.validationEnCours = false;
-      }
-    });
-  }
-
-  async devaliderMatiere(): Promise<void> {
-    if (!this.progression || this.progression.etape !== 'VALIDEE' || !this.classeId || !this.matiereId || !this.periodeId) return;
-    const confirmed = await this.notification.confirm(
-      'Annuler la validation de cette matière ? La saisie redeviendra modifiable (par vous, pas par le professeur sans nouvelle soumission).',
-      'Dévalider cette matière'
-    );
-    if (!confirmed) return;
-    this.validationEnCours = true;
-    this.noteService.devaliderMatiere({ classeId: this.classeId, matiereId: this.matiereId, periodeId: this.periodeId }).subscribe({
-      next: (res: any) => {
-        this.progression = res.data ?? res;
-        this.notification.success('Validation annulée');
-        this.validationEnCours = false;
-        this.chargerHistorique();
-      },
-      error: (err) => {
-        this.notification.error(err);
-        this.validationEnCours = false;
-      }
-    });
-  }
-
   private construirePayload(): any {
     return {
       classeId: this.classeId,
@@ -323,6 +258,101 @@ export class SaisieNotesComponent implements OnInit, OnDestroy {
         this.saving = false;
       }
     });
+  }
+
+  /** Colonnes reçues de l'enseignant et pas encore approuvées. */
+  private colonnesAApprouver(): ColonneChoix[] {
+    if (!this.feuille || !this.progression) return [];
+    const p = this.progression;
+    const cols: ColonneChoix[] = [];
+    for (let n = (p.interrogationsValideesJusqua ?? 0) + 1; n <= (p.interrogationsVerroueesJusqua ?? 0); n++) {
+      cols.push({ type: 'INTERROGATION', numero: n, libelle: `Interrogation ${n}`, choisie: false });
+    }
+    for (let n = (p.devoirsValideesJusqua ?? 0) + 1; n <= (p.devoirsVerrouesJusqua ?? 0); n++) {
+      cols.push({ type: 'DEVOIR', numero: n, libelle: n === 1 ? '1er Devoir' : '2e Devoir', choisie: false });
+    }
+    return cols;
+  }
+
+  /** L'administration approuve une sélection de colonnes reçues. Les colonnes approuvées sont
+      figées / grisées ; quand tout ce qui a été envoyé est approuvé, la matière passe « Approuvé ». */
+  async approuver(): Promise<void> {
+    if (!this.aApprouver || !this.classeId || !this.matiereId || !this.periodeId) return;
+
+    const colonnes = this.colonnesAApprouver();
+    if (colonnes.length === 0) {
+      this.notification.info('Aucune colonne en attente d\'approbation.');
+      return;
+    }
+
+    const choix: ChoixColonnesResultat | null = await this.dialog
+      .open(ChoixColonnesDialogComponent, {
+        width: '460px',
+        maxWidth: '95vw',
+        panelClass: 'professional-dialog',
+        data: {
+          titre: 'Approuver les notes',
+          sousTitre: (this.feuille?.matiereLibelle ?? '') + ' · ' + (this.feuille?.classeLibelle ?? ''),
+          intro:
+            "Cochez les colonnes que vous approuvez. Une fois approuvées, elles sont figées ; " +
+            "il faudra renvoyer la matière à l'enseignant pour les rouvrir.",
+          cta: 'Approuver',
+          colonnes
+        }
+      })
+      .afterClosed()
+      .toPromise();
+
+    if (!choix) return;
+
+    this.approbationEnCours = true;
+    this.noteService
+      .approuverColonnes({
+        classeId: this.classeId,
+        matiereId: this.matiereId,
+        periodeId: this.periodeId,
+        interrogationsJusqua: choix.interrogationsJusqua,
+        devoirsJusqua: choix.devoirsJusqua
+      })
+      .subscribe({
+        next: (res: any) => {
+          this.progression = res.data ?? res;
+          this.notification.success('Colonnes approuvées');
+          this.approbationEnCours = false;
+          this.chargerHistorique();
+        },
+        error: (err) => {
+          this.notification.error(err);
+          this.approbationEnCours = false;
+        }
+      });
+  }
+
+  /** Renvoie une matière (reçue ou approuvée) à l'enseignant pour qu'il la corrige / la complète. */
+  async renvoyerALEnseignant(): Promise<void> {
+    if (!this.classeId || !this.matiereId || !this.periodeId) return;
+    if (this.progression?.etape !== 'SOUMISE' && this.progression?.etape !== 'VALIDEE') return;
+    const confirmed = await this.notification.confirm(
+      "Renvoyer cette matière à l'enseignant ? Il récupère la main (corriger, ajouter une " +
+        'interrogation…) et devra la renvoyer ensuite.',
+      "Renvoyer à l'enseignant"
+    );
+    if (!confirmed) return;
+    this.approbationEnCours = true;
+    this.noteService
+      .renvoyerAuProfesseur({ classeId: this.classeId, matiereId: this.matiereId, periodeId: this.periodeId })
+      .subscribe({
+        next: (res: any) => {
+          this.progression = res.data ?? res;
+          this.notification.success("Matière renvoyée à l'enseignant");
+          this.approbationEnCours = false;
+          this.refresh();
+        },
+        error: (err) => {
+          this.notification.error(err);
+          this.approbationEnCours = false;
+        }
+      });
   }
 
   ngOnDestroy(): void {

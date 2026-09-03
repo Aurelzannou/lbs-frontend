@@ -72,6 +72,21 @@ export class NoteService {
     return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/devalider-matiere`, payload);
   }
 
+  /** Admin : renvoie une matière reçue à l'enseignant (SOUMISE → BROUILLON). */
+  renvoyerAuProfesseur(payload: ProgressionMatiereRequest): Observable<ProgressionSaisieNotes> {
+    return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/renvoyer`, payload);
+  }
+
+  /** Professeur : reprend une matière qu'il a envoyée (SOUMISE → BROUILLON), tant qu'elle n'est pas validée. */
+  reprendreSaisie(payload: ProgressionMatiereRequest): Observable<ProgressionSaisieNotes> {
+    return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/reprendre`, payload);
+  }
+
+  /** Admin : approuve une sélection de colonnes reçues (interrogationsJusqua / devoirsJusqua). */
+  approuverColonnes(payload: ProgressionMatiereRequest): Observable<ProgressionSaisieNotes> {
+    return this.api.put<ProgressionSaisieNotes>(`${this.endpoint}/progression/approuver`, payload);
+  }
+
   getHistorique(classeId: number, matiereId: number, periodeId: number): Observable<ProgressionEtapeHistorique[]> {
     const params = new HttpParams()
       .set('classeId', classeId.toString())

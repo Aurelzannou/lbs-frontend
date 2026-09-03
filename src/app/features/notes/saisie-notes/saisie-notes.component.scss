@@ -339,6 +339,32 @@
   }
 }
 
+.btn-approuver {
+  background: #16a34a;
+  &:hover:not(:disabled) {
+    background: #15803d;
+  }
+}
+
+.btn-renvoyer {
+  background: #fff;
+  color: #b45309;
+  border: 1px solid #fcd34d;
+  &:hover:not(:disabled) {
+    background: #fffbeb;
+  }
+}
+
+.readonly-banner.banner-approuver {
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.readonly-banner.banner-approuve {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
 .btn-action-devalider {
   background: #d97706;
   &:hover:not(:disabled) {

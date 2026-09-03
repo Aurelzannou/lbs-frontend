@@ -28,14 +28,17 @@
         [disabled]="
           nombreInterrogations <= 1 ||
           derniereInterrogationRemplie ||
-          interrogationVerrouillee(nombreInterrogations)
+          interrogationVerrouillee(nombreInterrogations) ||
+          interrogationEnvoyee(nombreInterrogations)
         "
         [matTooltip]="
-          interrogationVerrouillee(nombreInterrogations)
-            ? 'Impossible : cette colonne est verrouillée'
-            : derniereInterrogationRemplie
-              ? 'Impossible : des notes existent déjà dans cette colonne'
-              : 'Retirer la dernière colonne d\'interrogation'
+          interrogationEnvoyee(nombreInterrogations)
+            ? 'Impossible : cette colonne a été envoyée à l\'administration'
+            : interrogationVerrouillee(nombreInterrogations)
+              ? 'Impossible : cette colonne est verrouillée'
+              : derniereInterrogationRemplie
+                ? 'Impossible : des notes existent déjà dans cette colonne'
+                : 'Retirer la dernière colonne d\'interrogation'
         "
       >
         <mat-icon>remove</mat-icon>
@@ -52,7 +55,14 @@
             <div class="col-header-lock">
               <span>Interrogation {{ i + 1 }}</span>
               <mat-icon
-                *ngIf="interrogationValidee(i + 1)"
+                *ngIf="interrogationEnvoyee(i + 1)"
+                class="icon-lock icon-validee"
+                matTooltip="Colonne figée — non modifiable"
+              >
+                lock
+              </mat-icon>
+              <mat-icon
+                *ngIf="!interrogationEnvoyee(i + 1) && interrogationValidee(i + 1)"
                 class="icon-lock icon-validee"
                 matTooltip="Validée par l'administration"
               >
@@ -85,7 +95,8 @@
           <th class="col-note">
             <div class="col-header-lock">
               <span>1er Devoir</span>
-              <mat-icon *ngIf="devoirValide(1)" class="icon-lock icon-validee" matTooltip="Validé par l'administration">check_circle</mat-icon>
+              <mat-icon *ngIf="devoirEnvoye(1)" class="icon-lock icon-validee" matTooltip="Colonne figée — non modifiable">lock</mat-icon>
+              <mat-icon *ngIf="!devoirEnvoye(1) && devoirValide(1)" class="icon-lock icon-validee" matTooltip="Validé par l'administration">check_circle</mat-icon>
               <mat-icon *ngIf="devoirEnAttenteValidation(1)" class="icon-lock icon-attente" matTooltip="Verrouillé, en attente de validation admin">hourglass_top</mat-icon>
               <button
                 *ngIf="!readonly && verrouillageActifPourEdition && devoirEstProchain(1)"
@@ -103,7 +114,8 @@
           <th class="col-note">
             <div class="col-header-lock">
               <span>2e Devoir</span>
-              <mat-icon *ngIf="devoirValide(2)" class="icon-lock icon-validee" matTooltip="Validé par l'administration">check_circle</mat-icon>
+              <mat-icon *ngIf="devoirEnvoye(2)" class="icon-lock icon-validee" matTooltip="Colonne figée — non modifiable">lock</mat-icon>
+              <mat-icon *ngIf="!devoirEnvoye(2) && devoirValide(2)" class="icon-lock icon-validee" matTooltip="Validé par l'administration">check_circle</mat-icon>
               <mat-icon *ngIf="devoirEnAttenteValidation(2)" class="icon-lock icon-attente" matTooltip="Verrouillé, en attente de validation admin">hourglass_top</mat-icon>
               <button
                 *ngIf="!readonly && verrouillageActifPourEdition && devoirEstProchain(2)"
@@ -131,7 +143,7 @@
           <td
             class="col-note"
             *ngFor="let i of interrogationIndices"
-            [class.col-verrouillee]="interrogationVerrouillee(i + 1)"
+            [class.col-verrouillee]="interrogationVerrouillee(i + 1) || interrogationEnvoyee(i + 1)"
             [class.col-en-attente]="interrogationEnAttente(i + 1)"
           >
             <input
@@ -139,25 +151,25 @@
               inputmode="decimal"
               [value]="el.interrogations[i]"
               (input)="onSaisieInterrogation(el, i, $event)"
-              [disabled]="readonly || !interrogationEditable(i + 1)"
+              [disabled]="readonly || interrogationEnvoyee(i + 1) || !interrogationEditable(i + 1)"
             />
           </td>
-          <td class="col-note" [class.col-verrouillee]="devoirVerrouille(1)" [class.col-en-attente]="devoirEnAttente(1)">
+          <td class="col-note" [class.col-verrouillee]="devoirVerrouille(1) || devoirEnvoye(1)" [class.col-en-attente]="devoirEnAttente(1)">
             <input
               type="text"
               inputmode="decimal"
               [value]="el.devoir1"
               (input)="onSaisieDevoir(el, 1, $event)"
-              [disabled]="readonly || !devoirEditable(1)"
+              [disabled]="readonly || devoirEnvoye(1) || !devoirEditable(1)"
             />
           </td>
-          <td class="col-note" [class.col-verrouillee]="devoirVerrouille(2)" [class.col-en-attente]="devoirEnAttente(2)">
+          <td class="col-note" [class.col-verrouillee]="devoirVerrouille(2) || devoirEnvoye(2)" [class.col-en-attente]="devoirEnAttente(2)">
             <input
               type="text"
               inputmode="decimal"
               [value]="el.devoir2"
               (input)="onSaisieDevoir(el, 2, $event)"
-              [disabled]="readonly || !devoirEditable(2)"
+              [disabled]="readonly || devoirEnvoye(2) || !devoirEditable(2)"
             />
           </td>
           <td class="col-moyenne">

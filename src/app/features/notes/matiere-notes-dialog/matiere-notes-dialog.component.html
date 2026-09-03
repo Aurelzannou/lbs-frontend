@@ -20,16 +20,8 @@
     <div class="rfm-body">
       <div class="progression-bar" *ngIf="progression">
         <div class="progression-item etape-badge" [ngClass]="'etape-' + progression.etape.toLowerCase()">
-          <mat-icon>{{ progression.etape === 'VALIDEE' ? 'verified' : (progression.etape === 'SOUMISE' ? 'hourglass_top' : 'edit_note') }}</mat-icon>
-          <span>{{ progression.etape === 'VALIDEE' ? 'Validée' : (progression.etape === 'SOUMISE' ? 'Soumise pour validation' : 'Brouillon') }}</span>
-        </div>
-        <div class="progression-item">
-          <mat-icon>lock</mat-icon>
-          <span>Interrogations : {{ progression.interrogationsVerroueesJusqua }} verrouillée(s) · {{ progression.interrogationsValideesJusqua }} validée(s)</span>
-        </div>
-        <div class="progression-item">
-          <mat-icon>lock</mat-icon>
-          <span>Devoirs : {{ progression.devoirsVerrouesJusqua }}/2 verrouillé(s) · {{ progression.devoirsValideesJusqua }}/2 validé(s)</span>
+          <mat-icon>{{ progression.etape === 'VALIDEE' ? 'verified' : (progression.etape === 'SOUMISE' ? 'inbox' : 'edit_note') }}</mat-icon>
+          <span>{{ etapeLabel }}</span>
         </div>
       </div>
 
@@ -57,9 +49,6 @@
         [estConduite]="feuille.estConduite ?? false"
         [progressionInterrogations]="null"
         [progressionDevoirs]="null"
-        [progressionInterrogationsValidees]="progression?.interrogationsValideesJusqua ?? 0"
-        [progressionDevoirsValidees]="progression?.devoirsValideesJusqua ?? 0"
-        [verrouillageActifPourEdition]="false"
         (valeurModifiee)="onValeurModifiee()"
       ></app-notes-roster-table>
     </div>
@@ -75,74 +64,16 @@
         <button type="button" class="btn-action btn-fermer" (click)="fermer()">Fermer</button>
 
         <button
-          *ngIf="progression?.etape === 'SOUMISE'"
+          *ngIf="peutRenvoyer"
           type="button"
-          class="btn-action btn-valider"
-          [disabled]="validationEnCours"
-          (click)="validerMatiere()"
-        >
-          <mat-icon>check_circle</mat-icon>
-          Valider la matière
-        </button>
-        <button
-          *ngIf="progression?.etape === 'VALIDEE'"
-          type="button"
-          class="btn-action btn-devalider"
-          [disabled]="validationEnCours"
-          (click)="devaliderMatiere()"
-          matTooltip="Annuler la validation pour pouvoir modifier à nouveau"
+          class="btn-action btn-deverrouiller"
+          (click)="renvoyerAuProfesseur()"
+          [disabled]="renvoiEnCours"
+          matTooltip="L'enseignant récupère la main pour corriger / ajouter une interrogation"
         >
           <mat-icon>undo</mat-icon>
-          Dévalider la matière
+          Renvoyer à l'enseignant
         </button>
-
-        <ng-container *ngIf="progression && progression.etape !== 'VALIDEE'">
-          <button
-            *ngIf="progression.interrogationsValideesJusqua < progression.interrogationsVerroueesJusqua"
-            type="button"
-            class="btn-action btn-valider"
-            [disabled]="deverrouillageEnCours"
-            (click)="validerInterrogation()"
-            matTooltip="Valider la prochaine interrogation verrouillée en attente"
-          >
-            <mat-icon>check_circle</mat-icon>
-            Valider l'interrogation
-          </button>
-          <button
-            *ngIf="progression.interrogationsVerroueesJusqua > 0"
-            type="button"
-            class="btn-action btn-deverrouiller"
-            [disabled]="deverrouillageEnCours"
-            (click)="deverrouillerInterrogations()"
-            matTooltip="Déverrouiller la dernière interrogation verrouillée"
-          >
-            <mat-icon>lock_open</mat-icon>
-            Déverrouiller l'interrogation
-          </button>
-
-          <button
-            *ngIf="progression.devoirsValideesJusqua < progression.devoirsVerrouesJusqua"
-            type="button"
-            class="btn-action btn-valider"
-            [disabled]="deverrouillageEnCours"
-            (click)="validerDevoir()"
-            matTooltip="Valider le prochain devoir verrouillé en attente"
-          >
-            <mat-icon>check_circle</mat-icon>
-            Valider le devoir
-          </button>
-          <button
-            *ngIf="progression.devoirsVerrouesJusqua > 0"
-            type="button"
-            class="btn-action btn-deverrouiller"
-            [disabled]="deverrouillageEnCours"
-            (click)="deverrouillerDevoirs()"
-            matTooltip="Déverrouiller le dernier devoir verrouillé"
-          >
-            <mat-icon>lock_open</mat-icon>
-            Déverrouiller le devoir
-          </button>
-        </ng-container>
 
         <button
           *ngIf="!data.readonly"

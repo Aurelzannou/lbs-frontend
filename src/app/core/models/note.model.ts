@@ -20,6 +20,8 @@ export interface FeuilleSaisieNotes {
   nombreInterrogations: number;
   /** Matière "Conduite" — moyenne = valeur unique (Interrogation 1), pas de /3. */
   estConduite?: boolean;
+  /** true si un professeur est assigné à cette classe+matière (sinon saisie = administration). */
+  professeurAssigne?: boolean;
   eleves: EleveNoteDto[];
 }
 
@@ -73,6 +75,9 @@ export interface ProgressionMatiereRequest {
   classeId: number;
   matiereId: number;
   periodeId: number;
+  /** Envoi sélectif : figer les interrogations / devoirs jusqu'à ce numéro (null = tout ce qui est rempli). */
+  interrogationsJusqua?: number | null;
+  devoirsJusqua?: number | null;
 }
 
 export interface ProgressionEtapeHistorique {

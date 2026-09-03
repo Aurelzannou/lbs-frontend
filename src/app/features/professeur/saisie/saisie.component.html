@@ -25,14 +25,18 @@
       <span>Le bulletin de cette classe pour cette période est déjà validé : les notes sont en lecture seule.</span>
     </div>
 
-    <div class="readonly-banner etape-soumise" *ngIf="!feuille.valide && progression?.etape === 'SOUMISE'">
+    <div class="readonly-banner etape-soumise" *ngIf="!feuille.valide && envoyee">
       <mat-icon>hourglass_top</mat-icon>
-      <span>Matière soumise pour validation, en attente de la décision de l'administration.</span>
+      <span>
+        Notes envoyées à l'administration<ng-container *ngIf="dateEnvoi"> le {{ dateEnvoi | date: 'dd/MM/yyyy à HH:mm' }}</ng-container> —
+        en attente de validation. Vous pouvez encore ajouter une interrogation ou corriger : cela
+        annulera l'envoi et vous devrez renvoyer la matière.
+      </span>
     </div>
 
     <div class="readonly-banner etape-validee" *ngIf="!feuille.valide && progression?.etape === 'VALIDEE'">
       <mat-icon>verified</mat-icon>
-      <span>Matière validée par l'administration.</span>
+      <span>Matière validée par l'administration : notes en lecture seule.</span>
     </div>
 
     <div class="feuille-header">
@@ -45,13 +49,10 @@
       [(nombreInterrogations)]="feuille.nombreInterrogations"
       [readonly]="feuille.valide || etapeReadonly"
       [estConduite]="feuille.estConduite ?? false"
-      [progressionInterrogations]="progression?.interrogationsVerroueesJusqua ?? 0"
-      [progressionDevoirs]="progression?.devoirsVerrouesJusqua ?? 0"
-      [progressionInterrogationsValidees]="progression?.interrogationsValideesJusqua ?? 0"
-      [progressionDevoirsValidees]="progression?.devoirsValideesJusqua ?? 0"
-      [verrouillageEnCours]="verrouillageEnCours"
-      (verrouillerInterrogation)="verrouillerInterrogation($event)"
-      (verrouillerDevoir)="verrouillerDevoir($event)"
+      [progressionInterrogations]="null"
+      [progressionDevoirs]="null"
+      [colonnesEnvoyeesInterro]="progression?.interrogationsVerroueesJusqua ?? 0"
+      [colonnesEnvoyeesDevoir]="progression?.devoirsVerrouesJusqua ?? 0"
       (valeurModifiee)="onValeurModifiee()"
     ></app-notes-roster-table>
 
@@ -67,13 +68,13 @@
         {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
       </button>
       <button
+        *ngIf="peutEnvoyer"
         class="btn-soumettre"
-        (click)="soumettre()"
-        [disabled]="!peutSoumettre || soumission"
-        [title]="peutSoumettre ? '' : 'Verrouillez toutes les colonnes (interrogations et devoirs) avant de soumettre'"
+        (click)="envoyerAAdministration()"
+        [disabled]="soumission"
       >
         <mat-icon>send</mat-icon>
-        {{ soumission ? 'Envoi...' : 'Soumettre pour validation' }}
+        {{ soumission ? 'Envoi...' : "Envoyer à l'administration" }}
       </button>
     </div>
   </div>

@@ -38,7 +38,7 @@
               <td>
                 <span class="statut-badge" [class.valide]="item.valide" [class.non-valide]="!item.valide">
                   <span class="statut-dot"></span>
-                  {{ item.valide ? 'Validé' : 'Non validé' }}
+                  {{ item.valide ? 'Validé' : (toutesRecues(item) ? 'Prêt à valider' : 'En attente') }}
                 </span>
               </td>
               <td class="col-details">
@@ -46,7 +46,9 @@
                   le {{ item.dateValidation | date: 'dd/MM/yyyy HH:mm' }}
                   <span *ngIf="item.valideParEmail"> par {{ item.valideParEmail }}</span>
                 </span>
-                <span *ngIf="!item.valide" class="text-muted">—</span>
+                <span *ngIf="!item.valide" [class.text-muted]="toutesRecues(item)">
+                  {{ item.matieresRecues || 0 }} / {{ item.matieresTotal || 0 }} matières approuvées
+                </span>
               </td>
               <td class="col-actions" (click)="$event.stopPropagation()">
                 <div class="action-group">

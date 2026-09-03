@@ -154,6 +154,15 @@ export class ValidationBulletinsComponent implements OnInit {
     const item = this.classeSelectionnee;
     const periode = this.periodeSelectionnee;
 
+    // Tant que l'enseignant n'a pas envoyé sa matière à l'administration, on ne l'ouvre pas :
+    // il est encore en train d'y travailler.
+    if (!item.valide && !this.matiereEditable(matiereId)) {
+      this.notification.info(
+        `« ${matiereLibelle} » n'a pas encore été envoyée par l'enseignant.`
+      );
+      return;
+    }
+
     // Cet écran de correction n'a aucune restriction d'édition liée à la soumission du professeur
     // (contrairement à la saisie directe) — seule une classe déjà validée reste en lecture seule,
     // et il faut explicitement la dévalider pour la modifier à nouveau.
@@ -182,13 +191,24 @@ export class ValidationBulletinsComponent implements OnInit {
 
   // ── Actions valider / dévalider / pdf ────────────────────────────────
 
+  toutesRecues(item: ValidationBulletin): boolean {
+    return (item.matieresTotal ?? 0) > 0 && (item.matieresRecues ?? 0) >= (item.matieresTotal ?? 0);
+  }
+
   async valider(item: ValidationBulletin): Promise<void> {
     const periode = this.periodeSelectionnee;
     if (!periode?.anneeScolaireId) return;
 
+    const manquantes = (item.matieresTotal ?? 0) - (item.matieresRecues ?? 0);
+    const alerte = manquantes > 0
+      ? `Attention : ${manquantes} matière(s) sur ${item.matieresTotal} n'ont pas encore été envoyées par les professeurs. `
+      : '';
+
     const confirmed = await this.notification.confirm(
-      `Valider les bulletins de ${item.classeLibelle} pour ${periode.libelle} ? ` +
-        `Les notes de cette classe ne pourront plus être modifiées tant que la validation n'est pas annulée.`,
+      alerte +
+        `Valider les bulletins de ${item.classeLibelle} pour ${periode.libelle} ? ` +
+        `Toutes les matières de la classe passeront en « validé » et les notes ne pourront plus être modifiées ` +
+        `tant que la validation n'est pas annulée.`,
       'Valider les bulletins'
     );
     if (!confirmed) return;

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { NoteService } from '../../../core/services/note.service';
@@ -12,6 +13,11 @@ import { NotificationService } from '../../../core/services/notification.service
 import { PeriodeAcademique } from '../../../core/models/periode-academique.model';
 import { FeuilleSaisieNotes, ProgressionSaisieNotes } from '../../../core/models/note.model';
 import { NotesRosterTableComponent } from '../../notes/notes-roster-table/notes-roster-table.component';
+import {
+  ChoixColonnesDialogComponent,
+  ColonneChoix,
+  ChoixColonnesResultat
+} from '../../notes/choix-colonnes-dialog.component';
 
 @Component({
   selector: 'app-professeur-saisie',
@@ -21,6 +27,7 @@ import { NotesRosterTableComponent } from '../../notes/notes-roster-table/notes-
     FormsModule,
     MatIconModule,
     MatButtonModule,
+    MatDialogModule,
     NotesRosterTableComponent
   ],
   templateUrl: './saisie.component.html',
@@ -32,6 +39,7 @@ export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
   private noteService = inject(NoteService);
   private periodeService = inject(PeriodeAcademiqueService);
   private notification = inject(NotificationService);
+  private dialog = inject(MatDialog);
 
   classeId!: number;
   matiereId!: number;
@@ -42,7 +50,6 @@ export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
   progression: ProgressionSaisieNotes | null = null;
   loading = false;
   saving = false;
-  verrouillageEnCours = false;
   soumission = false;
 
   // Auto-save : après une coupure d'inactivité de saisie, on enregistre automatiquement en
@@ -52,17 +59,24 @@ export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
   private modificationSubject = new Subject<void>();
   private modificationSub?: Subscription;
 
-  get peutSoumettre(): boolean {
-    if (!this.progression || this.progression.etape !== 'BROUILLON') return false;
-    const p = this.progression;
-    return p.interrogationsVerroueesJusqua >= 1
-      && p.devoirsVerrouesJusqua >= 2
-      && p.interrogationsValideesJusqua >= p.interrogationsVerroueesJusqua
-      && p.devoirsValideesJusqua >= p.devoirsVerrouesJusqua;
+  /** Scénario simplifié : l'enseignant garde la main tant que l'administration n'a pas VALIDÉ.
+      Une matière déjà envoyée reste modifiable — toute modification annule l'envoi (côté serveur,
+      elle repasse en brouillon) et il faudra la renvoyer. */
+  get etapeReadonly(): boolean {
+    return !!this.feuille?.valide || this.progression?.etape === 'VALIDEE';
   }
 
-  get etapeReadonly(): boolean {
-    return !!this.progression && this.progression.etape !== 'BROUILLON';
+  get envoyee(): boolean {
+    return this.progression?.etape === 'SOUMISE';
+  }
+
+  get peutEnvoyer(): boolean {
+    return !this.etapeReadonly && !!this.feuille && !this.feuille.valide
+      && this.colonnesEnvoyables().length > 0;
+  }
+
+  get dateEnvoi(): string | null {
+    return this.progression?.dateSoumission ?? null;
   }
 
   ngOnInit(): void {
@@ -93,18 +107,27 @@ export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
     this.modificationSub = this.modificationSubject.pipe(debounceTime(1500)).subscribe(() => this.enregistrerAuto());
   }
 
+  /** Vrai dès qu'une note a été touchée et pas encore enregistrée — évite un enregistrement inutile
+      à la fermeture de la page (qui, sur une matière envoyée, annulerait l'envoi pour rien). */
+  private dirty = false;
+
   onValeurModifiee(): void {
+    this.dirty = true;
     this.autoSaveStatut = 'idle';
     this.modificationSubject.next();
   }
 
   private enregistrerAuto(): void {
     if (!this.feuille || this.feuille.valide || this.etapeReadonly || !this.periodeId) return;
+    const etaitEnvoyee = this.envoyee;
     this.autoSaveStatut = 'saving';
     this.noteService.enregistrerFeuille(this.construirePayload()).subscribe({
       next: (res: any) => {
         this.feuille = res.data ?? res;
+        this.dirty = false;
         this.autoSaveStatut = 'saved';
+        // Modifier une matière envoyée annule l'envoi côté serveur : on rafraîchit l'étape.
+        if (etaitEnvoyee) this.chargerProgression();
       },
       error: (err) => {
         this.autoSaveStatut = 'erreur';
@@ -141,54 +164,6 @@ export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
     });
   }
 
-  async verrouillerInterrogation(numero: number): Promise<void> {
-    const confirmed = await this.notification.confirm(
-      `Verrouiller l'interrogation ${numero} ? Vous ne pourrez plus la modifier ensuite (seul un admin pourra la déverrouiller).`,
-      'Verrouiller cette colonne'
-    );
-    if (!confirmed) return;
-    this.verrouillerColonne('INTERROGATION', numero);
-  }
-
-  async verrouillerDevoir(numero: number): Promise<void> {
-    const label = numero === 1 ? 'le 1er devoir' : 'le 2e devoir';
-    const confirmed = await this.notification.confirm(
-      `Verrouiller ${label} ? Vous ne pourrez plus le modifier ensuite (seul un admin pourra le déverrouiller).`,
-      'Verrouiller cette colonne'
-    );
-    if (!confirmed) return;
-    this.verrouillerColonne('DEVOIR', numero);
-  }
-
-  private verrouillerColonne(typeEvaluation: 'INTERROGATION' | 'DEVOIR', numero: number): void {
-    if (!this.feuille || !this.periodeId) return;
-    this.verrouillageEnCours = true;
-    // On enregistre d'abord les valeurs en cours (l'utilisateur peut avoir modifié cette colonne
-    // juste avant de cliquer "Terminer") pour ne jamais verrouiller des données non sauvegardées.
-    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe({
-      next: (res: any) => {
-        this.feuille = res.data ?? res;
-        this.noteService
-          .verrouillerColonne({ classeId: this.classeId, matiereId: this.matiereId, periodeId: this.periodeId!, typeEvaluation, numero })
-          .subscribe({
-            next: (prog: any) => {
-              this.progression = prog.data ?? prog;
-              this.notification.success('Colonne verrouillée');
-              this.verrouillageEnCours = false;
-            },
-            error: (err) => {
-              this.notification.error(err);
-              this.verrouillageEnCours = false;
-            }
-          });
-      },
-      error: (err) => {
-        this.notification.error(err);
-        this.verrouillageEnCours = false;
-      }
-    });
-  }
-
   private construirePayload(): any {
     return {
       classeId: this.classeId,
@@ -212,10 +187,13 @@ export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
     );
     if (!confirmed) return;
 
+    const etaitEnvoyee = this.envoyee;
     this.saving = true;
     this.noteService.enregistrerFeuille(this.construirePayload()).subscribe({
       next: (res: any) => {
         this.feuille = res.data ?? res;
+        this.dirty = false;
+        if (etaitEnvoyee) this.chargerProgression();
         this.notification.success('Notes enregistrées');
         this.saving = false;
       },
@@ -226,27 +204,87 @@ export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
     });
   }
 
-  async soumettre(): Promise<void> {
-    if (!this.periodeId || !this.peutSoumettre) return;
-    const confirmed = await this.notification.confirm(
-      "Soumettre cette matière pour validation ? Vous ne pourrez plus modifier les notes tant que l'administration n'aura pas répondu.",
-      'Soumettre pour validation'
-    );
-    if (!confirmed) return;
-    this.soumission = true;
-    this.noteService
-      .soumettreMatiere({ classeId: this.classeId, matiereId: this.matiereId, periodeId: this.periodeId })
-      .subscribe({
-        next: (res: any) => {
-          this.progression = res.data ?? res;
-          this.notification.success('Matière soumise pour validation');
-          this.soumission = false;
-        },
-        error: (err) => {
-          this.notification.error(err);
-          this.soumission = false;
+  /** Colonnes remplies et pas encore envoyées — proposées à l'enseignant dans le dialogue d'envoi. */
+  private colonnesEnvoyables(): ColonneChoix[] {
+    if (!this.feuille) return [];
+    const dejaInterro = this.progression?.interrogationsVerroueesJusqua ?? 0;
+    const dejaDevoir = this.progression?.devoirsVerrouesJusqua ?? 0;
+    const cols: ColonneChoix[] = [];
+
+    for (let n = dejaInterro + 1; n <= this.feuille.nombreInterrogations; n++) {
+      if (this.feuille.eleves.some((e) => e.interrogations?.[n - 1] != null)) {
+        cols.push({ type: 'INTERROGATION', numero: n, libelle: `Interrogation ${n}`, choisie: false });
+      }
+    }
+    for (const n of [1, 2]) {
+      if (n <= dejaDevoir) continue;
+      const rempli = this.feuille.eleves.some((e) => (n === 1 ? e.devoir1 : e.devoir2) != null);
+      if (rempli) {
+        cols.push({ type: 'DEVOIR', numero: n, libelle: n === 1 ? '1er Devoir' : '2e Devoir', choisie: false });
+      }
+    }
+    return cols;
+  }
+
+  async envoyerAAdministration(): Promise<void> {
+    if (!this.periodeId || !this.peutEnvoyer) return;
+
+    const colonnes = this.colonnesEnvoyables();
+    if (colonnes.length === 0) {
+      this.notification.info('Aucune nouvelle colonne remplie à envoyer.');
+      return;
+    }
+
+    const choix: ChoixColonnesResultat | null = await this.dialog
+      .open(ChoixColonnesDialogComponent, {
+        width: '460px',
+        maxWidth: '95vw',
+        panelClass: 'professional-dialog',
+        data: {
+          titre: "Envoyer à l'administration",
+          sousTitre: (this.feuille?.matiereLibelle ?? '') + ' · ' + (this.feuille?.classeLibelle ?? ''),
+          intro:
+            'Cochez les colonnes à envoyer. Une fois envoyées, elles sont figées : vous ne pourrez ' +
+            "plus les modifier sans un renvoi de l'administration.",
+          cta: 'Envoyer',
+          colonnes
         }
-      });
+      })
+      .afterClosed()
+      .toPromise();
+
+    if (!choix) return;
+
+    this.soumission = true;
+    // On enregistre d'abord la dernière saisie en cours, puis on envoie la sélection.
+    this.noteService.enregistrerFeuille(this.construirePayload()).subscribe({
+      next: () => {
+        this.noteService
+          .soumettreMatiere({
+            classeId: this.classeId,
+            matiereId: this.matiereId,
+            periodeId: this.periodeId!,
+            interrogationsJusqua: choix.interrogationsJusqua,
+            devoirsJusqua: choix.devoirsJusqua
+          })
+          .subscribe({
+            next: (res: any) => {
+              this.progression = res.data ?? res;
+              this.refresh();
+              this.notification.success("Colonnes envoyées à l'administration");
+              this.soumission = false;
+            },
+            error: (err) => {
+              this.notification.error(err);
+              this.soumission = false;
+            }
+          });
+      },
+      error: (err) => {
+        this.notification.error(err);
+        this.soumission = false;
+      }
+    });
   }
 
   retour(): void {
@@ -255,7 +293,9 @@ export class ProfesseurSaisieComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.modificationSub?.unsubscribe();
-    if (!this.feuille || this.feuille.valide || this.etapeReadonly || !this.periodeId) return;
+    // N'enregistrer à la fermeture QUE s'il reste des modifications non sauvegardées — sinon on
+    // annulerait inutilement l'envoi d'une matière simplement consultée.
+    if (!this.dirty || !this.feuille || this.feuille.valide || this.etapeReadonly || !this.periodeId) return;
     this.noteService.enregistrerFeuille(this.construirePayload()).subscribe();
   }
 }

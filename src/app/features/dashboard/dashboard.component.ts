@@ -157,7 +157,7 @@ import {
             <h3>
               À traiter — {{ nb.periodeLibelle }}
               <span class="wide-sub">
-                {{ nb.matieresAValider }} à valider · {{ nb.matieresEnSaisie }} en saisie
+                {{ nb.matieresAValider }} à approuver · {{ nb.matieresEnSaisie }} en saisie
               </span>
             </h3>
             <div class="tt-list">
@@ -165,12 +165,12 @@ import {
                    [class.clickable]="m.etat === 'A_VALIDER'"
                    (click)="m.etat === 'A_VALIDER' && allerValidation()">
                 <span class="tt-badge" [class.b-val]="m.etat === 'A_VALIDER'" [class.b-sai]="m.etat === 'EN_SAISIE'">
-                  {{ m.etat === 'A_VALIDER' ? 'À valider' : (m.pretePourSoumission ? 'À relancer' : 'En saisie') }}
+                  {{ m.etat === 'A_VALIDER' ? 'À approuver' : 'En saisie' }}
                 </span>
                 <span class="tt-txt">
                   <strong>{{ m.classeLibelle }}</strong> · {{ m.matiereLibelle }}
-                  <span class="tt-hint" *ngIf="m.etat === 'EN_SAISIE' && m.pretePourSoumission">
-                    — le professeur a tout verrouillé mais n'a pas encore soumis
+                  <span class="tt-hint" *ngIf="m.etat === 'A_VALIDER'">
+                    — l'enseignant a envoyé ses notes, l'administration doit les approuver
                   </span>
                 </span>
                 <mat-icon *ngIf="m.etat === 'A_VALIDER'" class="tt-go">chevron_right</mat-icon>
@@ -426,7 +426,8 @@ export class DashboardComponent implements OnInit {
   loading = true;
 
   allerValidation(): void {
-    this.router.navigate(['/notes/validation']);
+    // L'approbation des notes reçues se fait sur l'écran "Saisie des notes".
+    this.router.navigate(['/notes/saisie']);
   }
 
   ngOnInit(): void {

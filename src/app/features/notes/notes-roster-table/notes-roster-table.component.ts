@@ -31,6 +31,10 @@ export class NotesRosterTableComponent implements OnChanges {
   @Input() progressionInterrogationsValidees = 0;
   @Input() progressionDevoirsValidees = 0;
   @Input() verrouillageEnCours = false;
+  // Colonnes déjà envoyées à l'administration (figées / grisées côté enseignant, mais il peut
+  // toujours en ajouter de nouvelles au-delà) — scénario simplifié, sans validation colonne par colonne.
+  @Input() colonnesEnvoyeesInterro = 0;
+  @Input() colonnesEnvoyeesDevoir = 0;
   // Côté admin, on veut afficher les couleurs/icônes de verrouillage sans jamais bloquer l'édition
   // ni proposer le bouton "Terminer" (réservé au professeur) — mettre à false désactive ces deux
   // effets tout en gardant les getters *Verrouillee/*Valide/*EnAttente actifs pour le style visuel.
@@ -91,7 +95,8 @@ export class NotesRosterTableComponent implements OnChanges {
     if (
       this.nombreInterrogations <= 1 ||
       this.derniereInterrogationRemplie ||
-      this.interrogationVerrouillee(this.nombreInterrogations)
+      this.interrogationVerrouillee(this.nombreInterrogations) ||
+      this.interrogationEnvoyee(this.nombreInterrogations)
     ) {
       return;
     }
@@ -291,5 +296,15 @@ export class NotesRosterTableComponent implements OnChanges {
 
   onVerrouillerDevoir(numero: number): void {
     this.verrouillerDevoir.emit(numero);
+  }
+
+  // ── Colonnes déjà envoyées à l'administration (figées) ────────────────
+
+  interrogationEnvoyee(numero: number): boolean {
+    return numero <= this.colonnesEnvoyeesInterro;
+  }
+
+  devoirEnvoye(numero: number): boolean {
+    return numero <= this.colonnesEnvoyeesDevoir;
   }
 }
