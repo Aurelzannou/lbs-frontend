@@ -37,17 +37,16 @@ export class HomeComponent {
     nom: 'La Bonne Semence',
     sigle: 'LBS',
     lieu: 'Djeffa',
-    telephoneAffiche: '01 51 10 96 93',
+    telephoneAffiche: '01 97 07 91 64',
     // Format international pour les liens tel: / WhatsApp (Bénin, +229)
-    telephoneLien: '+22951109693',
-    whatsapp: 'https://wa.me/22951109693'
+    telephoneLien: '+22997079164',
+    whatsapp: 'https://wa.me/22997079164'
   };
 
   // TODO (à confirmer avec l'école) : remplacer par les vrais chiffres
   // (année de création, nombre d'élèves, taux de réussite aux examens…).
   readonly reperes = [
     { valeur: 'Maternelle → Lycée', label: 'Tous les cycles sur un même site' },
-    { valeur: 'FR · EN', label: 'Enseignement bilingue' },
     { valeur: 'Effectifs réduits', label: 'Un suivi vraiment personnalisé' },
     { valeur: 'Djeffa', label: 'Un cadre calme et sécurisé' }
   ];
