@@ -11,8 +11,11 @@ export class MouvementCaisseService {
   private api = inject(ApiService);
   private readonly endpoint = '/api/mouvements-caisse';
 
-  listerParCaisse(caisseId: number): Observable<MouvementCaisse[]> {
-    const params = new HttpParams().set('caisseId', caisseId.toString());
+  listerParCaisse(caisseId: number, anneeScolaireId: number | null = null): Observable<MouvementCaisse[]> {
+    let params = new HttpParams().set('caisseId', caisseId.toString());
+    if (anneeScolaireId !== null) {
+      params = params.set('anneeScolaireId', anneeScolaireId.toString());
+    }
     return this.api.get<MouvementCaisse[]>(this.endpoint, params);
   }
 }

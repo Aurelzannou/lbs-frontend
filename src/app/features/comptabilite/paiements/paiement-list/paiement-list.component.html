@@ -10,6 +10,25 @@
       <input class="search-input" placeholder="Rechercher un paiement..." (input)="onSearchChange($event)" />
     </div>
 
+    <!-- Filtre par année scolaire — par défaut, seule l'année active. -->
+    <ng-select
+      [items]="annees"
+      bindLabel="libelle"
+      bindValue="id"
+      [(ngModel)]="anneeScolaireId"
+      (change)="onAnneeChange()"
+      placeholder="Toutes les années"
+      [clearable]="true"
+      style="min-width: 200px"
+    >
+      <ng-template ng-option-tmp let-item="item"
+        >{{ item.libelle }}<ng-container *ngIf="item.actif"> (active)</ng-container></ng-template
+      >
+      <ng-template ng-label-tmp let-item="item"
+        >{{ item.libelle }}<ng-container *ngIf="item.actif"> (active)</ng-container></ng-template
+      >
+    </ng-select>
+
     <div class="toolbar-actions">
       <button class="btn-refresh" (click)="refresh()" title="Actualiser">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

@@ -9,9 +9,11 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DossierEleveService } from '../../../core/services/dossier-eleve.service';
 import { SuiviPaiementService } from '../../../core/services/suivi-paiement.service';
+import { AnneeScolaireService } from '../../../core/services/annee-scolaire.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DossierEleve } from '../../../core/models/dossier-eleve.model';
 import { SuiviPaiement } from '../../../core/models/suivi-paiement.model';
+import { AnneeScolaire } from '../../../core/models/annee-scolaire.model';
 import { PaiementFormDialogComponent } from '../paiements/paiement-form-dialog/paiement-form-dialog.component';
 
 @Component({
@@ -33,6 +35,7 @@ import { PaiementFormDialogComponent } from '../paiements/paiement-form-dialog/p
 export class SuiviPaiementsComponent implements OnInit {
   private dossierEleveService = inject(DossierEleveService);
   private suiviPaiementService = inject(SuiviPaiementService);
+  private anneeService = inject(AnneeScolaireService);
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
 
@@ -42,9 +45,32 @@ export class SuiviPaiementsComponent implements OnInit {
   loadingDossiers = false;
   loadingSuivi = false;
 
+  annees: (AnneeScolaire | { id: null; libelle: string })[] = [];
+  /** Filtre par défaut sur l'année scolaire active — "Toutes les années" (id null) le lève. */
+  anneeScolaireId: number | null = null;
+
   ngOnInit(): void {
+    this.anneeService.getAll(0, 50).subscribe((res: any) => {
+      const page = res.data ?? res;
+      const list: AnneeScolaire[] = page.data ?? (Array.isArray(page) ? page : []);
+      this.annees = [{ id: null, libelle: 'Toutes les années' }, ...list];
+      const active = list.find((a) => a.actif);
+      this.anneeScolaireId = active?.id ?? null;
+      this.loadDossiers();
+    });
+  }
+
+  /** Un élève changé de filtre d'année → sa sélection courante n'est plus forcément valable,
+      on la remet à zéro pour éviter d'afficher un suivi hors du périmètre affiché. */
+  onAnneeChange(): void {
+    this.dossierEleveId = null;
+    this.suivi = null;
+    this.loadDossiers();
+  }
+
+  loadDossiers(): void {
     this.loadingDossiers = true;
-    this.dossierEleveService.getAll(1, 300).subscribe((res) => {
+    this.dossierEleveService.getAll(1, 300, '', this.anneeScolaireId).subscribe((res) => {
       const liste: DossierEleve[] = res.data || res || [];
       // Seuls les dossiers acceptés / inscrits ont une scolarité à payer.
       this.dossiers = liste

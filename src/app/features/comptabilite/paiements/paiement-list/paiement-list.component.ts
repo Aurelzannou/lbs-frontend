@@ -13,8 +13,12 @@ import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PaiementService } from '../../../../core/services/paiement.service';
+import { AnneeScolaireService } from '../../../../core/services/annee-scolaire.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Paiement } from '../../../../core/models/paiement.model';
+import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { FormsModule } from '@angular/forms';
 import { PaiementFormDialogComponent } from '../paiement-form-dialog/paiement-form-dialog.component';
 import { PdfPreviewDialogComponent } from '../../../notes/pdf-preview-dialog/pdf-preview-dialog.component';
 import { Subject, Subscription } from 'rxjs';
@@ -43,7 +47,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatInputModule,
     MatFormFieldModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
+    NgSelectModule,
+    FormsModule
   ],
   animations: [
     trigger('rowsAnimation', [
@@ -58,6 +64,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class PaiementListComponent implements OnInit, OnDestroy, AfterViewInit {
   private paiementService = inject(PaiementService);
+  private anneeService = inject(AnneeScolaireService);
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
@@ -82,6 +89,10 @@ export class PaiementListComponent implements OnInit, OnDestroy, AfterViewInit {
   pageSize = 10;
   searchTerm = '';
 
+  annees: (AnneeScolaire | { id: null; libelle: string })[] = [];
+  /** Filtre par défaut sur l'année scolaire active — "Toutes les années" (id null) le lève. */
+  anneeScolaireId: number | null = null;
+
   private searchSubject = new Subject<string>();
   private searchSub!: Subscription;
 
@@ -96,6 +107,24 @@ export class PaiementListComponent implements OnInit, OnDestroy, AfterViewInit {
         this.pageIndex = 0;
         this.refresh();
       });
+    this.loadAnnees();
+  }
+
+  /** Charge les années scolaires et sélectionne l'année active par défaut, puis lance le premier
+      chargement des paiements. */
+  loadAnnees(): void {
+    this.anneeService.getAll(0, 50).subscribe((res: any) => {
+      const page = res.data ?? res;
+      const list: AnneeScolaire[] = page.data ?? (Array.isArray(page) ? page : []);
+      this.annees = [{ id: null, libelle: 'Toutes les années' }, ...list];
+      const active = list.find((a) => a.actif);
+      this.anneeScolaireId = active?.id ?? null;
+      this.refresh();
+    });
+  }
+
+  onAnneeChange(): void {
+    this.pageIndex = 0;
     this.refresh();
   }
 
@@ -116,7 +145,7 @@ export class PaiementListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   refresh(): void {
     this.loading = true;
-    this.paiementService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm).subscribe({
+    this.paiementService.getAll(this.pageIndex + 1, this.pageSize, this.searchTerm, this.anneeScolaireId).subscribe({
       next: (response: any) => {
         const items = response.data || (Array.isArray(response) ? response : []);
         const meta = response.meta || {};

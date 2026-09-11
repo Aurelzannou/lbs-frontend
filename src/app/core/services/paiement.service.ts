@@ -14,10 +14,18 @@ export class PaiementService {
   private baseUrl = environment.apiUrl;
   private readonly endpoint = '/api/paiements';
 
-  getAll(page: number = 1, size: number = 10, filter: string = ''): Observable<any> {
-    let params = new HttpParams().set('page', (page - 1).toString()).set('size', size.toString());
+  getAll(
+    page: number = 1,
+    size: number = 10,
+    filter: string = '',
+    anneeScolaireId: number | null = null
+  ): Observable<any> {
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
     if (filter && filter.trim().length > 0) {
       params = params.set('filter', filter.trim());
+    }
+    if (anneeScolaireId !== null) {
+      params = params.set('anneeScolaireId', anneeScolaireId.toString());
     }
     return this.api.get<any>(this.endpoint, params);
   }

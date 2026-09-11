@@ -1,5 +1,27 @@
 <div class="page-wrapper">
   <div class="toolbar">
+    <!-- Filtre par année scolaire — par défaut, seule l'année active. -->
+    <div class="rfm-select">
+      <span class="rfm-label">Année</span>
+      <ng-select
+        [items]="annees"
+        bindLabel="libelle"
+        bindValue="id"
+        [(ngModel)]="anneeScolaireId"
+        (change)="onAnneeChange()"
+        placeholder="Toutes les années"
+        appendTo="body"
+        class="ng-field"
+      >
+        <ng-template ng-option-tmp let-item="item"
+          >{{ item.libelle }}<ng-container *ngIf="item.actif"> (active)</ng-container></ng-template
+        >
+        <ng-template ng-label-tmp let-item="item"
+          >{{ item.libelle }}<ng-container *ngIf="item.actif"> (active)</ng-container></ng-template
+        >
+      </ng-select>
+    </div>
+
     <div class="rfm-select dossier-picker">
       <span class="rfm-label">Élève</span>
       <ng-select
