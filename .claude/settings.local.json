@@ -179,7 +179,8 @@
       "Bash(cp \"/c/Users/di/Desktop/lbs_Backend/src/main/resources/reports/emploi-du-temps.jrxml\" \"/c/Users/di/Desktop/lbs_Backend/target/classes/reports/emploi-du-temps.jrxml\")",
       "Bash(cp \"/c/Users/di/Desktop/lbs_Backend/src/main/resources/reports/liste-eleves-classe.jrxml\" \"/c/Users/di/Desktop/lbs_Backend/target/classes/reports/liste-eleves-classe.jrxml\")",
       "PowerShell(Select-String -Path \"$env:TEMP\\\\lbs_compile2.log\" -Pattern \"ERROR|BUILD\" | ForEach-Object { $_.Line })",
-      "Bash(cp \"/c/Users/di/Desktop/lbs_Backend/src/main/resources/reports/emploi-du-temps.jrxml\" \"/c/Users/di/Desktop/lbs_Backend/target/classes/reports/emploi-du-temps.jrxml\" && echo done)"
+      "Bash(cp \"/c/Users/di/Desktop/lbs_Backend/src/main/resources/reports/emploi-du-temps.jrxml\" \"/c/Users/di/Desktop/lbs_Backend/target/classes/reports/emploi-du-temps.jrxml\" && echo done)",
+      "PowerShell(Select-String -Path \"$env:TEMP\\\\lbs_fe_build5.log\" -Pattern \"error TS|Application bundle\" | Select-Object -Last 10 | ForEach-Object { $_.Line })"
     ],
     "additionalDirectories": [
       "c:\\Users\\di\\Desktop\\LbsBack,end"

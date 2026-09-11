@@ -1,97 +1,253 @@
 <div class="page-wrapper">
-  <div class="toolbar">
-    <!-- Filtre par année scolaire — par défaut, seule l'année active. -->
-    <div class="rfm-select">
-      <span class="rfm-label">Année</span>
-      <ng-select
-        [items]="annees"
-        bindLabel="libelle"
-        bindValue="id"
-        [(ngModel)]="anneeScolaireId"
-        (change)="onAnneeChange()"
-        placeholder="Toutes les années"
-        appendTo="body"
-        class="ng-field"
-      >
-        <ng-template ng-option-tmp let-item="item"
-          >{{ item.libelle }}<ng-container *ngIf="item.actif"> (active)</ng-container></ng-template
-        >
-        <ng-template ng-label-tmp let-item="item"
-          >{{ item.libelle }}<ng-container *ngIf="item.actif"> (active)</ng-container></ng-template
-        >
-      </ng-select>
-    </div>
-
-    <div class="rfm-select dossier-picker">
-      <span class="rfm-label">Élève</span>
-      <ng-select
-        [items]="dossiers"
-        bindLabel="nomComplet"
-        bindValue="id"
-        [(ngModel)]="dossierEleveId"
-        (change)="onDossierChange()"
-        placeholder="Rechercher un élève..."
-        [loading]="loadingDossiers"
-        appendTo="body"
-        class="ng-field"
-      >
-      </ng-select>
-    </div>
-
-    <button class="btn-add" *ngIf="dossierEleveId" (click)="nouveauPaiement()">
-      <mat-icon>add</mat-icon>
-      Nouveau paiement
+  <!-- ===== Bascule de mode ===== -->
+  <div class="mode-tabs">
+    <button class="mode-tab" [class.active]="mode === 'eleve'" (click)="switchMode('eleve')">
+      Par élève
+    </button>
+    <button class="mode-tab" [class.active]="mode === 'global'" (click)="switchMode('global')">
+      Tous les impayés
     </button>
   </div>
 
-  <div class="spinner-overlay" *ngIf="loadingSuivi">
-    <div class="spinner"></div>
-  </div>
+  <!-- ===== Mode « Par élève » ===== -->
+  <ng-container *ngIf="mode === 'eleve'">
+    <div class="toolbar">
+      <ng-container *ngIf="impayeSelectionne; else pickerEleve">
+        <button class="btn-retour" (click)="retourImpayes()">
+          <mat-icon>arrow_back</mat-icon>
+          Retour aux impayés
+        </button>
+        <div class="eleve-context">
+          <strong>{{ impayeSelectionne.eleveNomComplet }}</strong>
+          <span class="text-muted"
+            >— {{ impayeSelectionne.classeLibelle }} · {{ impayeSelectionne.anneeScolaireLibelle }}</span
+          >
+        </div>
+      </ng-container>
 
-  <ng-container *ngIf="suivi">
-    <div class="totals-row">
-      <div class="total-card">
-        <span class="total-label">Total dû</span>
-        <span class="total-value">{{ suivi.totalDu | number: '1.0-0' }} FCFA</span>
-      </div>
-      <div class="total-card paye">
-        <span class="total-label">Total payé</span>
-        <span class="total-value">{{ suivi.totalPaye | number: '1.0-0' }} FCFA</span>
-      </div>
-      <div class="total-card reste">
-        <span class="total-label">Reste à payer</span>
-        <span class="total-value">{{ suivi.totalReste | number: '1.0-0' }} FCFA</span>
-      </div>
+      <ng-template #pickerEleve>
+        <div class="rfm-select">
+          <span class="rfm-label">Année</span>
+          <ng-select
+            [items]="annees"
+            bindLabel="libelle"
+            bindValue="id"
+            [(ngModel)]="anneeScolaireId"
+            (change)="onAnneeChange()"
+            placeholder="Toutes les années"
+            appendTo="body"
+            class="ng-field"
+          >
+            <ng-template ng-option-tmp let-item="item"
+              >{{ item.libelle }}<ng-container *ngIf="item.actif"> (active)</ng-container></ng-template
+            >
+            <ng-template ng-label-tmp let-item="item"
+              >{{ item.libelle }}<ng-container *ngIf="item.actif"> (active)</ng-container></ng-template
+            >
+          </ng-select>
+        </div>
+
+        <div class="rfm-select dossier-picker">
+          <span class="rfm-label">Élève</span>
+          <ng-select
+            [items]="dossiers"
+            bindLabel="nomComplet"
+            bindValue="id"
+            [(ngModel)]="dossierEleveId"
+            (change)="onDossierPickedManually()"
+            placeholder="Rechercher un élève..."
+            [loading]="loadingDossiers"
+            appendTo="body"
+            class="ng-field"
+          >
+          </ng-select>
+        </div>
+      </ng-template>
+
+      <button class="btn-add" *ngIf="dossierEleveId" (click)="nouveauPaiement()">
+        <mat-icon>add</mat-icon>
+        Nouveau paiement
+      </button>
     </div>
 
-    <div class="frais-card" *ngFor="let f of suivi.frais">
-      <div class="frais-header">
-        <h4>{{ f.typeFraisLibelle }}</h4>
-        <span class="frais-resume">
-          {{ f.montantPaye | number: '1.0-0' }} / {{ f.montantDu | number: '1.0-0' }} FCFA
-          <em *ngIf="f.reste > 0">— reste {{ f.reste | number: '1.0-0' }} FCFA</em>
-        </span>
-      </div>
+    <div class="spinner-overlay" *ngIf="loadingSuivi">
+      <div class="spinner"></div>
+    </div>
 
-      <div class="tranches-row" *ngIf="f.tranches.length; else pasEcheancier">
-        <div class="tranche-chip" *ngFor="let t of f.tranches" [ngClass]="t.statut.toLowerCase()">
-          <span class="tranche-numero">Tranche {{ t.numero }}</span>
-          <span class="tranche-libelle">{{ t.libelle }}</span>
-          <span class="tranche-date">{{ t.dateEcheance | date: 'dd/MM/yyyy' }}</span>
-          <span class="tranche-montant">{{ t.montantAlloue | number: '1.0-0' }} / {{ t.montant | number: '1.0-0' }} FCFA</span>
-          <span class="tranche-statut">{{ statutLabel(t.statut) }}</span>
+    <ng-container *ngIf="suivi">
+      <div class="totals-row">
+        <div class="total-card">
+          <span class="total-label">Total dû</span>
+          <span class="total-value">{{ suivi.totalDu | number: '1.0-0' }} FCFA</span>
+        </div>
+        <div class="total-card paye">
+          <span class="total-label">Total payé</span>
+          <span class="total-value">{{ suivi.totalPaye | number: '1.0-0' }} FCFA</span>
+        </div>
+        <div class="total-card reste">
+          <span class="total-label">Reste à payer</span>
+          <span class="total-value">{{ suivi.totalReste | number: '1.0-0' }} FCFA</span>
         </div>
       </div>
-      <ng-template #pasEcheancier>
-        <p class="text-muted">Aucun échéancier défini pour ce frais.</p>
-      </ng-template>
+
+      <div class="frais-card" *ngFor="let f of suivi.frais">
+        <div class="frais-header">
+          <h4>{{ f.typeFraisLibelle }}</h4>
+          <span class="frais-resume">
+            {{ f.montantPaye | number: '1.0-0' }} / {{ f.montantDu | number: '1.0-0' }} FCFA
+            <em *ngIf="f.reste > 0">— reste {{ f.reste | number: '1.0-0' }} FCFA</em>
+          </span>
+        </div>
+
+        <div class="tranches-row" *ngIf="f.tranches.length; else pasEcheancier">
+          <div class="tranche-chip" *ngFor="let t of f.tranches" [ngClass]="t.statut.toLowerCase()">
+            <span class="tranche-numero">Tranche {{ t.numero }}</span>
+            <span class="tranche-libelle">{{ t.libelle }}</span>
+            <span class="tranche-date">{{ t.dateEcheance | date: 'dd/MM/yyyy' }}</span>
+            <span class="tranche-montant">{{ t.montantAlloue | number: '1.0-0' }} / {{ t.montant | number: '1.0-0' }} FCFA</span>
+            <span class="tranche-statut">{{ statutLabel(t.statut) }}</span>
+          </div>
+        </div>
+        <ng-template #pasEcheancier>
+          <p class="text-muted">Aucun échéancier défini pour ce frais.</p>
+        </ng-template>
+      </div>
+    </ng-container>
+
+    <div class="empty-state" *ngIf="!suivi && dossierEleveId && !loadingSuivi">
+      <p>Aucun frais scolaire configuré pour la classe/année de cet élève.</p>
+    </div>
+    <div class="empty-state" *ngIf="!dossierEleveId">
+      <p>Choisissez un élève pour afficher son suivi de paiement.</p>
     </div>
   </ng-container>
 
-  <div class="empty-state" *ngIf="!suivi && dossierEleveId && !loadingSuivi">
-    <p>Aucun frais scolaire configuré pour la classe/année de cet élève.</p>
-  </div>
-  <div class="empty-state" *ngIf="!dossierEleveId">
-    <p>Choisissez un élève pour afficher son suivi de paiement.</p>
-  </div>
+  <!-- ===== Mode « Tous les impayés » ===== -->
+  <ng-container *ngIf="mode === 'global'">
+    <div class="toolbar">
+      <div class="rfm-select">
+        <span class="rfm-label">Année</span>
+        <ng-select
+          [items]="annees"
+          bindLabel="libelle"
+          bindValue="id"
+          [(ngModel)]="anneeImpayesId"
+          (change)="onFiltreImpayesChange()"
+          placeholder="Toutes les années"
+          appendTo="body"
+          class="ng-field"
+        >
+          <ng-template ng-option-tmp let-item="item"
+            >{{ item.libelle }}<ng-container *ngIf="item.actif"> (active)</ng-container></ng-template
+          >
+          <ng-template ng-label-tmp let-item="item"
+            >{{ item.libelle }}<ng-container *ngIf="item.actif"> (active)</ng-container></ng-template
+          >
+        </ng-select>
+      </div>
+
+      <div class="rfm-select">
+        <span class="rfm-label">Classe</span>
+        <ng-select
+          [items]="classesImpayes"
+          bindLabel="libelle"
+          bindValue="id"
+          [(ngModel)]="classeImpayesId"
+          (change)="onFiltreImpayesChange()"
+          placeholder="Toutes les classes"
+          appendTo="body"
+          class="ng-field"
+        >
+        </ng-select>
+      </div>
+
+      <div class="rfm-select">
+        <span class="rfm-label">Statut</span>
+        <ng-select
+          [items]="[
+            { id: null, libelle: 'Tous' },
+            { id: 'EN_ATTENTE', libelle: 'En attente' },
+            { id: 'PARTIELLE', libelle: 'Partiel' },
+            { id: 'EN_RETARD', libelle: 'En retard' }
+          ]"
+          bindLabel="libelle"
+          bindValue="id"
+          [(ngModel)]="statutImpayes"
+          (change)="onFiltreImpayesChange()"
+          [clearable]="false"
+          appendTo="body"
+          class="ng-field"
+        >
+        </ng-select>
+      </div>
+
+      <button
+        class="btn-pdf"
+        (click)="exporterImpayesPdf()"
+        [disabled]="exportImpayesEnCours || !impayes.length"
+      >
+        <mat-icon>picture_as_pdf</mat-icon>
+        {{ exportImpayesEnCours ? 'Génération…' : 'Exporter en PDF' }}
+      </button>
+    </div>
+
+    <div class="spinner-overlay" *ngIf="loadingImpayes">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="totals-row" *ngIf="impayes.length">
+      <div class="total-card">
+        <span class="total-label">Élèves concernés</span>
+        <span class="total-value">{{ effectifImpayes }}</span>
+      </div>
+      <div class="total-card">
+        <span class="total-label">Total dû</span>
+        <span class="total-value">{{ totalDuImpayes | number: '1.0-0' }} FCFA</span>
+      </div>
+      <div class="total-card paye">
+        <span class="total-label">Total payé</span>
+        <span class="total-value">{{ totalPayeImpayes | number: '1.0-0' }} FCFA</span>
+      </div>
+      <div class="total-card reste">
+        <span class="total-label">Reste à recouvrer</span>
+        <span class="total-value">{{ totalResteImpayes | number: '1.0-0' }} FCFA</span>
+      </div>
+    </div>
+
+    <div class="impayes-table-wrapper" *ngIf="impayes.length; else pasImpayes">
+      <table class="impayes-table">
+        <thead>
+          <tr>
+            <th>Élève</th>
+            <th>Classe</th>
+            <th>Année</th>
+            <th class="num">Dû</th>
+            <th class="num">Payé</th>
+            <th class="num">Reste</th>
+            <th>Statut</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of impayes" (click)="voirDetailImpaye(l)" class="impaye-row">
+            <td>{{ l.eleveNomComplet }}</td>
+            <td>{{ l.classeLibelle }}</td>
+            <td>{{ l.anneeScolaireLibelle }}</td>
+            <td class="num">{{ l.totalDu | number: '1.0-0' }}</td>
+            <td class="num">{{ l.totalPaye | number: '1.0-0' }}</td>
+            <td class="num reste-cell">{{ l.totalReste | number: '1.0-0' }}</td>
+            <td>
+              <span class="statut-badge" [ngClass]="l.statut.toLowerCase()">{{ statutGlobalLabel(l.statut) }}</span>
+            </td>
+            <td class="col-action"><mat-icon>chevron_right</mat-icon></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #pasImpayes>
+      <div class="empty-state" *ngIf="!loadingImpayes">
+        <p>Aucun impayé sur ce périmètre 🎉</p>
+      </div>
+    </ng-template>
+  </ng-container>
 </div>

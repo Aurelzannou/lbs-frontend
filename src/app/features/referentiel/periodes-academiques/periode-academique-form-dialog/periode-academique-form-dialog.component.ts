@@ -59,11 +59,16 @@ export class PeriodeAcademiqueFormDialogComponent implements OnInit {
         [Validators.required]
       ],
       libelle: [this.data?.libelle || '', [Validators.required]],
+      // Un <input type="date"> attend une chaîne "aaaa-mm-jj" — lui donner un objet Date le
+      // laisse vide (il ne sait pas l'interpréter), d'où la perte de la valeur en modification.
       dateDebut: [
-        this.data?.dateDebut ? new Date(this.data.dateDebut) : null,
+        this.data?.dateDebut ? this.data.dateDebut.substring(0, 10) : null,
         [Validators.required]
       ],
-      dateFin: [this.data?.dateFin ? new Date(this.data.dateFin) : null, [Validators.required]]
+      dateFin: [
+        this.data?.dateFin ? this.data.dateFin.substring(0, 10) : null,
+        [Validators.required]
+      ]
     });
   }
 

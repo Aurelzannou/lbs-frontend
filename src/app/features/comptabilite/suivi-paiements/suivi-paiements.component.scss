@@ -9,12 +9,193 @@
   position: relative;
 }
 
+.mode-tabs {
+  display: flex;
+  gap: 0.4rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.mode-tab {
+  padding: 0.6rem 1rem;
+  border: none;
+  background: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover {
+    color: #1e293b;
+  }
+  &.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+  }
+}
+
 .toolbar {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
+}
+
+// Les filtres (Année / Classe / Statut) n'ont pas de largeur propre — sans ça, le ng-select
+// se réduit à son contenu ("Tout") et devient minuscule. `.dossier-picker`, plus bas, garde
+// la priorité sur son propre élément grâce à l'ordre de déclaration (cascade).
+.rfm-select {
+  min-width: 190px;
+
+  .ng-select {
+    width: 100%;
+  }
+}
+
+.btn-retour {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #374151;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+  &:hover {
+    background: #f9fafb;
+  }
+}
+
+.eleve-context {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+.btn-pdf {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #d97706;
+  background: white;
+  color: #b45309;
+  margin-left: auto;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+  &:hover:not(:disabled) {
+    background: #fffbeb;
+  }
+  &:disabled {
+    border-color: #e2e8f0;
+    color: #cbd5e1;
+    cursor: not-allowed;
+  }
+}
+
+.impayes-table-wrapper {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow-x: auto;
+  box-shadow: var(--card-shadow);
+}
+
+.impayes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+
+  th,
+  td {
+    padding: 10px 14px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  th {
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  td {
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+  }
+
+  .num {
+    text-align: right;
+  }
+
+  .reste-cell {
+    font-weight: 700;
+    color: #b45309;
+  }
+
+  .col-action {
+    color: #cbd5e1;
+    text-align: center;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.impaye-row {
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover {
+    background: #f8fafc;
+  }
+}
+
+.statut-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+
+  &.en_attente {
+    background: #e2e8f0;
+    color: #475569;
+  }
+  &.partielle {
+    background: #fef3c7;
+    color: #b45309;
+  }
+  &.en_retard {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
 }
 
 .dossier-picker {
