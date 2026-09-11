@@ -28,6 +28,15 @@
     </div>
     <div class="header-actions">
       <button
+        class="btn-draft"
+        (click)="telechargerBrouillon()"
+        [disabled]="!classeId || !anneeScolaireId || !planning.length || exportEnCours"
+        matTooltip="PDF de l'emploi du temps de cette classe"
+      >
+        <mat-icon>picture_as_pdf</mat-icon>
+        {{ exportEnCours ? 'Génération…' : 'Emploi du temps PDF' }}
+      </button>
+      <button
         class="btn-add"
         (click)="openForm()"
         [disabled]="!classeId || !anneeScolaireId || anneeVerrouillee"

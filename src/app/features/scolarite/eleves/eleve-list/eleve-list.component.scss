@@ -80,9 +80,18 @@
     color: #6b7280;
   }
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: #f9fafb;
     border-color: #d1d5db;
+  }
+
+  &:disabled {
+    color: #cbd5e1;
+    cursor: not-allowed;
+
+    svg {
+      color: #cbd5e1;
+    }
   }
 }
 

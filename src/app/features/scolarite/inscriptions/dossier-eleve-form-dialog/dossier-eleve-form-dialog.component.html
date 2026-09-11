@@ -217,6 +217,11 @@
             </div>
           </div>
         </div>
+
+        <div class="rfm-row periode-fermee" *ngIf="!isEdit && !periodeOuverte && periodeMessage">
+          <mat-icon>event_busy</mat-icon>
+          <span>{{ periodeMessage }}</span>
+        </div>
       </form>
     </div>
 
@@ -229,7 +234,7 @@
           mat-flat-button
           class="rfm-submit"
           (click)="onSubmit()"
-          [disabled]="form.invalid || loading"
+          [disabled]="form.invalid || loading || verifPeriodeEnCours || (!isEdit && !periodeOuverte)"
         >
           <mat-icon *ngIf="!loading">save</mat-icon>
           {{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}

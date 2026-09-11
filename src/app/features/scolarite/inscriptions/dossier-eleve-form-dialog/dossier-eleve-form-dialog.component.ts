@@ -6,6 +6,7 @@ import { DossierEleveService } from '../../../../core/services/dossier-eleve.ser
 import { ClasseService } from '../../../../core/services/classe.service';
 import { AnneeScolaireService } from '../../../../core/services/annee-scolaire.service';
 import { EleveService } from '../../../../core/services/eleve.service';
+import { PeriodeInscriptionService } from '../../../../core/services/periode-inscription.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { DossierEleve } from '../../../../core/models/dossier-eleve.model';
 import { Classe } from '../../../../core/models/classe.model';
@@ -45,11 +46,18 @@ export class DossierEleveFormDialogComponent implements OnInit {
   private classeService = inject(ClasseService);
   private anneeService = inject(AnneeScolaireService);
   private eleveService = inject(EleveService);
+  private periodeInscriptionService = inject(PeriodeInscriptionService);
   private notification = inject(NotificationService);
 
   form!: FormGroup;
   loading = false;
   isEdit = false;
+
+  /** Période d'inscription de l'année sélectionnée. Une nouvelle inscription / réinscription
+      n'est possible que si une période est ouverte (même règle que le portail parent). */
+  periodeOuverte = true;
+  periodeMessage: string | null = null;
+  verifPeriodeEnCours = false;
 
   classes: Classe[] = [];
   annees: AnneeScolaire[] = [];
@@ -74,6 +82,40 @@ export class DossierEleveFormDialogComponent implements OnInit {
     this.isEdit = !!this.data;
     this.initForm();
     this.loadData();
+
+    // À la création : dès qu'une année scolaire est choisie, on vérifie qu'une période
+    // d'inscription est bien ouverte pour cette année.
+    if (!this.isEdit) {
+      this.form
+        .get('anneeScolaireId')!
+        .valueChanges.subscribe((anneeId: number | null) => this.verifierPeriode(anneeId));
+    }
+  }
+
+  private verifierPeriode(anneeId: number | null): void {
+    if (!anneeId) {
+      this.periodeOuverte = true;
+      this.periodeMessage = null;
+      return;
+    }
+    this.verifPeriodeEnCours = true;
+    this.periodeInscriptionService.getPeriodeActive(anneeId).subscribe({
+      next: (periode) => {
+        this.verifPeriodeEnCours = false;
+        this.periodeOuverte = !!periode;
+        this.periodeMessage = periode
+          ? null
+          : "Aucune période d'inscription n'est ouverte pour cette année scolaire. " +
+            'Élargissez la date de clôture de la période concernée pour enregistrer un dossier.';
+      },
+      error: () => {
+        this.verifPeriodeEnCours = false;
+        // En cas d'échec de la vérification, on n'empêche pas la saisie : le backend
+        // reste le garde-fou et renverra une erreur claire à l'enregistrement.
+        this.periodeOuverte = true;
+        this.periodeMessage = null;
+      }
+    });
   }
 
   private initForm(): void {
@@ -172,6 +214,12 @@ export class DossierEleveFormDialogComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
+    if (!this.isEdit && !this.periodeOuverte) {
+      this.notification.error(
+        this.periodeMessage || "Aucune période d'inscription n'est ouverte pour cette année."
+      );
+      return;
+    }
     if (this.form.valid) {
       const confirmed = await this.notification.confirm(
         this.isEdit

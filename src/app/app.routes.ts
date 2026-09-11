@@ -285,6 +285,13 @@ export const routes: Routes = [
           import('./features/scolarite/validations/validation-list/validation-list.component').then(
             (m) => m.ValidationListComponent
           )
+      },
+      {
+        path: 'parents-eleves',
+        loadComponent: () =>
+          import('./features/scolarite/parents-eleves/parents-eleves.component').then(
+            (m) => m.ParentsElevesComponent
+          )
       }
     ]
   },

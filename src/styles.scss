@@ -462,10 +462,42 @@ h4,
 }
 
 /* Force le rendu clair des contrôles natifs date/heure — sinon le curseur/segment
-   sélectionné devient quasi invisible quand le navigateur est en thème sombre. */
+   sélectionné devient quasi invisible (thème sombre du navigateur, ou segment en cours
+   de saisie affiché en gris très pâle par WebKit). */
 input[type='date'],
 input[type='time'] {
   color-scheme: light;
+  color: #1e293b;
+
+  &::-webkit-datetime-edit,
+  &::-webkit-datetime-edit-fields-wrapper,
+  &::-webkit-datetime-edit-text,
+  &::-webkit-datetime-edit-year-field,
+  &::-webkit-datetime-edit-month-field,
+  &::-webkit-datetime-edit-day-field,
+  &::-webkit-datetime-edit-hour-field,
+  &::-webkit-datetime-edit-minute-field {
+    color: #1e293b;
+    opacity: 1;
+  }
+
+  /* Segment en cours d'édition : surlignage bleu pâle lisible. */
+  &::-webkit-datetime-edit-year-field:focus,
+  &::-webkit-datetime-edit-month-field:focus,
+  &::-webkit-datetime-edit-day-field:focus,
+  &::-webkit-datetime-edit-hour-field:focus,
+  &::-webkit-datetime-edit-minute-field:focus {
+    background-color: #bfdbfe;
+    color: #0f172a;
+    border-radius: 2px;
+    outline: none;
+  }
+}
+
+/* Champs date/heure à l'intérieur d'un mat-form-field (Material MDC) : même contraste. */
+.mat-mdc-form-field input[type='date'],
+.mat-mdc-form-field input[type='time'] {
+  color: #1e293b;
 }
 
 /* Date field */

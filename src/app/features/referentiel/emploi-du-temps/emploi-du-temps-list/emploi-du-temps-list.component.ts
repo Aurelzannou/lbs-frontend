@@ -14,6 +14,7 @@ import { EmploiDuTemps } from '../../../../core/models/emploi-du-temps.model';
 import { Classe } from '../../../../core/models/classe.model';
 import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
 import { EmploiDuTempsFormDialogComponent } from '../emploi-du-temps-form-dialog/emploi-du-temps-form-dialog.component';
+import { PdfPreviewDialogComponent } from '../../../notes/pdf-preview-dialog/pdf-preview-dialog.component';
 
 @Component({
   selector: 'app-emploi-du-temps-list',
@@ -43,6 +44,7 @@ export class EmploiDuTempsListComponent implements OnInit {
   anneeScolaireId: number | null = null;
   planning: EmploiDuTemps[] = [];
   loading = false;
+  exportEnCours = false;
 
   readonly jours = [
     { code: 'LUNDI', label: 'Lundi' },
@@ -203,6 +205,35 @@ export class EmploiDuTempsListComponent implements OnInit {
       .subscribe((result) => {
         if (result) this.refresh();
       });
+  }
+
+  /** Télécharge / prévisualise un brouillon PDF de l'emploi du temps de la classe affichée. */
+  telechargerBrouillon(): void {
+    if (!this.classeId || !this.anneeScolaireId || !this.planning.length || this.exportEnCours) return;
+    this.exportEnCours = true;
+    this.emploiDuTempsService.telechargerBrouillonPdf(this.classeId, this.anneeScolaireId).subscribe({
+      next: (blob) => {
+        const classe = this.classes.find((c) => c.id === this.classeId);
+        const nom = classe?.libelle ?? 'classe';
+        this.dialog.open(PdfPreviewDialogComponent, {
+          width: '820px',
+          maxWidth: '95vw',
+          height: '90vh',
+          maxHeight: '92vh',
+          panelClass: 'professional-dialog',
+          data: {
+            blob,
+            filename: `emploi-du-temps-${nom}.pdf`,
+            title: `Emploi du temps — ${nom}`
+          }
+        });
+        this.exportEnCours = false;
+      },
+      error: () => {
+        this.notification.error("Impossible de générer le PDF de l'emploi du temps");
+        this.exportEnCours = false;
+      }
+    });
   }
 
   async supprimer(seance: EmploiDuTemps): Promise<void> {

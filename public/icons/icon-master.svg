@@ -1,0 +1,34 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" fill="#0f172a"/>
+
+  <!-- Open book, centered -->
+  <g>
+    <!-- left page -->
+    <path d="M170 300
+             Q 350 252 505 300
+             L 505 738
+             Q 350 690 170 738
+             Z"
+          fill="#d97706"/>
+    <!-- right page -->
+    <path d="M854 300
+             Q 674 252 519 300
+             L 519 738
+             Q 674 690 854 738
+             Z"
+          fill="#f59e0b"/>
+    <!-- spine -->
+    <rect x="502" y="284" width="20" height="470" rx="10" fill="#b45309"/>
+
+    <!-- text lines, left page -->
+    <rect x="228" y="372" width="238" height="24" rx="12" fill="#fde68a" opacity="0.9"/>
+    <rect x="228" y="434" width="238" height="24" rx="12" fill="#fde68a" opacity="0.72"/>
+    <rect x="228" y="496" width="238" height="24" rx="12" fill="#fde68a" opacity="0.56"/>
+    <rect x="228" y="558" width="176" height="24" rx="12" fill="#fde68a" opacity="0.42"/>
+    <!-- text lines, right page -->
+    <rect x="558" y="372" width="238" height="24" rx="12" fill="#fff7ed" opacity="0.95"/>
+    <rect x="558" y="434" width="238" height="24" rx="12" fill="#fff7ed" opacity="0.78"/>
+    <rect x="558" y="496" width="238" height="24" rx="12" fill="#fff7ed" opacity="0.62"/>
+    <rect x="558" y="558" width="176" height="24" rx="12" fill="#fff7ed" opacity="0.46"/>
+  </g>
+</svg>

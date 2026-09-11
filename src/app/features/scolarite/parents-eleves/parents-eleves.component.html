@@ -1,0 +1,136 @@
+<div class="page-wrapper">
+  <div class="intro">
+    <h2>Parents &amp; élèves</h2>
+    <p>
+      Associez les parents (comptes déjà créés) aux élèves inscrits par l'administration, pour
+      leur ouvrir l'accès aux bulletins, présences et frais depuis leur espace.
+    </p>
+  </div>
+
+  <div class="picker">
+    <span class="field-label">Élève</span>
+    <ng-select
+      [items]="eleves"
+      bindLabel="nomComplet"
+      bindValue="id"
+      [(ngModel)]="eleveId"
+      (change)="onEleveChange()"
+      [loading]="loadingEleves"
+      placeholder="Rechercher un élève par nom..."
+      appendTo="body"
+      class="ng-field"
+    >
+    </ng-select>
+  </div>
+
+  <ng-container *ngIf="eleveId">
+    <div class="section-head">
+      <h3>Parents associés</h3>
+      <button mat-flat-button class="btn-associer" *ngIf="!formOuvert" (click)="ouvrirForm()">
+        <mat-icon>person_add</mat-icon>
+        Associer un parent
+      </button>
+    </div>
+
+    <div class="form-associer" *ngIf="formOuvert">
+      <div class="fa-grid">
+        <div class="fa-field fa-wide">
+          <span class="field-label">Parent</span>
+          <ng-select
+            [items]="tuteurs"
+            bindValue="id"
+            [(ngModel)]="nouveauTuteurId"
+            [typeahead]="tuteurInput$"
+            [loading]="loadingTuteurs"
+            placeholder="Rechercher par nom, email ou téléphone..."
+            appendTo="body"
+            class="ng-field"
+            typeToSearchText="Tapez pour rechercher un parent"
+          >
+            <ng-template ng-option-tmp let-item="item">
+              <div class="opt-tuteur">
+                <strong>{{ item.prenom }} {{ item.nom }}</strong>
+                <small>{{ item.email }}<span *ngIf="item.telephone1"> · {{ item.telephone1 }}</span></small>
+              </div>
+            </ng-template>
+            <ng-template ng-label-tmp let-item="item">
+              {{ item.prenom }} {{ item.nom }} — {{ item.email }}
+            </ng-template>
+          </ng-select>
+        </div>
+
+        <div class="fa-field">
+          <span class="field-label">Lien de parenté</span>
+          <ng-select
+            [items]="liens"
+            [(ngModel)]="nouveauLien"
+            placeholder="—"
+            appendTo="body"
+            class="ng-field"
+          >
+          </ng-select>
+        </div>
+      </div>
+
+      <label class="fa-check">
+        <input type="checkbox" [(ngModel)]="nouveauContactUrgence" />
+        <span>Contact d'urgence</span>
+      </label>
+
+      <p class="fa-hint">
+        <mat-icon>info</mat-icon>
+        Le parent doit avoir créé son compte via l'inscription en ligne pour apparaître ici.
+      </p>
+
+      <div class="fa-actions">
+        <button mat-button (click)="annulerForm()" [disabled]="saving">Annuler</button>
+        <button
+          mat-flat-button
+          class="btn-associer"
+          (click)="associer()"
+          [disabled]="!nouveauTuteurId || saving"
+        >
+          Associer
+        </button>
+      </div>
+    </div>
+
+    <div class="loading-center" *ngIf="loadingParents">
+      <mat-spinner diameter="28"></mat-spinner>
+    </div>
+
+    <div class="parents-list" *ngIf="!loadingParents">
+      <div class="parent-card" *ngFor="let p of parents">
+        <div class="pc-main">
+          <div class="pc-avatar">
+            {{ (p.tuteur?.prenom || '?')[0] }}{{ (p.tuteur?.nom || '?')[0] }}
+          </div>
+          <div class="pc-info">
+            <div class="pc-name">
+              {{ p.tuteur?.prenom }} {{ p.tuteur?.nom }}
+              <span class="pc-lien" *ngIf="p.lienParente">{{ p.lienParente }}</span>
+              <span class="pc-badge" *ngIf="p.contactUrgence">Contact d'urgence</span>
+            </div>
+            <div class="pc-contact">
+              <span *ngIf="p.tuteur?.email"><mat-icon>mail</mat-icon>{{ p.tuteur?.email }}</span>
+              <span *ngIf="p.tuteur?.telephone1"><mat-icon>call</mat-icon>{{ p.tuteur?.telephone1 }}</span>
+            </div>
+          </div>
+        </div>
+        <button class="pc-remove" (click)="dissocier(p)" title="Dissocier">
+          <mat-icon>link_off</mat-icon>
+        </button>
+      </div>
+
+      <div class="empty-state" *ngIf="!parents.length">
+        <mat-icon>group_off</mat-icon>
+        <p>Aucun parent associé à cet élève.</p>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="empty-state top" *ngIf="!eleveId">
+    <mat-icon>family_restroom</mat-icon>
+    <p>Choisissez un élève pour gérer ses parents.</p>
+  </div>
+</div>

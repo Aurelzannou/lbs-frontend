@@ -45,7 +45,8 @@
               "node_modules/eva-icons/style/eva-icons.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "serviceWorker": "ngsw-config.json"
           },
           "configurations": {
             "production": {

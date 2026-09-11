@@ -1,3 +1,10 @@
+@if (!pwa.enLigne()) {
+  <div class="offline-bar" role="status">
+    <span class="offline-dot"></span>
+    Vous êtes hors connexion — certaines informations peuvent être indisponibles.
+  </div>
+}
+
 @if (showLayout) {
   <app-one-column-layout [menu]="menu">
     <router-outlet></router-outlet>

@@ -16,6 +16,7 @@ import { PortalEmploiDuTempsDialogComponent } from '../emploi-du-temps-dialog/em
 import { PresenceHistoriqueDialogComponent } from '../presence-historique-dialog/presence-historique-dialog.component';
 import { PortailPaiementDialogComponent } from '../paiement-dialog/portail-paiement-dialog.component';
 import { PresenceService } from '../../../core/services/presence.service';
+import { PwaService } from '../../../core/services/pwa.service';
 import { PresenceEnfant } from '../../../core/models/presence.model';
 
 @Component({
@@ -74,6 +75,21 @@ import { PresenceEnfant } from '../../../core/models/presence.model';
             <div class="text-content">
               <h2>Inscrire un enfant</h2>
               <p>Commencez une nouvelle inscription pour l'année en cours.</p>
+            </div>
+            <mat-icon class="arrow">chevron_right</mat-icon>
+          </div>
+        </mat-card>
+
+        <mat-card
+          class="action-card install-action"
+          *ngIf="pwa.installable() && !pwa.estInstallee"
+          (click)="installerApp()"
+        >
+          <div class="card-content">
+            <div class="icon-bg install"><mat-icon>install_mobile</mat-icon></div>
+            <div class="text-content">
+              <h2>Installer l'application</h2>
+              <p>Ajoutez LBS à votre écran d'accueil pour un accès rapide.</p>
             </div>
             <mat-icon class="arrow">chevron_right</mat-icon>
           </div>
@@ -380,6 +396,9 @@ import { PresenceEnfant } from '../../../core/models/presence.model';
       // ── Action rapide ─────────────────────────────────────────────────────────
       .quick-actions {
         margin-bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
         .action-card {
           cursor: pointer;
           border-radius: 1.5rem;
@@ -392,6 +411,14 @@ import { PresenceEnfant } from '../../../core/models/presence.model';
           &:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(30, 58, 138, 0.35);
+          }
+
+          &.install-action {
+            background: linear-gradient(135deg, #0f172a, #b45309);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
+            &:hover {
+              box-shadow: 0 20px 40px rgba(15, 23, 42, 0.35);
+            }
           }
 
           .card-content {
@@ -828,6 +855,7 @@ export class PortalDashboardComponent implements OnInit {
   private router = inject(Router);
   private dialog = inject(MatDialog);
   private presenceService = inject(PresenceService);
+  protected pwa = inject(PwaService);
 
   userName = 'Parent';
   userInitial = 'P';
@@ -869,6 +897,10 @@ export class PortalDashboardComponent implements OnInit {
         // Silencieux : le bouton "Présences" restera juste masqué s'il n'y a pas de données.
       }
     });
+  }
+
+  installerApp(): void {
+    this.pwa.installer();
   }
 
   loadDossiers(): void {

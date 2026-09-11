@@ -9,6 +9,7 @@ import { OneColumnLayoutComponent } from './@theme/layouts/one-column-layout.com
 import { AuthService } from './core/services/auth.service';
 import { MenuService } from './core/services/menu.service';
 import { NotificationService } from './core/services/notification.service';
+import { PwaService } from './core/services/pwa.service';
 import { KeycloakService, KeycloakEventTypeLegacy } from 'keycloak-angular';
 import { filter } from 'rxjs/operators';
 
@@ -49,7 +50,9 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private menuService: MenuService,
     private keycloak: KeycloakService,
-    private notification: NotificationService
+    private notification: NotificationService,
+    /** Instancié dès le démarrage : surveille les mises à jour du service worker et la connexion. */
+    public pwa: PwaService
   ) {
     this.surveillerExpirationSession();
 

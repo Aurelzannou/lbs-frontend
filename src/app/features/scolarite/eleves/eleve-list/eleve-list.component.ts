@@ -14,11 +14,14 @@ import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { EleveService } from '../../../../core/services/eleve.service';
 import { ClasseService } from '../../../../core/services/classe.service';
+import { AnneeScolaireService } from '../../../../core/services/annee-scolaire.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Eleve } from '../../../../core/models/eleve.model';
 import { Classe } from '../../../../core/models/classe.model';
+import { AnneeScolaire } from '../../../../core/models/annee-scolaire.model';
 import { EleveFormDialogComponent } from '../eleve-form-dialog/eleve-form-dialog.component';
 import { EleveDetailDialogComponent } from '../eleve-detail-dialog/eleve-detail-dialog.component';
+import { PdfPreviewDialogComponent } from '../../../notes/pdf-preview-dialog/pdf-preview-dialog.component';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -66,6 +69,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
   private eleveService = inject(EleveService);
   private classeService = inject(ClasseService);
+  private anneeService = inject(AnneeScolaireService);
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
@@ -82,9 +86,15 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
   dataSource = new MatTableDataSource<Eleve>([]);
   loading = false;
+  exportListeEnCours = false;
 
   classes: (Classe | { id: null; libelle: string; code: string })[] = [];
   classeId: number | null = null;
+
+  annees: (AnneeScolaire | { id: null; libelle: string })[] = [];
+  /** Filtre par défaut sur l'année scolaire active — un élève sans dossier « vivant » sur
+      l'année choisie n'apparaît pas ; "Toutes les années" (id null) lève ce filtre. */
+  anneeScolaireId: number | null = null;
 
   // Pagination et recherche
   totalElements = 0;
@@ -107,7 +117,7 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
         this.refresh();
       });
     this.loadClasses();
-    this.refresh();
+    this.loadAnnees();
   }
 
   loadClasses(): void {
@@ -117,7 +127,26 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /** Charge les années scolaires et sélectionne l'année active par défaut, puis lance le premier
+      chargement des élèves (une fois le filtre par défaut connu, pour éviter un clignotement
+      "toutes années" → "année active"). */
+  loadAnnees(): void {
+    this.anneeService.getAll(0, 50).subscribe((res: any) => {
+      const page = res.data ?? res;
+      const list: AnneeScolaire[] = page.data ?? (Array.isArray(page) ? page : []);
+      this.annees = [{ id: null, libelle: 'Toutes les années' }, ...list];
+      const active = list.find((a) => a.actif);
+      this.anneeScolaireId = active?.id ?? null;
+      this.refresh();
+    });
+  }
+
   onClasseChange(): void {
+    this.pageIndex = 0;
+    this.refresh();
+  }
+
+  onAnneeChange(): void {
     this.pageIndex = 0;
     this.refresh();
   }
@@ -146,7 +175,7 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loading = true;
     // L'API utilise une pagination 1-based
     this.eleveService
-      .getAll(this.pageIndex + 1, this.pageSize, this.searchTerm, null, this.classeId)
+      .getAll(this.pageIndex + 1, this.pageSize, this.searchTerm, null, this.classeId, this.anneeScolaireId)
       .subscribe({
         next: (response: any) => {
           const items = response.data || (Array.isArray(response) ? response : []);
@@ -219,6 +248,35 @@ export class EleveListComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   getEndIndex(): number {
     return Math.min((this.pageIndex + 1) * this.pageSize, this.totalElements);
+  }
+
+  /** Liste PDF (imprimable) des élèves de la classe filtrée — nécessite une classe sélectionnée. */
+  telechargerListeClasse(): void {
+    if (this.classeId == null) {
+      this.notification.info('Choisissez d’abord une classe dans le filtre pour générer sa liste.');
+      return;
+    }
+    if (this.exportListeEnCours) return;
+    this.exportListeEnCours = true;
+    this.eleveService.telechargerListeClassePdf(this.classeId).subscribe({
+      next: (blob) => {
+        const classe = this.classes.find((c) => c.id === this.classeId) as any;
+        const nom = classe?.libelle ?? 'classe';
+        this.dialog.open(PdfPreviewDialogComponent, {
+          width: '820px',
+          maxWidth: '95vw',
+          height: '90vh',
+          maxHeight: '92vh',
+          panelClass: 'professional-dialog',
+          data: { blob, filename: `liste-eleves-${nom}.pdf`, title: `Liste des élèves — ${nom}` }
+        });
+        this.exportListeEnCours = false;
+      },
+      error: () => {
+        this.notification.error('Impossible de générer la liste des élèves');
+        this.exportListeEnCours = false;
+      }
+    });
   }
 
   openForm(eleve: Eleve): void {
