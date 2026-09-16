@@ -6,8 +6,10 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Dépendances (cache tant que package*.json ne change pas)
-COPY package.json package-lock.json ./
+# Dépendances (cache tant que package*.json/.npmrc ne changent pas)
+# .npmrc (legacy-peer-deps) doit être présent AVANT npm ci, sinon le conflit de
+# peer deps @nebular/Angular fait échouer l'install.
+COPY package.json package-lock.json .npmrc ./
 RUN npm ci
 
 # Code + build prod
