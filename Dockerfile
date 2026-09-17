@@ -33,6 +33,8 @@ COPY --from=build /app/dist/lbs-frontend/browser /usr/share/nginx/html
 
 EXPOSE 80
 
-# Vérifie que nginx répond
+# Vérifie que nginx répond — 127.0.0.1 explicitement, pas "localhost" : nginx n'écoute qu'en
+# IPv4 ici (notre nginx.conf personnalisé désactive l'ajout auto du listener IPv6 par l'image
+# de base), donc "localhost" (résolu en IPv6 d'abord) se voit refuser la connexion à tort.
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1
+  CMD wget -qO- http://127.0.0.1/ >/dev/null 2>&1 || exit 1
